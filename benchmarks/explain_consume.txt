@@ -1,0 +1,54 @@
+﻿                                                                                             QUERY PLAN                                                                                             
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=72.98..73.10 rows=10 width=34) (actual time=0.155..0.161 rows=10 loops=1)
+   Buffers: shared hit=38
+   ->  LockRows  (cost=72.98..73.18 rows=16 width=34) (actual time=0.154..0.159 rows=10 loops=1)
+         Buffers: shared hit=38
+         ->  Sort  (cost=72.98..73.02 rows=16 width=34) (actual time=0.141..0.142 rows=10 loops=1)
+               Sort Key: m.msg_offset
+               Sort Method: quicksort  Memory: 37kB
+               Buffers: shared hit=28
+               ->  Append  (cost=0.00..72.66 rows=16 width=34) (actual time=0.008..0.097 rows=205 loops=1)
+                     Buffers: shared hit=25
+                     ->  Seq Scan on message_2026_09 m_1  (cost=0.00..7.38 rows=8 width=34) (actual time=0.007..0.054 rows=205 loops=1)
+                           Filter: ((topic_id = 1) AND ((status)::text = 'pending'::text) AND ((visible_at IS NULL) OR (visible_at <= now())))
+                           Rows Removed by Filter: 18
+                           Buffers: shared hit=6
+                     ->  Index Scan using message_2026_10_topic_id_partition_id_msg_offset_idx1 on message_2026_10 m_2  (cost=0.12..8.15 rows=1 width=34) (actual time=0.010..0.010 rows=0 loops=1)
+                           Index Cond: (topic_id = 1)
+                           Filter: (((status)::text = 'pending'::text) AND ((visible_at IS NULL) OR (visible_at <= now())))
+                           Buffers: shared hit=5
+                     ->  Index Scan using message_2026_11_topic_id_partition_id_msg_offset_idx1 on message_2026_11 m_3  (cost=0.12..8.15 rows=1 width=34) (actual time=0.001..0.001 rows=0 loops=1)
+                           Index Cond: (topic_id = 1)
+                           Filter: (((status)::text = 'pending'::text) AND ((visible_at IS NULL) OR (visible_at <= now())))
+                           Buffers: shared hit=2
+                     ->  Index Scan using message_2026_12_topic_id_partition_id_msg_offset_idx1 on message_2026_12 m_4  (cost=0.12..8.15 rows=1 width=34) (actual time=0.003..0.003 rows=0 loops=1)
+                           Index Cond: (topic_id = 1)
+                           Filter: (((status)::text = 'pending'::text) AND ((visible_at IS NULL) OR (visible_at <= now())))
+                           Buffers: shared hit=2
+                     ->  Index Scan using message_2027_01_topic_id_partition_id_msg_offset_idx1 on message_2027_01 m_5  (cost=0.12..8.15 rows=1 width=34) (actual time=0.003..0.003 rows=0 loops=1)
+                           Index Cond: (topic_id = 1)
+                           Filter: (((status)::text = 'pending'::text) AND ((visible_at IS NULL) OR (visible_at <= now())))
+                           Buffers: shared hit=2
+                     ->  Index Scan using message_2027_02_topic_id_partition_id_msg_offset_idx1 on message_2027_02 m_6  (cost=0.12..8.15 rows=1 width=34) (actual time=0.004..0.004 rows=0 loops=1)
+                           Index Cond: (topic_id = 1)
+                           Filter: (((status)::text = 'pending'::text) AND ((visible_at IS NULL) OR (visible_at <= now())))
+                           Buffers: shared hit=2
+                     ->  Index Scan using message_2027_03_topic_id_partition_id_msg_offset_idx1 on message_2027_03 m_7  (cost=0.12..8.15 rows=1 width=34) (actual time=0.004..0.004 rows=0 loops=1)
+                           Index Cond: (topic_id = 1)
+                           Filter: (((status)::text = 'pending'::text) AND ((visible_at IS NULL) OR (visible_at <= now())))
+                           Buffers: shared hit=2
+                     ->  Index Scan using message_2027_04_topic_id_partition_id_msg_offset_idx1 on message_2027_04 m_8  (cost=0.12..8.15 rows=1 width=34) (actual time=0.003..0.003 rows=0 loops=1)
+                           Index Cond: (topic_id = 1)
+                           Filter: (((status)::text = 'pending'::text) AND ((visible_at IS NULL) OR (visible_at <= now())))
+                           Buffers: shared hit=2
+                     ->  Index Scan using message_default_topic_id_partition_id_msg_offset_idx1 on message_default m_9  (cost=0.12..8.15 rows=1 width=34) (actual time=0.005..0.005 rows=0 loops=1)
+                           Index Cond: (topic_id = 1)
+                           Filter: (((status)::text = 'pending'::text) AND ((visible_at IS NULL) OR (visible_at <= now())))
+                           Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=1634
+ Planning Time: 2.589 ms
+ Execution Time: 0.239 ms
+(50 rows)
+

@@ -1,0 +1,12 @@
+﻿LISTEN
+ waiting 
+---------
+ 
+(1 row)
+
+Asynchronous notification "conduit_events" with payload "{"event": "PRODUCE", "topic_id": 1, "msg_offset": 4, "partition_id": 2}" received from server process with PID 218.
+    status     
+---------------
+ listener done
+(1 row)
+
