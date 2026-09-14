@@ -1,0 +1,22 @@
+<div class="card bg-base-100 shadow-sm p-4">
+  <div class="stat-label mb-2">{{ columns | length }} columns · {{ rows | length }} rows</div>
+  <div class="overflow-x-auto result-scroll">
+    <table class="table table-sm table-zebra">
+      <thead>
+        <tr>{% for c in columns %}<th>{{ c }}</th>{% endfor %}</tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          {% for c in columns %}
+          <td class="payload-cell"><code class="text-xs">{{ row[c] if row[c] is string else row[c] | tojson }}</code></td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+        {% if not rows %}
+        <tr><td colspan="{{ columns | length }}" class="opacity-50 text-center py-4">no rows</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>

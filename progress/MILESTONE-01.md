@@ -6,6 +6,17 @@
 
 Stand up the Dockerized PostgreSQL runtime and deploy the full relational schema — every entity the broker needs, with real constraints, indexes, and monthly partitioning of the MESSAGE table.
 
+## Planning Decisions (Q&A)
+
+| Question | Options presented | Chosen | Rationale |
+|---|---|---|---|
+| How far should the DBMS be the core? | Full RDBMS core (rec.) / Deepened hybrid | Full RDBMS core | Messages as rows, procedures as the broker, PostgreSQL's WAL replaces hand-rolled recovery — the cleanest DBMS-project narrative; keeping the custom log data plane would dilute the DBMS focus |
+| Which RDBMS? | PostgreSQL (rec.) / MySQL | PostgreSQL | SKIP LOCKED, LISTEN/NOTIFY, BRIN, row-level security, materialized views — the full feature showcase the project needs |
+| DB access pattern? | Raw psycopg 3 + stored procedures (rec.) / SQLAlchemy Core | Raw psycopg + procedures | All SQL lives in reviewable `.sql` files; no ORM keeps the "DBMS as core" thesis honest |
+| How to run locally + at the demo? | Full Docker Compose (rec.) / Native installs / Dockerized Postgres only | Full Docker Compose | Identical environments for 3 teammates + demo machine; one command up |
+| Verification environment (no Docker on the machine)? | Install Docker Desktop (rec.) / WSL Postgres (needs sudo password) / Portable PG16 in temp | Install Docker Desktop | The project runtime is Docker Compose anyway; the existing WSL2 backend made it a one-time setup |
+| Web interface (initial choice)? | FastAPI + Jinja + HTMX (rec.) / React SPA / Jinja only | Jinja + HTMX | Python-only stack, least effort at the time — later revised by direct instruction to React+TS, then finalized back to Jinja+HTMX in Milestone 6 (see its decisions table) |
+
 ## What was built
 
 | File | Contents |

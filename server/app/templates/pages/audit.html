@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex items-end gap-3 mb-4">
+  <h1 class="text-xl font-bold">Audit Trail</h1>
+  <div>
+    <select name="event_type" class="select select-bordered select-sm"
+            hx-get="/fragments/audit" hx-target="#audit-table" hx-swap="outerHTML"
+            hx-trigger="change" hx-include="[name='event_type']">
+      <option value="">all events</option>
+      {% for e in ['PRODUCE', 'DELIVERED', 'DLQ', 'ACL_GRANT', 'ACL_REVOKE', 'CONFIG_CHANGE', 'TOPIC_CREATE', 'SCHEMA_PUBLISH', 'AUTH_FAIL'] %}
+      <option value="{{ e }}" {% if e == event_type %}selected{% endif %}>{{ e }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+{% include "fragments/_audit_table.html" with context %}
+{% endblock %}

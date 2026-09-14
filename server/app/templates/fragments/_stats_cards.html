@@ -1,0 +1,26 @@
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+  {% for s in stats %}
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="stat-label">{{ s.topic_name }} · retention {{ s.retention_days }}d</div>
+    <div class="flex gap-5 mt-2">
+      <div>
+        <div class="stat-value text-success">{{ s.delivered }}</div>
+        <div class="stat-label">delivered</div>
+      </div>
+      <div>
+        <div class="stat-value">{{ s.pending }}</div>
+        <div class="stat-label">pending</div>
+      </div>
+      <div>
+        <div class="stat-value text-warning">{{ s.claimed }}</div>
+        <div class="stat-label">claimed</div>
+      </div>
+      <div>
+        <div class="stat-value text-error">{{ s.dead }}</div>
+        <div class="stat-label">dead</div>
+      </div>
+    </div>
+    <div class="text-xs opacity-60 mt-2">dlq pending: {{ s.dlq_pending }}</div>
+  </div>
+  {% endfor %}
+</div>

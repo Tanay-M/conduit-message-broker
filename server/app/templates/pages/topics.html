@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-xl font-bold mb-4">Topics</h1>
+
+{% if ctx.mode == 'admin' %}
+<div class="card bg-base-100 shadow-sm p-4 mb-4">
+  <div class="stat-label mb-3">create topic</div>
+  <form hx-post="/web/topics" hx-target="#topics-table" hx-swap="outerHTML" class="flex flex-wrap gap-2 items-end">
+    <div>
+      <div class="stat-label">name</div>
+      <input name="name" class="input input-bordered input-sm" required>
+    </div>
+    <div>
+      <div class="stat-label">partitions</div>
+      <input name="partitions" type="number" value="2" min="1" max="64" class="input input-bordered input-sm w-20">
+    </div>
+    <div>
+      <div class="stat-label">owner</div>
+      <input name="owner_username" class="input input-bordered input-sm" required>
+    </div>
+    <div class="grow">
+      <div class="stat-label">description</div>
+      <input name="description" class="input input-bordered input-sm w-full">
+    </div>
+    <div class="grow">
+      <div class="stat-label">schema (JSON, optional)</div>
+      <input name="schema_json" class="input input-bordered input-sm w-full mono" placeholder='{"required": ["event"]}'>
+    </div>
+    <button class="btn btn-primary btn-sm">Create</button>
+  </form>
+</div>
+{% endif %}
+
+{% include "fragments/_topics_table.html" %}
+{% endblock %}

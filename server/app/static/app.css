@@ -1,0 +1,78 @@
+:root {
+    --chart-height: 260px;
+}
+
+.chart-box {
+    position: relative;
+    height: var(--chart-height);
+}
+
+.payload-cell code {
+    font-size: 0.72rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+    display: block;
+    max-width: 420px;
+    max-height: 120px;
+    overflow: auto;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.nav-link:hover {
+    background: var(--b2);
+}
+
+.nav-link.active {
+    background: var(--p);
+    color: var(--pc);
+}
+
+.stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+}
+
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+#sql-editor {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    min-height: 140px;
+}
+
+.result-scroll {
+    max-height: 420px;
+    overflow: auto;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: oklch(0.72 0.19 152);
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.35; }
+    100% { opacity: 1; }
+}

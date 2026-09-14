@@ -18,5 +18,24 @@ services:
       timeout: 3s
       retries: 10
 
+  api:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: conduit-api
+    environment:
+      CONDUIT_APP_DSN: postgresql://conduit_app:conduit_app_dev@db:5432/conduit
+      CONDUIT_ADMIN_DSN: postgresql://conduit:conduit_dev@db:5432/conduit
+      CONDUIT_ADMIN_TOKEN: ${CONDUIT_ADMIN_TOKEN:-conduit-admin-token}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./tests:/app/tests:ro
+      - ./demos:/app/demos:ro
+      - ./benchmarks:/app/benchmarks
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   conduit_pgdata:

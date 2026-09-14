@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-xl font-bold mb-1">SQL Console</h1>
+<div class="text-xs opacity-60 mb-4">read-only · single SELECT or EXPLAIN · 5s timeout · 500 row cap</div>
+
+<div class="card bg-base-100 shadow-sm p-4">
+  <form hx-post="/web/sql" hx-target="#sql-results" hx-swap="innerHTML" class="flex flex-col gap-2">
+    <textarea id="sql-editor" name="query" class="textarea textarea-bordered" spellcheck="false">SELECT topic_name, pending, claimed, delivered, dead
+FROM v_topic_stats
+ORDER BY topic_name;</textarea>
+    <div class="flex items-center gap-2">
+      <button class="btn btn-primary btn-sm">Run</button>
+      <span class="text-xs opacity-50">Ctrl+Enter</span>
+    </div>
+  </form>
+</div>
+
+<div id="sql-results" class="mt-4"></div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-xl font-bold mb-1">Playground</h1>
+<div class="text-xs opacity-60 mb-4">produce a message, watch it land in the table, consume it, acknowledge it — end to end</div>
+
+{% if ctx.mode != 'app' %}
+<div class="alert alert-warning mb-4">
+  Broker playground needs an <b>app session</b>: log out and sign in with an app api key
+  (keys are listed under Admin → Applications). The live table below still works in admin mode.
+</div>
+{% endif %}
+
+<div x-data="playground" class="grid lg:grid-cols-2 gap-4">
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="stat-label mb-3">producer</div>
+    {% if ctx.mode == 'app' %}
+    <div class="flex flex-col gap-2">
+      <div>
+        <div class="stat-label">topic</div>
+        <select x-model="pTopic" class="select select-bordered select-sm w-full">
+          <option value="">select…</option>
+          <template x-for="t in produceTopics" :key="t.topic_name">
+            <option :value="t.topic_name" x-text="t.topic_name"></option>
+          </template>
+        </select>
+      </div>
+      <div>
+        <div class="stat-label">key (optional — hash routing)</div>
+        <input x-model="pKey" class="input input-bordered input-sm w-full mono" placeholder="order-42">
+      </div>
+      <div>
+        <div class="stat-label">payload (JSON)</div>
+        <textarea x-model="pPayload" class="textarea textarea-bordered mono w-full text-xs" rows="5"></textarea>
+      </div>
+      <button class="btn btn-primary btn-sm" @click="produce()" :disabled="!pTopic">Send message</button>
+      <div x-show="pError" x-cloak class="alert alert-error text-sm py-2" x-text="pError"></div>
+      <div x-show="pResult" x-cloak class="alert alert-success text-sm py-2">
+        <div>
+          stored at
+          <span class="mono" x-text="`topic=${pResult?.topic_id} partition=${pResult?.partition_id} offset=${pResult?.msg_offset}`"></span>
+          <span x-show="pResult?.duplicate" class="badge badge-warning badge-xs ml-2">duplicate (idempotent replay)</span>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="opacity-50 text-sm">sign in with an app api key to produce</div>
+    {% endif %}
+  </div>
+
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="stat-label mb-3">consumer</div>
+    {% if ctx.mode == 'app' %}
+    <div class="flex flex-col gap-2">
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <div class="stat-label">group</div>
+          <select x-model="cGroup" class="select select-bordered select-sm w-full">
+            <option value="">select…</option>
+            <template x-for="g in groups" :key="g.group_name">
+              <option :value="g.group_name" x-text="g.group_name"></option>
+            </template>
+          </select>
+        </div>
+        <div>
+          <div class="stat-label">topic</div>
+          <select x-model="cTopic" class="select select-bordered select-sm w-full">
+            <option value="">select…</option>
+            <template x-for="t in consumeTopics" :key="t.topic_name">
+              <option :value="t.topic_name" x-text="t.topic_name"></option>
+            </template>
+          </select>
+        </div>
+      </div>
+      <div class="flex items-end gap-2">
+        <div>
+          <div class="stat-label">batch</div>
+          <input x-model.number="cBatch" type="number" min="1" max="100" class="input input-bordered input-sm w-24">
+        </div>
+        <button class="btn btn-primary btn-sm" @click="consume()" :disabled="!cGroup || !cTopic">Consume</button>
+        <button class="btn btn-success btn-sm" x-show="claimed.length" @click="ackAll()">Ack all</button>
+      </div>
+      <div x-show="cError" x-cloak class="alert alert-error text-sm py-2" x-text="cError"></div>
+      <div x-show="cInfo" x-cloak class="alert alert-info text-sm py-2" x-text="cInfo"></div>
+      <div class="flex flex-col gap-2 mt-1">
+        <template x-for="m in claimed" :key="m.partition_id + '-' + m.msg_offset">
+          <div class="border border-base-300 rounded-lg p-3 text-sm">
+            <div class="flex items-center justify-between">
+              <div class="mono text-xs opacity-70">
+                partition <span x-text="m.partition_id"></span> · offset <span x-text="m.msg_offset"></span> · attempt <span x-text="m.attempts"></span>
+              </div>
+              <div class="flex gap-1">
+                <button class="btn btn-success btn-xs" @click="ackOne(m)">Ack</button>
+                <button class="btn btn-error btn-outline btn-xs" @click="nackOne(m)">Nack</button>
+              </div>
+            </div>
+            <pre class="mono text-xs mt-2 whitespace-pre-wrap" x-text="JSON.stringify(m.payload, null, 2)"></pre>
+          </div>
+        </template>
+      </div>
+    </div>
+    {% else %}
+    <div class="opacity-50 text-sm">sign in with an app api key to consume</div>
+    {% endif %}
+  </div>
+</div>
+
+{% if topic %}
+<div class="mt-6">
+  <div class="flex items-center gap-2 mb-3">
+    <div class="stat-label">live messages · {{ topic }}</div>
+    <span class="live-dot"></span>
+  </div>
+  <div hx-ext="sse" sse-connect="/api/events">
+    {% include "fragments/_messages_table.html" with context %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

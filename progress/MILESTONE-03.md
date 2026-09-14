@@ -31,6 +31,13 @@ Decisions: **terminal events only** (no per-claim audit rows — keeps audit_log
 ### Verification plan
 `tests/smoke_m3.sql`: audit assertions per event type, monotonic rejection, RLS allow/deny matrix as `conduit_app` (alice granted / bob denied / anonymous zero-visibility), view-vs-function consistency, matview refresh consistency; regression re-run of `smoke_m2.sql`; parallel-session LISTEN/NOTIFY demo.
 
+## Planning Decisions (Q&A)
+
+| Question | Options presented | Chosen | Rationale |
+|---|---|---|---|
+| Which broker events should the audit triggers record? | Terminal events only (rec.) / Every claim too | Terminal events only | PRODUCE / DELIVERED / DLQ / ACL / CONFIG / topic-schema lifecycle / AUTH_FAIL cover the graded story; skipping transient per-claim rows keeps audit_log meaningful and the hot path light |
+| How much of the schema should row-level security cover? | `message` + `dead_letter_message` (rec.) / Everything sensitive | Message + DLQ | Clearest demo, least risk of blocking admin/maintenance flows; other tables remain guarded by grants + triggers |
+
 ## What Was Implemented
 
 All three files deployed cleanly on fresh init (`00 → 10 → 20 → 30 → 40`): 15 triggers, 10 trigger functions + `log_auth_failure`, 1 role + 14 grants + 5 policies + 3 policy helpers, 4 views + 1 materialized view + refresh function.

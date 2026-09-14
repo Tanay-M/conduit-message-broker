@@ -1,0 +1,84 @@
+{
+  "config": {
+    "total_per_run": 2000,
+    "batch_sizes": [
+      1,
+      10,
+      100,
+      1000
+    ],
+    "drain_total": 5000,
+    "workers": 5
+  },
+  "results": [
+    {
+      "run": "batch=1",
+      "batch": 1,
+      "messages": 2000,
+      "cycles": 2000,
+      "msgs_per_s": 5.1,
+      "cycle_latency_ms": {
+        "min": 160.65,
+        "p50": 189.53,
+        "p95": 253.79,
+        "p99": 302.02,
+        "max": 454.66
+      }
+    },
+    {
+      "run": "batch=10",
+      "batch": 10,
+      "messages": 2000,
+      "cycles": 200,
+      "msgs_per_s": 45.1,
+      "cycle_latency_ms": {
+        "min": 181.72,
+        "p50": 231.73,
+        "p95": 246.45,
+        "p99": 257.76,
+        "max": 287.34
+      }
+    },
+    {
+      "run": "batch=100",
+      "batch": 100,
+      "messages": 2000,
+      "cycles": 20,
+      "msgs_per_s": 369.3,
+      "cycle_latency_ms": {
+        "min": 245.14,
+        "p50": 272.83,
+        "p95": 279.01,
+        "p99": 285.07,
+        "max": 285.07
+      }
+    },
+    {
+      "run": "batch=1000",
+      "batch": 1000,
+      "messages": 2000,
+      "cycles": 2,
+      "msgs_per_s": 1856.1,
+      "cycle_latency_ms": {
+        "min": 458.09,
+        "p50": 458.09,
+        "p95": 615.88,
+        "p99": 615.88,
+        "max": 615.88
+      }
+    },
+    {
+      "run": "1-worker drain (batch=100)",
+      "messages": 5000,
+      "wall_s": 20.11,
+      "msgs_per_s": 248.7
+    },
+    {
+      "run": "5-worker drain (batch=100)",
+      "messages": 5000,
+      "wall_s": 18.66,
+      "msgs_per_s": 267.9,
+      "speedup_vs_single": 1.08
+    }
+  ]
+}

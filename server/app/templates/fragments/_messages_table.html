@@ -1,0 +1,36 @@
+<div id="messages-table"
+     hx-get="/fragments/messages?topic={{ topic }}{% if status %}&status={{ status }}{% endif %}"
+     hx-trigger="sse:conduit_events, every 15s"
+     hx-swap="outerHTML">
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="overflow-x-auto result-scroll">
+      <table class="table table-sm">
+        <thead>
+          <tr><th>created</th><th>topic</th><th>partition</th><th>offset</th><th>key</th><th>payload</th><th>status</th><th>attempts</th></tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+          <tr class="hover">
+            <td class="text-xs opacity-70 whitespace-nowrap">{{ row.created_at.strftime('%H:%M:%S') }}</td>
+            <td>{{ row.topic_name }}</td>
+            <td class="mono">{{ row.partition_number }}</td>
+            <td class="mono">{{ row.msg_offset }}</td>
+            <td class="mono text-xs">{{ row.msg_key or '—' }}</td>
+            <td class="payload-cell"><code>{{ row.payload | tojson }}</code></td>
+            <td>
+              {% if row.status == 'delivered' %}<span class="badge badge-success badge-sm">delivered</span>
+              {% elif row.status == 'claimed' %}<span class="badge badge-warning badge-sm">claimed</span>
+              {% elif row.status == 'dead' %}<span class="badge badge-error badge-sm">dead</span>
+              {% else %}<span class="badge badge-ghost badge-sm">pending</span>{% endif %}
+            </td>
+            <td class="mono">{{ row.attempts }}</td>
+          </tr>
+          {% endfor %}
+          {% if not rows %}
+          <tr><td colspan="8" class="opacity-50 text-center py-6">no messages match</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,36 @@
+<div id="topics-table">
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="overflow-x-auto">
+      <table class="table table-sm">
+        <thead><tr><th>#</th><th>name</th><th>status</th><th>partitions</th><th>retention</th><th>max bytes</th><th>created by</th><th>created</th>{% if ctx is defined and ctx.mode == 'admin' %}<th></th>{% endif %}</tr></thead>
+        <tbody>
+          {% for t in topics %}
+          <tr class="hover">
+            <td class="mono">{{ t.topic_id }}</td>
+            <td class="font-semibold">{{ t.topic_name }}</td>
+            <td>
+              {% if t.status == 'active' %}<span class="badge badge-success badge-sm">active</span>
+              {% else %}<span class="badge badge-ghost badge-sm">archived</span>{% endif %}
+            </td>
+            <td class="mono">{{ t.partition_count }}</td>
+            <td class="mono">{{ t.retention_days }}d</td>
+            <td class="mono text-xs">{{ t.max_message_bytes }}</td>
+            <td>{{ t.created_by }}</td>
+            <td class="text-xs opacity-70">{{ t.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            {% if ctx is defined and ctx.mode == 'admin' %}
+            <td>
+              {% if t.status == 'active' %}
+              <button class="btn btn-outline btn-xs"
+                      hx-post="/web/topics/{{ t.topic_name }}/archive"
+                      hx-target="#topics-table" hx-swap="outerHTML"
+                      hx-confirm="archive {{ t.topic_name }}? producing will be rejected">archive</button>
+              {% endif %}
+            </td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

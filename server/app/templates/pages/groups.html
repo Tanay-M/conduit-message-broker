@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-xl font-bold mb-4">Consumer Groups</h1>
+
+{% if ctx.mode == 'admin' %}
+<div class="card bg-base-100 shadow-sm p-4 mb-4 flex flex-wrap gap-4">
+  <form hx-post="/web/groups" hx-target="#groups-table" hx-swap="outerHTML" class="flex flex-wrap gap-2 items-end">
+    <div class="stat-label mb-1">create group</div>
+    <div>
+      <div class="stat-label">name</div>
+      <input name="name" class="input input-bordered input-sm" required>
+    </div>
+    <div>
+      <div class="stat-label">created by</div>
+      <input name="created_by_username" class="input input-bordered input-sm" required>
+    </div>
+    <div>
+      <div class="stat-label">max attempts</div>
+      <input name="max_delivery_attempts" type="number" value="3" min="1" max="10" class="input input-bordered input-sm w-20">
+    </div>
+    <button class="btn btn-primary btn-sm">Create</button>
+  </form>
+  <form hx-post="/web/groups/subscribe" hx-target="#groups-table" hx-swap="outerHTML" class="flex flex-wrap gap-2 items-end" id="subscribe-form">
+    <div class="stat-label mb-1">subscribe</div>
+    <div>
+      <div class="stat-label">group</div>
+      <input name="group" class="input input-bordered input-sm" list="group-list" required>
+      <datalist id="group-list">{% for g in groups %}<option value="{{ g.group_name }}">{% endfor %}</datalist>
+    </div>
+    <div>
+      <div class="stat-label">topic</div>
+      <input name="topic" class="input input-bordered input-sm" required>
+    </div>
+    <button class="btn btn-primary btn-sm">Subscribe</button>
+  </form>
+</div>
+{% endif %}
+
+{% include "fragments/_groups_table.html" %}
+{% endblock %}

@@ -16,6 +16,13 @@ A suspended user's grants must stop working: both ACL triggers and the three `fn
 ### D. Verification (`tests/smoke_m4.sql`)
 Dataset-shape assertions; audit coverage counts; lag/throughput views populated; purge deletes exactly 30; schema evolution accept/reject; suspend → blocked at trigger **and** RLS layers; app revocation → `CDT03`; paused group → `CDT06`; archived topic → `CDT02`; final ledger balance; matview consistency. Regression: m2 + m3 on a clean volume.
 
+## Planning Decisions (Q&A)
+
+| Question | Options presented | Chosen | Rationale |
+|---|---|---|---|
+| How large should the seeded dataset be? | ~2,000 messages (rec.) / ~8,000 | ~2,000 | Init stays fast and every dashboard view looks alive; M8 benchmarks generate their own bulk data |
+| Include admin-management functions? | Admin functions + suspend-cuts-access semantics (rec.) / Seed only | Admin functions + suspend semantics | A real data-management surface for deliverable D2; suspension must genuinely cut access (trigger + RLS layers) to be a security control, not a cosmetic flag |
+
 ## What Was Implemented
 
 All of the above, deployed and verified. Final dataset shape achieved **exactly as designed**:

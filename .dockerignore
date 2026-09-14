@@ -1,0 +1,12 @@
+.git
+db
+benchmarks
+progress
+tests
+web
+*.pdf
+docker-compose.yml
+PLAN.md
+README.md
+.gitignore
+.dockerignore

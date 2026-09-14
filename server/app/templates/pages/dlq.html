@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-xl font-bold mb-4">Dead Letter Queue</h1>
+
+{% if ctx.mode == 'admin' and apps %}
+<div class="card bg-base-100 shadow-sm p-4 mb-4 flex items-end gap-3">
+  <div>
+    <div class="stat-label">requeue as producer app</div>
+    <select name="producer_app_name" class="select select-bordered select-sm">
+      {% for a in apps %}
+      {% if a.app_type in ('producer', 'both') and a.status == 'active' %}
+      <option value="{{ a.app_name }}">{{ a.app_name }} ({{ a.owner }})</option>
+      {% endif %}
+      {% endfor %}
+    </select>
+  </div>
+  <div class="text-xs opacity-60 py-2">requeue produces a fresh message on the original topic</div>
+</div>
+{% endif %}
+
+{% include "fragments/_dlq_table.html" %}
+{% endblock %}

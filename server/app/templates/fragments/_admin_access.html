@@ -1,0 +1,29 @@
+<div id="access-table">
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="overflow-x-auto">
+      <table class="table table-sm">
+        <thead><tr><th>#</th><th>user</th><th>topic</th><th>access</th><th>granted</th><th></th></tr></thead>
+        <tbody>
+          {% for g in grants %}
+          <tr class="hover">
+            <td class="mono">{{ g.access_id }}</td>
+            <td class="font-semibold">{{ g.username }}</td>
+            <td>{{ g.topic_name }}</td>
+            <td><span class="badge badge-ghost badge-sm">{{ g.access_type }}</span></td>
+            <td class="text-xs opacity-70">{{ g.granted_at.strftime('%Y-%m-%d') }}</td>
+            <td>
+              <button class="btn btn-outline btn-error btn-xs"
+                      hx-post="/web/access/revoke"
+                      hx-vals='{"username": "{{ g.username }}", "topic": "{{ g.topic_name }}", "access_type": "{{ g.access_type }}"}'
+                      hx-target="#access-table" hx-swap="outerHTML">revoke</button>
+            </td>
+          </tr>
+          {% endfor %}
+          {% if not grants %}
+          <tr><td colspan="6" class="opacity-50 text-center py-4">no grants</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

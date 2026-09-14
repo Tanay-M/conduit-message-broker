@@ -1,0 +1,29 @@
+<div id="apps-table">
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="overflow-x-auto">
+      <table class="table table-sm">
+        <thead><tr><th>#</th><th>app</th><th>owner</th><th>type</th><th>status</th><th>api key</th></tr></thead>
+        <tbody>
+          {% for a in apps %}
+          <tr class="hover">
+            <td class="mono">{{ a.app_id }}</td>
+            <td class="font-semibold">{{ a.app_name }}</td>
+            <td>{{ a.owner }}</td>
+            <td><span class="badge badge-ghost badge-sm">{{ a.app_type }}</span></td>
+            <td>
+              {% if a.status == 'active' %}<span class="badge badge-success badge-sm">active</span>
+              {% else %}<span class="badge badge-error badge-sm">revoked</span>{% endif %}
+            </td>
+            <td>
+              <details>
+                <summary class="link link-primary link-hover text-xs cursor-pointer">reveal</summary>
+                <code class="mono text-xs">{{ a.api_key }}</code>
+              </details>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -6,6 +6,12 @@
 
 Implement the entire broker as database code in `db/sql/10_functions.sql` — producing, consuming, acknowledging, retrying, dead-lettering, retention, and administration all as stored functions, so the database (not application code) is the message broker.
 
+## Planning Decisions (Q&A)
+
+| Question | Options presented | Chosen | Rationale |
+|---|---|---|---|
+| How much of `10_functions.sql` should Milestone 2 cover? | Full file: hot path + admin + maintenance (rec.) / Hot path only | Full file | M3 (triggers/RLS/views) then had the complete API to hook into; one coherent procedures file rather than a split effort |
+
 ## What was built
 
 ### Hot path

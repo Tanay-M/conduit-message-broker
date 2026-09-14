@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex items-center gap-2 mb-4">
+  <h1 class="text-xl font-bold">Message Browser</h1>
+  <span class="live-dot"></span>
+  <span class="text-xs opacity-60">live — rows update as events arrive</span>
+</div>
+
+{% if topics %}
+<div class="flex gap-3 items-end mb-3">
+  <div>
+    <div class="stat-label">topic</div>
+    <select name="topic" class="select select-bordered select-sm"
+            hx-get="/fragments/messages" hx-target="#messages-table" hx-swap="outerHTML"
+            hx-trigger="change" hx-include="[name='topic'],[name='status']">
+      {% for t in topics %}
+      <option value="{{ t.topic_name }}" {% if t.topic_name == topic %}selected{% endif %}>{{ t.topic_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>
+    <div class="stat-label">status</div>
+    <select name="status" class="select select-bordered select-sm"
+            hx-get="/fragments/messages" hx-target="#messages-table" hx-swap="outerHTML"
+            hx-trigger="change" hx-include="[name='topic'],[name='status']">
+      <option value="" {% if not status %}selected{% endif %}>all</option>
+      {% for s in ['pending', 'claimed', 'delivered', 'dead'] %}
+      <option value="{{ s }}" {% if s == status %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+<div hx-ext="sse" sse-connect="/api/events">
+  {% set sel_topic = topic or topics[0].topic_name %}
+  {% include "fragments/_messages_table.html" with context %}
+</div>
+{% else %}
+<div class="alert alert-info">No accessible topics. Ask an admin for access grants.</div>
+{% endif %}
+{% endblock %}

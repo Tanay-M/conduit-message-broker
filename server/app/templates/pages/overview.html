@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-xl font-bold mb-4">Overview <span class="live-dot ml-1 align-middle"></span></h1>
+
+{% include "fragments/_stats_cards.html" %}
+
+<div class="grid md:grid-cols-2 gap-4 mt-4">
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="stat-label mb-2">messages by status</div>
+    <div class="chart-box"><canvas id="chart-status"></canvas></div>
+  </div>
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="stat-label mb-2">throughput (msg / minute, last 2h)</div>
+    <div class="chart-box"><canvas id="chart-throughput"></canvas></div>
+  </div>
+</div>
+
+<div class="mt-4">
+  {% include "fragments/_lag_table.html" %}
+</div>
+
+<div class="card bg-base-100 shadow-sm p-4 mt-4">
+  <div class="flex items-center justify-between mb-2">
+    <div class="stat-label">recent audit events</div>
+    <a href="/audit" class="link link-primary link-hover text-xs">view all →</a>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="table table-sm">
+      <thead><tr><th>time</th><th>user</th><th>topic</th><th>event</th><th>status</th></tr></thead>
+      <tbody>
+        {% for row in recent %}
+        <tr class="hover">
+          <td class="text-xs opacity-70">{{ row.event_timestamp }}</td>
+          <td>{{ row.username }}</td>
+          <td>{{ row.topic_name or '—' }}</td>
+          <td><span class="badge badge-ghost badge-sm">{{ row.event_type }}</span></td>
+          <td>
+            {% if row.status == 'success' %}<span class="badge badge-success badge-sm">success</span>
+            {% else %}<span class="badge badge-error badge-sm">failure</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if ctx.mode == 'admin' %}
+<div class="card bg-base-100 shadow-sm p-4 mt-4 flex items-center gap-3">
+  <div class="stat-label">maintenance</div>
+  <button class="btn btn-outline btn-xs" hx-post="/web/maintenance/purge" hx-swap="outerHTML">purge retention</button>
+  <button class="btn btn-outline btn-xs" hx-post="/web/maintenance/reap" hx-swap="outerHTML">reap expired claims</button>
+  <button class="btn btn-outline btn-xs" hx-post="/web/maintenance/refresh" hx-swap="outerHTML">refresh dashboard matview</button>
+</div>
+{% endif %}
+{% endblock %}

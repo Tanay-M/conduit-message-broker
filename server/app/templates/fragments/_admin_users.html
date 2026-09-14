@@ -1,0 +1,31 @@
+<div id="users-table">
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="overflow-x-auto">
+      <table class="table table-sm">
+        <thead><tr><th>#</th><th>username</th><th>email</th><th>role</th><th>status</th><th>created</th><th></th></tr></thead>
+        <tbody>
+          {% for u in users %}
+          <tr class="hover">
+            <td class="mono">{{ u.user_id }}</td>
+            <td class="font-semibold">{{ u.username }}</td>
+            <td class="text-xs">{{ u.email }}</td>
+            <td><span class="badge badge-ghost badge-sm">{{ u.role_name }}</span></td>
+            <td>
+              {% if u.status == 'active' %}<span class="badge badge-success badge-sm">active</span>
+              {% else %}<span class="badge badge-error badge-sm">suspended</span>{% endif %}
+            </td>
+            <td class="text-xs opacity-70">{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+            <td>
+              {% if u.status == 'active' %}
+              <button class="btn btn-outline btn-error btn-xs" hx-post="/web/users/{{ u.username }}/suspend" hx-target="#users-table" hx-swap="outerHTML">suspend</button>
+              {% else %}
+              <button class="btn btn-outline btn-xs" hx-post="/web/users/{{ u.username }}/activate" hx-target="#users-table" hx-swap="outerHTML">activate</button>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

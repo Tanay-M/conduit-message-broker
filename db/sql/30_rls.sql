@@ -24,6 +24,7 @@ GRANT EXECUTE ON FUNCTION ack(TEXT, JSONB) TO conduit_app;
 GRANT EXECUTE ON FUNCTION nack(TEXT, JSONB, TEXT) TO conduit_app;
 GRANT EXECUTE ON FUNCTION validate_schema(JSONB, JSONB) TO conduit_app;
 GRANT EXECUTE ON FUNCTION log_auth_failure(BIGINT, BIGINT, BIGINT, JSONB) TO conduit_app;
+GRANT EXECUTE ON FUNCTION fn_auth_app(UUID) TO conduit_app;
 
 CREATE FUNCTION fn_user_can_read(p_user_id BIGINT, p_topic_id BIGINT) RETURNS BOOLEAN
 LANGUAGE sql STABLE

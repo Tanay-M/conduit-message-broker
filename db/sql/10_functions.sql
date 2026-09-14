@@ -778,4 +778,33 @@ BEGIN
 END;
 $$;
 
+CREATE FUNCTION fn_auth_app(p_api_key UUID) RETURNS TABLE(app_id BIGINT, app_name TEXT, owner_user_id BIGINT, owner_username TEXT, owner_role TEXT, app_type TEXT, status TEXT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    r RECORD;
+BEGIN
+    SELECT a.app_id, a.app_name, a.owner_user_id, u.username AS owner_username,
+           ro.role_name AS owner_role, a.app_type, a.status
+    INTO r
+    FROM application a
+    JOIN app_user u ON u.user_id = a.owner_user_id
+    JOIN role ro ON ro.role_id = u.role_id
+    WHERE a.api_key = p_api_key;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'unknown api key' USING ERRCODE = 'CDT22';
+    END IF;
+    IF r.status <> 'active' THEN
+        RAISE EXCEPTION 'application % is revoked', r.app_name USING ERRCODE = 'CDT03';
+    END IF;
+    IF EXISTS (SELECT 1 FROM app_user u WHERE u.user_id = r.owner_user_id AND u.status <> 'active') THEN
+        RAISE EXCEPTION 'application owner % is not active', r.owner_username USING ERRCODE = 'CDT22';
+    END IF;
+
+    RETURN QUERY VALUES (r.app_id, r.app_name::TEXT, r.owner_user_id, r.owner_username::TEXT,
+                         r.owner_role::TEXT, r.app_type::TEXT, r.status::TEXT);
+END;
+$$;
+
 COMMIT;

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="winter">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conduit — login</title>
+  <link rel="stylesheet" href="/static/vendor/daisyui.min.css">
+  <script src="/static/vendor/tailwind.js"></script>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="min-h-screen bg-base-200 flex items-center justify-center">
+  <div class="card bg-base-100 shadow-lg w-96 p-8">
+    <div class="font-black text-primary text-2xl">Conduit</div>
+    <div class="text-sm opacity-60 mb-6">PostgreSQL message broker</div>
+    {% if error %}
+    <div class="alert alert-error text-sm mb-4">{{ error }}</div>
+    {% endif %}
+    <form method="post" action="/web/login" class="flex flex-col gap-3">
+      <label class="form-control">
+        <div class="label"><span class="label-text">Session type</span></div>
+        <select name="mode" class="select select-bordered">
+          <option value="admin">Admin token</option>
+          <option value="app">App api key</option>
+        </select>
+      </label>
+      <label class="form-control">
+        <div class="label"><span class="label-text">Token / api key</span></div>
+        <input name="token" type="password" class="input input-bordered mono" required autofocus>
+      </label>
+      <button class="btn btn-primary mt-2">Sign in</button>
+    </form>
+    <div class="text-xs opacity-50 mt-4">admin demo token: conduit-admin-token · app keys are listed on the Admin page</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+{
+  "config": {
+    "total_per_run": 2000,
+    "batch_sizes": [
+      1,
+      10,
+      100,
+      1000
+    ],
+    "contention": {
+      "threads": 4,
+      "batch": 100
+    }
+  },
+  "results": [
+    {
+      "run": "batch=1",
+      "batch": 1,
+      "calls": 2000,
+      "messages": 2000,
+      "msgs_per_s": 494.6,
+      "call_latency_ms": {
+        "min": 1.37,
+        "p50": 1.81,
+        "p95": 3.35,
+        "p99": 4.46,
+        "max": 11.24
+      }
+    },
+    {
+      "run": "batch=10",
+      "batch": 10,
+      "calls": 200,
+      "messages": 2000,
+      "msgs_per_s": 1520.5,
+      "call_latency_ms": {
+        "min": 5.24,
+        "p50": 6.12,
+        "p95": 8.33,
+        "p99": 11.93,
+        "max": 36.82
+      }
+    },
+    {
+      "run": "batch=100",
+      "batch": 100,
+      "calls": 20,
+      "messages": 2000,
+      "msgs_per_s": 2245.9,
+      "call_latency_ms": {
+        "min": 37.85,
+        "p50": 43.31,
+        "p95": 52.0,
+        "p99": 62.13,
+        "max": 62.13
+      }
+    },
+    {
+      "run": "batch=1000",
+      "batch": 1000,
+      "calls": 2,
+      "messages": 2000,
+      "msgs_per_s": 2562.4,
+      "call_latency_ms": {
+        "min": 386.17,
+        "p50": 386.17,
+        "p95": 393.04,
+        "p99": 393.04,
+        "max": 393.04
+      }
+    },
+    {
+      "run": "4-producers batch=100",
+      "batch": 100,
+      "calls": 20,
+      "messages": 2000,
+      "msgs_per_s": 2085.1,
+      "speedup_vs_single": 0.93
+    }
+  ]
+}

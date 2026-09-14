@@ -1,0 +1,27 @@
+<div class="card bg-base-100 shadow-sm p-4">
+  <div class="stat-label mb-2">consumer group lag</div>
+  <div class="overflow-x-auto">
+    <table class="table table-sm">
+      <thead><tr><th>topic</th><th>group</th><th>partition</th><th>committed</th><th>head</th><th>lag</th></tr></thead>
+      <tbody>
+        {% for row in lag %}
+        <tr class="hover">
+          <td>{{ row.topic_name }}</td>
+          <td>{{ row.group_name }}</td>
+          <td>{{ row.partition_number }}</td>
+          <td class="mono">{{ row.committed_offset }}</td>
+          <td class="mono">{{ row.head_offset }}</td>
+          <td>
+            {% if row.lag_messages == 0 %}<span class="badge badge-success badge-sm">0</span>
+            {% elif row.lag_messages > 100 %}<span class="badge badge-error badge-sm">{{ row.lag_messages }}</span>
+            {% else %}<span class="badge badge-warning badge-sm">{{ row.lag_messages }}</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        {% if not lag %}
+        <tr><td colspan="6" class="opacity-50 text-center py-4">no subscriptions yet</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>

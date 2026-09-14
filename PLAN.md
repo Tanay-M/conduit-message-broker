@@ -305,11 +305,11 @@ Policies on MESSAGE/TOPIC keyed to ACCESS grants for `current_setting('app.user_
 |---|---|---|
 | Database | PostgreSQL 16 + pgTAP | SKIP LOCKED, LISTEN/NOTIFY, BRIN, RLS, JSONB, partitioning |
 | DB artifacts | Hand-written numbered SQL files | The DDL/procedures/triggers *are* the graded project |
-| DB access | psycopg 3 async, raw SQL / procedure calls, **no ORM** | Keeps the "DBMS as core" thesis honest |
-| Backend | FastAPI + Pydantic (validation only at API boundary) | Async; SSE; auto API docs |
-| Frontend | React + TypeScript (Vite) + Tailwind CSS + Recharts | Dashboard, charts, SSE live updates via `EventSource` |
+| DB access | psycopg 3 (async server / sync SDK), raw SQL / procedure calls, **no ORM** | Keeps the "DBMS as core" thesis honest |
+| Backend | FastAPI + Pydantic (validation only at API boundary) | Async; SSE; auto API docs; serves the web UI too |
+| Frontend | Jinja2 server-rendered + HTMX + Alpine + Tailwind/DaisyUI + Chart.js (all vendored, offline-capable) | Python-only codebase, no build step; DaisyUI themes = one-attribute re-skin |
 | Client SDK | Pure-Python `conduit` package | Demo producers/consumers |
-| Runtime | Docker Compose: `db` + `api` + `web`, init SQL auto-loaded on first start | Identical envs for 3 teammates + demo machine |
+| Runtime | Docker Compose: `db` + `api` (UI served by api on port 8000), init SQL auto-loaded on first start | Identical envs for 3 teammates + demo machine |
 | Tests | pytest (disposable container DB) + pgTAP (in-database tests) | Procedures/triggers tested in-database |
 
 ## 7. Repository Layout
@@ -317,29 +317,27 @@ Policies on MESSAGE/TOPIC keyed to ACCESS grants for `current_setting('app.user_
 ```
 Conduit/
 ├── PLAN.md                  # this document
-├── docker-compose.yml
+├── docker-compose.yml       # db + api (api serves REST, SSE, and the web UI)
 ├── db/
-│   ├── sql/
-│   │   ├── 00_schema.sql    # DDL, constraints, indexes, partitioning
-│   │   ├── 10_functions.sql # produce/consume/commit/purge/admin procedures
-│   │   ├── 20_triggers.sql  # audit, ACL, monotonic offset, updated_at, notify
-│   │   ├── 30_rls.sql       # row-level security policies
-│   │   ├── 40_views.sql     # lag/stats/throughput/audit views
-│   │   └── 50_seed.sql      # demo dataset
-│   └── init/                # docker-entrypoint-initdb.d wiring
-├── server/                  # FastAPI app (thin): auth, REST → procedures, SSE
-│   ├── app/main.py
-│   ├── app/api/             # admin.py, broker.py, events.py (SSE)
-│   ├── app/db.py            # psycopg pool + SET LOCAL app.user_id
-│   └── app/templates/       # error pages if any (Jinja minimal)
-├── web/                     # Vite React+TS SPA
-│   ├── src/pages/           # Dashboard, Topics, Groups, Audit, DLQ, Playground
-│   └── src/api/             # REST + EventSource SSE client
-├── client/                  # python `conduit` SDK: produce/consume/ack/admin
+│   ├── Dockerfile           # postgres:16 + pgTAP
+│   └── sql/
+│       ├── 00_schema.sql    # DDL, constraints, indexes, partitioning, role reference data
+│       ├── 10_functions.sql # produce/consume/ack/nack + admin/maintenance procedures
+│       ├── 20_triggers.sql  # audit, ACL, monotonic offset, updated_at, notify
+│       ├── 30_rls.sql       # conduit_app role, grants, RLS policies
+│       ├── 40_views.sql     # lag/stats/throughput/audit views + matview
+│       └── 50_seed.sql      # CONDUIT_SEED-gated demo dataset
+├── server/                  # FastAPI: JSON API + SSE + Jinja/HTMX web UI
+│   ├── app/api/             # broker, monitor, admin, events (SSE), sql console
+│   ├── app/webui/           # pages, fragments, form actions, cookie login
+│   ├── app/templates/       # base + pages/ + fragments/
+│   └── app/static/          # app.css/js + vendored libs (offline-capable)
+├── client/                  # python `conduit` SDK: Conduit + ConduitAdmin
 ├── tests/
-│   ├── pg/                  # pgTAP suites
-│   └── py/                  # pytest: API + SDK integration
-└── benchmarks/              # throughput scripts + EXPLAIN artifacts
+│   ├── smoke_m2/3/4.sql     # psql verification suites
+│   └── py/                  # pytest: SDK + API + webUI integration
+├── progress/                # per-milestone reports (plan + implemented)
+└── benchmarks/              # defense artifacts (race, EXPLAIN, NOTIFY)
 ```
 
 ## 8. Milestones (each tagged to Review-2 deliverables)
@@ -351,7 +349,7 @@ Conduit/
 | 3 | `20_triggers.sql` + `30_rls.sql` + `40_views.sql` | D4, D3 |
 | 4 | `50_seed.sql` (CONDUIT_SEED-gated demo dataset) + admin management functions + suspend-cuts-access semantics | D2 (insertion & management) |
 | 5 | Python `conduit` SDK + FastAPI surface (auth, REST → procedures, SSE from NOTIFY, two connection modes) | — |
-| 6 | React dashboard: Overview (lag/throughput charts), Topics, Groups, **Message Browser** (real rows, live status flips via SSE), **Playground** (produce panel + consumer panel with claims and Ack — the send→stored→read demo), Audit, DLQ, ACL manager, **read-only SQL console** (admin-only, `BEGIN READ ONLY` + statement validation) | D3, D5 |
+| 6 | Jinja+HTMX dashboard (replaces the React plan): Overview (stat cards + 2 charts), Topics, Groups, **Message Browser** (live status flips via SSE), **Playground** (produce + consumer panels with Ack/Nack — the send→stored→read demo), Audit, DLQ (+requeue), Admin (users/apps/ACL/config), **read-only SQL console** — all in the api container, libs vendored for offline demos, DaisyUI one-attribute theming | D3, D5 |
 | 7 | `demos/` — 7 narrated Python scenario scripts on the SDK: basic flow, SKIP LOCKED race, idempotency, poison→DLQ→requeue, crash recovery, security denials, exactly-once | D5 |
 | 8 | `benchmarks/` — produce/consume throughput + latency percentiles across batch sizes and concurrency; "price of guarantees" overhead measurement (broker path vs raw INSERT); EXPLAIN-at-scale proving the partial pending index | Defense |
 
@@ -394,4 +392,24 @@ Conduit/
 | Dashboard SQL console | Read-only SQL runner included in M6 (admin-only, `BEGIN READ ONLY` + statement validation) | planned |
 | Scenario/benchmark scripts | Python on the `conduit` SDK (same code path as API/dashboard), in `demos/` (M7) and `benchmarks/` (M8) | planned |
 | Milestone 4 status | 2,000-message seed verified to exact shape (1580/390/29/1); smoke_m4 all 10 sections green; m2+m3 regression green on clean volume | done |
+| API auth | Api-key only (`fn_auth_app` resolves app+owner; RLS via `SET LOCAL app.user_id`) + `CONDUIT_ADMIN_TOKEN` env token for admin endpoints — no schema change | done |
+| SDK transport | Direct-to-DB sync psycopg (`Conduit` hot path / `ConduitAdmin`); FastAPI is a separate thin async layer sharing `conduit.errors` | done |
+| psycopg parameter typing | All procedure calls use explicit casts (`%s::int/%s::bigint/%s::jsonb/%s::text`) — psycopg sends small ints as `smallint` and `Json` as `json`, which breaks signature resolution | done |
+| Audit API surface | `/api/admin/audit` (admin pool) — `conduit_app` has INSERT-only on audit_log, so the security_invoker view is admin-only by design | done |
+| SQL console endpoint | Live in M5: `/api/admin/sql` — single SELECT/EXPLAIN, `BEGIN READ ONLY`, 5s timeout, 500-row cap, admin token gated | done |
+| Milestone 5 status | SDK (23 methods) + FastAPI (34 endpoints + SSE) deployed as compose `api` service; 10/10 pytest green; m2/m3/m4 regressions green | done |
+| Frontend stack (revised) | Jinja2 + HTMX + Alpine + Tailwind/DaisyUI + Chart.js served by the api container — replaces React+TS+Vite (user decision: clean, minimalist, Python-only, easy restyling) | done |
+| Web UI auth | Cookie sessions (admin token or app api key, validated per request); `require_any` unifies app/admin contexts; SSE + JSON API + fragments all accept cookies | done |
+| Offline demos | All frontend libraries vendored into `static/vendor/` (~3.6 MB) — the demo machine needs no internet | done |
+| Theming | DaisyUI themes via one `data-theme` attribute + single `app.css` + single `base.html` — appearance changes are centralized by design | done |
+| Milestone 6 status | 9 pages + 12 fragments + ~30 webui routes; 20/20 pytest (M5+M6); regressions m2/m3/m4 green; walkthrough demo documented | done |
+| Demo scripts | 8 narrated self-asserting demos on the SDK (7 Python in-container + 1 host-level WAL kill/recovery); SDK gains `Conduit.query` (RLS-scoped), `Conduit.log_auth_failure`, `ConduitAdmin.run` | done |
+| Milestone reports | Every milestone file now embeds a Planning Decisions (Q&A) table — question, options, choice, rationale; continued for all future milestones | standing |
+| Milestone 7 status | All 8 demos PASS with artifacts in `benchmarks/demos/`; pytest 20/20; WAL demo kills + recovers the DB and leaves the stack healthy | done |
+| Benchmark result storage | JSON in `benchmarks/results/` + printed tables; headline numbers embedded in the M8 report | done |
+| Benchmark seq discipline | Global seq counters in produce/consume benchmarks — the idempotency ledger had correctly deduped the benchmark's own seq reuse (the interrupted-session 4000/10000 failure) | done |
+| Partial-index child naming | Partition children of parent indexes get auto-generated column-derived names (no "pending" in them) — assertions resolve real names via `pg_inherits` | done |
+| Dead-TID finding | EXPLAIN right after a mass drain shows dead index entries (bitmap scans emit live+dead TIDs; autovacuum reclaims) — documented as a teaching point in M8 | done |
+| Milestone 8 status | All 4 benchmarks PASS on a fresh volume: produce 495→2,562 msg/s (batch 1→1000), consume up to 3,379 msg/s, overhead 32×/43× vs bare insert, partial pending index proven at 30k scale; pytest 20/20 | done |
+| Roadmap | All 8 milestones complete — Review-2 ready (D1: M1, D2: M4, D3: M3/M6, D4: M2/M3, D5: M6/M7, defense numbers: M8) | complete |
    

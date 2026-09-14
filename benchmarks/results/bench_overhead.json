@@ -1,0 +1,47 @@
+{
+  "config": {
+    "rows_per_call": 1000,
+    "calls": 20
+  },
+  "results": [
+    {
+      "tier": "raw insert (no guarantees)",
+      "messages": 20000,
+      "msgs_per_s": 106183.2,
+      "call_latency_ms": {
+        "min": 5.81,
+        "p50": 9.34,
+        "p95": 12.72,
+        "p99": 16.89,
+        "max": 16.89
+      },
+      "overhead_factor_vs_raw": 1.0
+    },
+    {
+      "tier": "produce() as admin",
+      "messages": 20000,
+      "msgs_per_s": 3291.4,
+      "call_latency_ms": {
+        "min": 245.92,
+        "p50": 273.28,
+        "p95": 417.62,
+        "p99": 419.94,
+        "max": 419.94
+      },
+      "overhead_factor_vs_raw": 32.26
+    },
+    {
+      "tier": "produce() as conduit_app (RLS)",
+      "messages": 20000,
+      "msgs_per_s": 2453.7,
+      "call_latency_ms": {
+        "min": 373.25,
+        "p50": 404.79,
+        "p95": 437.37,
+        "p99": 482.45,
+        "max": 482.45
+      },
+      "overhead_factor_vs_raw": 43.27
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+<div id="config-table">
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="overflow-x-auto">
+      <table class="table table-sm">
+        <thead><tr><th>key</th><th>value</th><th>description</th><th>updated</th></tr></thead>
+        <tbody>
+          {% for c in config %}
+          <tr class="hover">
+            <td class="font-semibold mono text-xs">{{ c.config_key }}</td>
+            <td class="mono text-xs">{{ c.config_value }}</td>
+            <td class="text-xs">{{ c.description or '—' }}</td>
+            <td class="text-xs opacity-70">{{ c.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

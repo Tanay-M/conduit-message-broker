@@ -1,0 +1,39 @@
+<div id="dlq-table">
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="overflow-x-auto">
+      <table class="table table-sm">
+        <thead><tr><th>#</th><th>topic</th><th>orig offset</th><th>key</th><th>payload</th><th>reason</th><th>attempts</th><th>status</th>{% if ctx is defined and ctx.mode == 'admin' %}<th></th>{% endif %}</tr></thead>
+        <tbody>
+          {% for d in dlq %}
+          <tr class="hover">
+            <td class="mono">{{ d.dlq_id }}</td>
+            <td class="font-semibold">{{ d.topic_name }}</td>
+            <td class="mono">{{ d.original_offset }}</td>
+            <td class="mono text-xs">{{ d.msg_key or '—' }}</td>
+            <td class="payload-cell"><code>{{ d.payload | tojson }}</code></td>
+            <td class="text-xs">{{ d.failure_reason }}</td>
+            <td class="mono">{{ d.attempts }}</td>
+            <td>
+              {% if d.status == 'pending' %}<span class="badge badge-warning badge-sm">pending</span>
+              {% else %}<span class="badge badge-ghost badge-sm">requeued</span>{% endif %}
+            </td>
+            {% if ctx is defined and ctx.mode == 'admin' %}
+            <td>
+              {% if d.status == 'pending' %}
+              <button class="btn btn-outline btn-xs"
+                      hx-post="/web/dlq/{{ d.dlq_id }}/requeue"
+                      hx-target="#dlq-table" hx-swap="outerHTML"
+                      hx-include="[name='producer_app_name']">requeue</button>
+              {% endif %}
+            </td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+          {% if not dlq %}
+          <tr><td colspan="9" class="opacity-50 text-center py-6">dead letter queue is empty</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

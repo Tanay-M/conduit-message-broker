@@ -1,0 +1,30 @@
+<div id="audit-table" hx-get="/fragments/audit{% if event_type %}?event_type={{ event_type }}{% endif %}"
+     hx-trigger="every 10s" hx-swap="outerHTML">
+  <div class="card bg-base-100 shadow-sm p-4">
+    <div class="overflow-x-auto result-scroll">
+      <table class="table table-sm">
+        <thead><tr><th>#</th><th>time</th><th>user</th><th>app</th><th>topic</th><th>event</th><th>status</th><th>details</th></tr></thead>
+        <tbody>
+          {% for row in audit %}
+          <tr class="hover">
+            <td class="mono text-xs">{{ row.log_id }}</td>
+            <td class="text-xs opacity-70 whitespace-nowrap">{{ row.event_timestamp.strftime('%H:%M:%S') }}</td>
+            <td>{{ row.username }}</td>
+            <td class="text-xs">{{ row.app_name or '—' }}</td>
+            <td class="text-xs">{{ row.topic_name or '—' }}</td>
+            <td><span class="badge badge-ghost badge-sm">{{ row.event_type }}</span></td>
+            <td>
+              {% if row.status == 'success' %}<span class="badge badge-success badge-sm">success</span>
+              {% else %}<span class="badge badge-error badge-sm">failure</span>{% endif %}
+            </td>
+            <td class="payload-cell"><code class="text-xs">{{ row.details | tojson }}</code></td>
+          </tr>
+          {% endfor %}
+          {% if not audit %}
+          <tr><td colspan="8" class="opacity-50 text-center py-6">no audit events in the last 24 hours</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
