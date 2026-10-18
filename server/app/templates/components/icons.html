@@ -1,0 +1,25 @@
+{% macro icon(name, cls='') -%}
+<svg class="icon {{ cls }}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+{% if name == 'reports' %}<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h5"/>
+{% elif name == 'grid' %}<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+{% elif name == 'data' %}<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>
+{% elif name == 'code' %}<path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 18"/>
+{% elif name == 'activity' %}<path d="M3 12h4l3-8 4 16 3-8h4"/>
+{% elif name == 'queue' %}<path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/>
+{% elif name == 'settings' %}<path d="M12 8v8m-4-4h8M4 4h16v16H4z"/>
+{% elif name == 'search' %}<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/>
+{% elif name == 'plus' %}<path d="M12 5v14M5 12h14"/>
+{% elif name == 'arrow' %}<path d="M5 12h14m-5-5 5 5-5 5"/>
+{% elif name == 'chevron' %}<path d="m9 5 7 7-7 7"/>
+{% elif name == 'down' %}<path d="m6 9 6 6 6-6"/>
+{% elif name == 'download' %}<path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/>
+{% elif name == 'refresh' %}<path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 6a8 8 0 0 1 13.4 4M4.5 14a8 8 0 0 0 13.4 4"/>
+{% elif name == 'check' %}<path d="m5 12 4 4L19 6"/>
+{% elif name == 'clock' %}<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+{% elif name == 'copy' %}<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/>
+{% elif name == 'logout' %}<path d="M9 4H4v16h5m5-13 5 5-5 5M8 12h12"/>
+{% elif name == 'menu' %}<path d="M4 6h16M4 12h16M4 18h16"/>
+{% elif name == 'shield' %}<path d="m12 3 8 4v6c0 4-8 8-8 8s-8-4-8-8V7z"/><path d="m8 12 3 3 5-6"/>
+{% else %}<circle cx="12" cy="12" r="8"/><path d="M12 8v5m0 3h.01"/>{% endif %}
+</svg>
+{%- endmacro %}

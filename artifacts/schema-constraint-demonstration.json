@@ -1,0 +1,85 @@
+{
+  "checked_on": "2026-10-18",
+  "fixture_key": "VIVA-a4c493e52d67",
+  "valid_inserts": [
+    {
+      "table": "customer",
+      "row": {
+        "customer_id": 12127,
+        "customer_ref": "VIVA-a4c493e52d67",
+        "full_name": "Viva sample customer",
+        "email": "VIVA-a4c493e52d67@example.test",
+        "region": "South"
+      }
+    },
+    {
+      "table": "product",
+      "row": {
+        "product_id": 157,
+        "sku": "VIVA-a4c493e52d67",
+        "product_name": "Viva sample product",
+        "category": "Test",
+        "catalogue_price": "12.50"
+      }
+    },
+    {
+      "table": "sales_order",
+      "row": {
+        "order_id": 121101,
+        "order_ref": "VIVA-a4c493e52d67",
+        "customer_id": 12127,
+        "ordered_at": "2026-10-18",
+        "status": "completed"
+      }
+    },
+    {
+      "table": "order_item",
+      "row": {
+        "order_id": 121101,
+        "line_number": 1,
+        "product_id": 157,
+        "quantity": 2,
+        "unit_price": "12.50"
+      }
+    }
+  ],
+  "rejected_cases": [
+    {
+      "case": "Duplicate customer reference",
+      "sqlstate": "23505",
+      "constraint": "customer_customer_ref_key",
+      "message": "duplicate key value violates unique constraint \"customer_customer_ref_key\""
+    },
+    {
+      "case": "NULL customer name",
+      "sqlstate": "23502",
+      "constraint": null,
+      "message": "null value in column \"full_name\" of relation \"customer\" violates not-null constraint"
+    },
+    {
+      "case": "Nonexistent customer FK",
+      "sqlstate": "23503",
+      "constraint": "sales_order_customer_id_fkey",
+      "message": "insert or update on table \"sales_order\" violates foreign key constraint \"sales_order_customer_id_fkey\""
+    },
+    {
+      "case": "Negative catalogue price",
+      "sqlstate": "23514",
+      "constraint": "product_catalogue_price_check",
+      "message": "new row for relation \"product\" violates check constraint \"product_catalogue_price_check\""
+    },
+    {
+      "case": "Zero line quantity",
+      "sqlstate": "23514",
+      "constraint": "order_item_quantity_check",
+      "message": "new row for relation \"order_item\" violates check constraint \"order_item_quantity_check\""
+    },
+    {
+      "case": "Duplicate order line PK",
+      "sqlstate": "23505",
+      "constraint": "order_item_pkey",
+      "message": "duplicate key value violates unique constraint \"order_item_pkey\""
+    }
+  ],
+  "fixture_rows_after_rollback": 0
+}

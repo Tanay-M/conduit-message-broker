@@ -52,7 +52,7 @@ print()
 print(plan_text)
 print()
 
-out = Path("/app/benchmarks/explain_at_scale.txt")
+out = Path(__file__).resolve().parent / 'explain_at_scale.txt'
 out.write_text(
     f"EXPLAIN (ANALYZE, BUFFERS) consume candidates query\n"
     f"topic: {fx['topic']} ({TOTAL} messages, {KEEP_PENDING} pending)\n\n{plan_text}\n"

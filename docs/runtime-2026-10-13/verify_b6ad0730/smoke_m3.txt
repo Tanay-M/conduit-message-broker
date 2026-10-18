@@ -1,0 +1,250 @@
+=================================================
+ M3 SMOKE TEST - triggers, RLS, views
+ (run against a FRESH volume)
+=================================================
+CREATE FUNCTION
+GRANT
+[1] fixtures: secadmin (admin), alice (producer, granted), bob (consumer, NO grants)
+ alice_produce_grant 
+---------------------
+                   3
+(1 row)
+
+ alice_consume_grant 
+---------------------
+                   4
+(1 row)
+
+ partitions_wired 
+------------------
+                2
+(1 row)
+
+[2] audit: PRODUCE rows written by trigger on message insert
+ loc_topic_id | loc_partition_id | loc_msg_offset | is_duplicate 
+--------------+------------------+----------------+--------------
+            2 |                4 |              0 | f
+(1 row)
+
+ loc_topic_id | loc_partition_id | loc_msg_offset | is_duplicate 
+--------------+------------------+----------------+--------------
+            2 |                5 |              0 | f
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ log_id |   event_type   | status  |                                        details                                         
+--------+----------------+---------+----------------------------------------------------------------------------------------
+     23 | TOPIC_CREATE   | success | {"topic_name": "secure-orders"}
+     24 | SCHEMA_PUBLISH | success | {"status": "active", "version": 1}
+     25 | ACL_GRANT      | success | {"access_type": "produce", "grantee_user_id": 3}
+     26 | ACL_GRANT      | success | {"access_type": "consume", "grantee_user_id": 3}
+     27 | PRODUCE        | success | {"key": "k1", "msg_offset": 0, "size_bytes": 17, "partition_id": 4, "producer_seq": 1}
+     28 | PRODUCE        | success | {"key": null, "msg_offset": 0, "size_bytes": 17, "partition_id": 5, "producer_seq": 2}
+(6 rows)
+
+[3] audit: DELIVERED rows on claim+ack
+ acked 
+-------
+     2
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+[4] audit: DLQ row after poison message exhausts attempts
+ loc_topic_id | loc_partition_id | loc_msg_offset | is_duplicate 
+--------------+------------------+----------------+--------------
+            2 |                4 |              1 | f
+(1 row)
+
+ retried | dead 
+---------+------
+       1 |    0
+(1 row)
+
+ retried | dead 
+---------+------
+       1 |    0
+(1 row)
+
+ retried | dead 
+---------+------
+       0 |    1
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+[5] audit: admin events (ACL_GRANT, TOPIC_CREATE, SCHEMA_PUBLISH, CONFIG_CHANGE) + updated_at bump
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ update_broker_config 
+----------------------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+UPDATE 1
+ fn_assert 
+-----------
+ 
+(1 row)
+
+[6] monotonic offset guard: regression must raise CDT19
+DO
+OK: offset regression rejected
+[7] RLS as conduit_app - alice allowed, bob denied, anonymous sees nothing
+You are now connected to database "conduit_verify_clean_b6ad0730" as user "conduit_app".
+SET
+ alice_message_visibility 
+--------------------------
+                        3
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ loc_topic_id | loc_partition_id | loc_msg_offset | is_duplicate 
+--------------+------------------+----------------+--------------
+            2 |                5 |              1 | f
+(1 row)
+
+ acked_via_rls 
+---------------
+             1
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+SET
+ bob_message_visibility 
+------------------------
+                      0
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+DO
+OK: bob blocked (CDT17/42501) and AUTH_FAIL logged
+RESET
+ anonymous_visibility 
+----------------------
+                    0
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+You are now connected to database "conduit_verify_clean_b6ad0730" as user "conduit".
+ fn_assert 
+-----------
+ 
+(1 row)
+
+[8] views: lag, stats (vs function), throughput, audit trail, matview refresh
+  topic_name   |   group_name    | partition_number | committed_offset | head_offset | lag_messages |        last_commit_at         
+---------------+-----------------+------------------+------------------+-------------+--------------+-------------------------------
+ orders        | billing-workers |                0 |                2 |           4 |            2 | 2026-10-13 06:58:46.781573+00
+ orders        | billing-workers |                1 |                2 |           3 |            1 | 2026-10-13 06:58:46.781573+00
+ orders        | billing-workers |                2 |                1 |           4 |            3 | 2026-10-13 06:58:46.781573+00
+ secure-orders | alice-workers   |                0 |                1 |           2 |            1 | 2026-10-13 06:58:52.680837+00
+ secure-orders | alice-workers   |                1 |                2 |           2 |            0 | 2026-10-13 06:58:52.781876+00
+(5 rows)
+
+  topic_name   | topic_status | retention_days | pending | claimed | delivered | dead | dlq_pending |        oldest_pending         |        last_message_at        
+---------------+--------------+----------------+---------+---------+-----------+------+-------------+-------------------------------+-------------------------------
+ secure-orders | active       |              7 |       0 |       0 |         3 |    1 |           1 |                               | 2026-10-13 06:58:52.764927+00
+ orders        | active       |              7 |       5 |       0 |         5 |    1 |           0 | 2026-10-13 06:58:46.746725+00 | 2026-10-13 06:58:46.819942+00
+(2 rows)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+  topic_name   |       minute_ts        | messages | cumulative_messages 
+---------------+------------------------+----------+---------------------
+ orders        | 2026-10-13 06:58:00+00 |       11 |                  11
+ secure-orders | 2026-10-13 06:58:00+00 |        4 |                   4
+(2 rows)
+
+ log_id | username |    app_name    |  topic_name   |  event_type   | status  
+--------+----------+----------------+---------------+---------------+---------
+     37 | bob      | bob-producer   | secure-orders | AUTH_FAIL     | failure
+     36 | system   |                | secure-orders | DELIVERED     | success
+     35 | alice    | alice-producer | secure-orders | PRODUCE       | success
+     34 | secadmin |                |               | CONFIG_CHANGE | success
+     33 | secadmin |                |               | CONFIG_CHANGE | success
+     32 | system   |                | secure-orders | DLQ           | success
+     31 | alice    | alice-producer | secure-orders | PRODUCE       | success
+     30 | system   |                | secure-orders | DELIVERED     | success
+     29 | system   |                | secure-orders | DELIVERED     | success
+     28 | alice    | alice-producer | secure-orders | PRODUCE       | success
+     27 | alice    | alice-producer | secure-orders | PRODUCE       | success
+     26 | secadmin |                | secure-orders | ACL_GRANT     | success
+(12 rows)
+
+ refresh_dashboard 
+-------------------
+ 
+(1 row)
+
+  topic_name   | topic_status | retention_days | pending | claimed | delivered | dead | dlq_pending |        oldest_pending         |        last_message_at        
+---------------+--------------+----------------+---------+---------+-----------+------+-------------+-------------------------------+-------------------------------
+ orders        | active       |              7 |       5 |       0 |         5 |    1 |           0 | 2026-10-13 06:58:46.746725+00 | 2026-10-13 06:58:46.819942+00
+ secure-orders | active       |              7 |       0 |       0 |         3 |    1 |           1 |                               | 2026-10-13 06:58:52.764927+00
+(2 rows)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+=================================================
+ M3 SMOKE TEST COMPLETE
+=================================================

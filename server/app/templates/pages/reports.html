@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% from 'components/icons.html' import icon %}
+{% block content %}
+<div class="page-heading"><div><h1>Reports</h1><p>Generate business reports. Keep every result traceable.</p></div><a class="btn btn-primary" href="/reports/new">{{ icon('plus') }}New report</a></div>
+{% include 'fragments/_report_metrics.html' %}
+<div class="template-shortcuts"><span>Create from a template</span>{% for code,title in [('customer_statement','Customer statements'),('product_sales','Product sales'),('monthly_sales','Monthly summary')] %}<a href="/reports/new?template={{ code }}">{{ icon('reports' if loop.first else 'activity' if loop.index==2 else 'grid') }}{{ title }}{{ icon('arrow') }}</a>{% endfor %}</div>
+<div class="section-heading history-heading"><div><h2>Run history</h2><p>Saved requests, processing status and generated outputs.</p></div><button class="btn btn-secondary btn-sm" data-refresh>{{ icon('refresh') }}Refresh</button></div>
+<div class="panel">
+  <div class="table-toolbar"><div class="tab-group" aria-label="Filter by status">{% for key,label in [('all','All runs'),('completed','Completed'),('active','In progress'),('attention','Needs attention')] %}<a class="table-tab {% if status==key %}selected{% endif %}" href="/?status={{ key }}&amp;q={{ q|urlencode }}">{{ label }}</a>{% endfor %}</div><form class="search-field" method="get" action="/"><input type="hidden" name="status" value="{{ status }}">{{ icon('search') }}<input name="q" value="{{ q }}" placeholder="Search reports or run ID" aria-label="Search reports or run ID"><button type="submit" class="sr-only">Search</button></form></div>
+  {% include 'fragments/_report_runs.html' %}
+</div>
+<p class="table-note">Showing the latest 50 matching runs. Report data is retained with its template version.</p>
+{% endblock %}

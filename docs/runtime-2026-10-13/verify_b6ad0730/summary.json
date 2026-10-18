@@ -1,0 +1,100 @@
+{
+  "run_id": "verify_b6ad0730",
+  "clean_database": "conduit_verify_clean_b6ad0730",
+  "seeded_database": "conduit_verify_seed_b6ad0730",
+  "output": "C:\\Users\\asus\\Desktop\\Conduit\\docs\\runtime-2026-10-13\\verify_b6ad0730",
+  "results": [
+    {
+      "check": "conduit_verify_clean_b6ad0730_create",
+      "exit_code": 0
+    },
+    {
+      "check": "conduit_verify_clean_b6ad0730_00_schema",
+      "exit_code": 0
+    },
+    {
+      "check": "conduit_verify_clean_b6ad0730_10_functions",
+      "exit_code": 0
+    },
+    {
+      "check": "conduit_verify_clean_b6ad0730_20_triggers",
+      "exit_code": 0
+    },
+    {
+      "check": "conduit_verify_clean_b6ad0730_30_rls",
+      "exit_code": 0
+    },
+    {
+      "check": "conduit_verify_clean_b6ad0730_40_views",
+      "exit_code": 0
+    },
+    {
+      "check": "smoke_m2",
+      "exit_code": 0
+    },
+    {
+      "check": "smoke_m3",
+      "exit_code": 0
+    },
+    {
+      "check": "conduit_verify_seed_b6ad0730_create",
+      "exit_code": 0
+    },
+    {
+      "check": "conduit_verify_seed_b6ad0730_00_schema",
+      "exit_code": 0
+    },
+    {
+      "check": "conduit_verify_seed_b6ad0730_10_functions",
+      "exit_code": 0
+    },
+    {
+      "check": "conduit_verify_seed_b6ad0730_20_triggers",
+      "exit_code": 0
+    },
+    {
+      "check": "conduit_verify_seed_b6ad0730_30_rls",
+      "exit_code": 0
+    },
+    {
+      "check": "conduit_verify_seed_b6ad0730_40_views",
+      "exit_code": 0
+    },
+    {
+      "check": "seed_data",
+      "exit_code": 0
+    },
+    {
+      "check": "smoke_m4",
+      "exit_code": 0
+    },
+    {
+      "check": "demo_01_basic_flow",
+      "exit_code": 0
+    },
+    {
+      "check": "demo_02_concurrency_race",
+      "exit_code": 0
+    },
+    {
+      "check": "demo_03_idempotency",
+      "exit_code": 0
+    },
+    {
+      "check": "demo_04_poison_dlq",
+      "exit_code": 0
+    },
+    {
+      "check": "demo_05_crash_recovery",
+      "exit_code": 0
+    },
+    {
+      "check": "demo_06_security",
+      "exit_code": 0
+    },
+    {
+      "check": "demo_07_exactly_once",
+      "exit_code": 0
+    }
+  ]
+}

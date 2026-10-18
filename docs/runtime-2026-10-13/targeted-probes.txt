@@ -1,0 +1,45 @@
+{
+  "playground_timestamp_sequence": {
+    "http_status": 400,
+    "body": {
+      "error": "22003",
+      "message": "integer out of range"
+    },
+    "defect_reproduced": true
+  },
+  "chart_identity": {
+    "visible_messages": 1,
+    "api_pending": 0,
+    "sql_pending": 1,
+    "defect_reproduced": true
+  },
+  "dlq_web_isolation": {
+    "direct_sql_visible_rows": 0,
+    "page_status": 200,
+    "private_marker_in_page": true,
+    "private_marker_in_fragment": true,
+    "defect_reproduced": true
+  },
+  "out_of_order_offset": {
+    "acked_offset": 1,
+    "committed_offset": 2,
+    "reported_lag": 0,
+    "still_claimed": 1,
+    "defect_reproduced": true
+  },
+  "consumer_group_scope": {
+    "first_group_delivered": 1,
+    "second_group_received": 0,
+    "shared_work_queue_confirmed": true
+  },
+  "seeded_web_grantor": {
+    "admin_user_exists": false,
+    "http_status": 404,
+    "body": {
+      "error": "CDT12",
+      "message": "unknown user admin"
+    },
+    "defect_reproduced": true
+  }
+}
+PROBE COMPLETE: five defects reproduced and shared queue scope confirmed; no implementation changes applied

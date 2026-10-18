@@ -1,0 +1,22 @@
+{
+  "checked_on": "2026-10-18",
+  "query": "WITH chosen AS (\n SELECT r.run_id,r.created_at FROM reporting.report_run r\n WHERE EXISTS (SELECT 1 FROM reporting.report_request q WHERE q.run_id=r.run_id AND q.state='completed')\n ORDER BY r.created_at DESC LIMIT 1\n), sample AS (\n SELECT r.*,q.request_id FROM chosen r JOIN reporting.report_request q USING(run_id)\n WHERE q.state='completed' ORDER BY q.request_id LIMIT 1\n)\nSELECT s.run_id,s.request_id,t.topic_name,m.status AS delivery_state,\n       a.app_name AS producer,cg.group_name AS consumer_group\nFROM sample s JOIN message m ON m.msg_key IN (s.run_id::text,s.request_id::text)\nJOIN topic t USING(topic_id)\nJOIN application a ON a.app_id=m.producer_app_id\nLEFT JOIN consumer_group cg ON cg.group_id=m.claimed_by\nWHERE t.topic_name IN ('report-prepare','report-render') ORDER BY t.topic_name;",
+  "rows": [
+    {
+      "run_id": "39e4c54e-1b88-419a-b238-42e217bb50ee",
+      "request_id": "2b9a2ec6-d91d-4c16-b3b0-f23b206a04b8",
+      "topic_name": "report-prepare",
+      "delivery_state": "delivered",
+      "producer": "reporting-service",
+      "consumer_group": "report-preparers"
+    },
+    {
+      "run_id": "39e4c54e-1b88-419a-b238-42e217bb50ee",
+      "request_id": "2b9a2ec6-d91d-4c16-b3b0-f23b206a04b8",
+      "topic_name": "report-render",
+      "delivery_state": "delivered",
+      "producer": "reporting-service",
+      "consumer_group": "report-workers"
+    }
+  ]
+}

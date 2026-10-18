@@ -1,0 +1,324 @@
+\set ON_ERROR_STOP on
+\pset pager off
+Pager usage is off.
+\echo '1. Tables and actual constraints'
+1. Tables and actual constraints
+SELECT table_name FROM information_schema.tables WHERE table_schema='reporting' ORDER BY table_name;
+    table_name    
+------------------
+ customer
+ order_item
+ product
+ report_audit
+ report_dataset
+ report_request
+ report_result
+ report_run
+ sales_order
+ template_version
+ v_run_progress
+ v_sales_lines
+ web_account
+ web_session
+(14 rows)
+
+SELECT conrelid::regclass AS relation,conname,pg_get_constraintdef(oid) AS definition
+FROM pg_constraint WHERE connamespace='reporting'::regnamespace ORDER BY conrelid::regclass::text,conname;
+          relation          |                conname                |                                               definition                                               
+----------------------------+---------------------------------------+--------------------------------------------------------------------------------------------------------
+ reporting.customer         | customer_customer_ref_key             | UNIQUE (customer_ref)
+ reporting.customer         | customer_email_key                    | UNIQUE (email)
+ reporting.customer         | customer_full_name_check              | CHECK ((length(TRIM(BOTH FROM full_name)) > 0))
+ reporting.customer         | customer_pkey                         | PRIMARY KEY (customer_id)
+ reporting.order_item       | order_item_line_number_check          | CHECK ((line_number > 0))
+ reporting.order_item       | order_item_order_id_fkey              | FOREIGN KEY (order_id) REFERENCES reporting.sales_order(order_id) ON DELETE RESTRICT
+ reporting.order_item       | order_item_pkey                       | PRIMARY KEY (order_id, line_number)
+ reporting.order_item       | order_item_product_id_fkey            | FOREIGN KEY (product_id) REFERENCES reporting.product(product_id) ON DELETE RESTRICT
+ reporting.order_item       | order_item_quantity_check             | CHECK (((quantity >= 1) AND (quantity <= 1000000)))
+ reporting.order_item       | order_item_unit_price_check           | CHECK ((unit_price >= (0)::numeric))
+ reporting.product          | product_catalogue_price_check         | CHECK ((catalogue_price >= (0)::numeric))
+ reporting.product          | product_pkey                          | PRIMARY KEY (product_id)
+ reporting.product          | product_sku_key                       | UNIQUE (sku)
+ reporting.report_audit     | report_audit_pkey                     | PRIMARY KEY (audit_id)
+ reporting.report_audit     | report_audit_request_id_fkey          | FOREIGN KEY (request_id) REFERENCES reporting.report_request(request_id) ON DELETE RESTRICT
+ reporting.report_dataset   | report_dataset_pkey                   | PRIMARY KEY (request_id)
+ reporting.report_dataset   | report_dataset_request_id_fkey        | FOREIGN KEY (request_id) REFERENCES reporting.report_request(request_id) ON DELETE RESTRICT
+ reporting.report_dataset   | report_dataset_rows_check             | CHECK ((jsonb_typeof(rows) = 'array'::text))
+ reporting.report_request   | report_request_attempts_check         | CHECK ((attempts >= 0))
+ reporting.report_request   | report_request_customer_id_fkey       | FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT
+ reporting.report_request   | report_request_pkey                   | PRIMARY KEY (request_id)
+ reporting.report_request   | report_request_run_id_fkey            | FOREIGN KEY (run_id) REFERENCES reporting.report_run(run_id) ON DELETE RESTRICT
+ reporting.report_request   | report_request_run_id_subject_key_key | UNIQUE (run_id, subject_key)
+ reporting.report_request   | report_request_state_check            | CHECK ((state = ANY (ARRAY['queued'::text, 'processing'::text, 'completed'::text, 'failed'::text])))
+ reporting.report_result    | report_result_csv_path_key            | UNIQUE (csv_path)
+ reporting.report_result    | report_result_csv_sha256_check        | CHECK ((csv_sha256 ~ '^[0-9a-f]{64}$'::text))
+ reporting.report_result    | report_result_html_path_key           | UNIQUE (html_path)
+ reporting.report_result    | report_result_html_sha256_check       | CHECK ((html_sha256 ~ '^[0-9a-f]{64}$'::text))
+ reporting.report_result    | report_result_pkey                    | PRIMARY KEY (request_id)
+ reporting.report_result    | report_result_render_seconds_check    | CHECK ((render_seconds >= (0)::double precision))
+ reporting.report_result    | report_result_request_id_fkey         | FOREIGN KEY (request_id) REFERENCES reporting.report_request(request_id) ON DELETE RESTRICT
+ reporting.report_result    | report_result_row_count_check         | CHECK ((row_count >= 0))
+ reporting.report_result    | report_result_sql_seconds_check       | CHECK ((sql_seconds >= (0)::double precision))
+ reporting.report_run       | report_run_check                      | CHECK ((start_date < end_date))
+ reporting.report_run       | report_run_check1                     | CHECK (((end_date - start_date) <= 3660))
+ reporting.report_run       | report_run_customer_id_fkey           | FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT
+ reporting.report_run       | report_run_pkey                       | PRIMARY KEY (run_id)
+ reporting.report_run       | report_run_requested_by_fkey          | FOREIGN KEY (requested_by) REFERENCES app_user(user_id) ON DELETE RESTRICT
+ reporting.report_run       | report_run_status_check               | CHECK ((status = ANY (ARRAY['preparing'::text, 'ready'::text, 'failed'::text])))
+ reporting.report_run       | report_run_submission_key_key         | UNIQUE (submission_key)
+ reporting.report_run       | report_run_template_id_fkey           | FOREIGN KEY (template_id) REFERENCES reporting.template_version(template_id) ON DELETE RESTRICT
+ reporting.report_run       | report_run_top_n_check                | CHECK (((top_n >= 1) AND (top_n <= 100)))
+ reporting.sales_order      | sales_order_customer_id_fkey          | FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT
+ reporting.sales_order      | sales_order_order_ref_key             | UNIQUE (order_ref)
+ reporting.sales_order      | sales_order_pkey                      | PRIMARY KEY (order_id)
+ reporting.sales_order      | sales_order_status_check              | CHECK ((status = ANY (ARRAY['completed'::text, 'cancelled'::text])))
+ reporting.template_version | template_version_code_check           | CHECK ((code = ANY (ARRAY['customer_statement'::text, 'product_sales'::text, 'monthly_sales'::text])))
+ reporting.template_version | template_version_code_version_key     | UNIQUE (code, version)
+ reporting.template_version | template_version_pkey                 | PRIMARY KEY (template_id)
+ reporting.template_version | template_version_version_check        | CHECK ((version > 0))
+ reporting.web_account      | web_account_pkey                      | PRIMARY KEY (account_id)
+ reporting.web_account      | web_account_username_check            | CHECK (((length(TRIM(BOTH FROM username)) >= 1) AND (length(TRIM(BOTH FROM username)) <= 64)))
+ reporting.web_account      | web_account_username_key              | UNIQUE (username)
+ reporting.web_session      | web_session_account_id_fkey           | FOREIGN KEY (account_id) REFERENCES reporting.web_account(account_id) ON DELETE CASCADE
+ reporting.web_session      | web_session_check                     | CHECK ((expires_at > created_at))
+ reporting.web_session      | web_session_pkey                      | PRIMARY KEY (token_hash)
+(56 rows)
+
+\echo '2. Four-table JOIN, filtering, calculated values'
+2. Four-table JOIN, filtering, calculated values
+SELECT customer_ref,full_name,order_ref,ordered_at,sku,quantity,unit_price,line_total
+FROM reporting.v_sales_lines WHERE customer_id=1 AND ordered_at >= '2026-01-01' AND ordered_at < '2027-01-01'
+ORDER BY ordered_at,order_id,line_number LIMIT 12;
+ customer_ref | full_name  |   order_ref   | ordered_at |  sku   | quantity | unit_price | line_total 
+--------------+------------+---------------+------------+--------+----------+------------+------------
+ DEMO-000001  | Customer 1 | DEMO-000001-1 | 2026-01-09 | SKU-3  |        3 |      75.00 |     225.00
+ DEMO-000001  | Customer 1 | DEMO-000001-1 | 2026-01-09 | SKU-4  |        4 |     100.00 |     400.00
+ DEMO-000001  | Customer 1 | DEMO-000001-1 | 2026-01-09 | SKU-5  |        1 |     125.00 |     125.00
+ DEMO-000001  | Customer 1 | DEMO-000001-2 | 2026-01-16 | SKU-23 |        3 |     575.00 |    1725.00
+ DEMO-000001  | Customer 1 | DEMO-000001-2 | 2026-01-16 | SKU-24 |        4 |     600.00 |    2400.00
+ DEMO-000001  | Customer 1 | DEMO-000001-2 | 2026-01-16 | SKU-25 |        1 |     625.00 |     625.00
+ DEMO-000001  | Customer 1 | DEMO-000001-3 | 2026-01-23 | SKU-13 |        3 |     325.00 |     975.00
+ DEMO-000001  | Customer 1 | DEMO-000001-3 | 2026-01-23 | SKU-14 |        4 |     350.00 |    1400.00
+ DEMO-000001  | Customer 1 | DEMO-000001-3 | 2026-01-23 | SKU-15 |        1 |     375.00 |     375.00
+ DEMO-000001  | Customer 1 | DEMO-000001-4 | 2026-01-30 | SKU-3  |        3 |      75.00 |     225.00
+ DEMO-000001  | Customer 1 | DEMO-000001-4 | 2026-01-30 | SKU-4  |        4 |     100.00 |     400.00
+ DEMO-000001  | Customer 1 | DEMO-000001-4 | 2026-01-30 | SKU-5  |        1 |     125.00 |     125.00
+(12 rows)
+
+\echo '3. GROUP BY, aggregate, HAVING'
+3. GROUP BY, aggregate, HAVING
+SELECT category,sum(quantity) AS units,sum(line_total) AS sales
+FROM reporting.v_sales_lines WHERE ordered_at >= '2026-01-01' AND ordered_at < '2027-01-01'
+GROUP BY category HAVING sum(line_total)>100 ORDER BY sales DESC;
+  category   | units  |    sales     
+-------------+--------+--------------
+ Office      | 249992 | 104988900.00
+ Electronics | 250002 |  94998150.00
+ Home        | 250006 |  92497450.00
+(3 rows)
+
+\echo '4. Correlated NOT EXISTS subquery'
+4. Correlated NOT EXISTS subquery
+SELECT c.customer_ref FROM reporting.customer c WHERE NOT EXISTS
+(SELECT 1 FROM reporting.sales_order o WHERE o.customer_id=c.customer_id AND o.ordered_at >= '2026-10-01' AND o.ordered_at < '2026-11-01')
+ORDER BY c.customer_ref LIMIT 10;
+ customer_ref 
+--------------
+ DEMO-000001
+ DEMO-000002
+ DEMO-000003
+ DEMO-000004
+ DEMO-000005
+ DEMO-000006
+ DEMO-000007
+ DEMO-000008
+ DEMO-000009
+ DEMO-000010
+(10 rows)
+
+\echo '5. Window function in approved monthly report'
+5. Window function in approved monthly report
+SELECT reporting.calculate((SELECT template_id FROM reporting.template_version WHERE code='monthly_sales' AND version=1),NULL,'2026-01-01','2027-01-01',10);
+                                                                                                                                                                                                                                                                                                                                                                                                                                      calculate                                                                                                                                                                                                                                                                                                                                                                                                                                       
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ [{"month": "2026-01-01", "sales": 33893975.00, "orders": 11603, "running_sales": 33893975.00}, {"month": "2026-02-01", "sales": 30573125.00, "orders": 10453, "running_sales": 64467100.00}, {"month": "2026-03-01", "sales": 33773975.00, "orders": 11542, "running_sales": 98241075.00}, {"month": "2026-04-01", "sales": 32471375.00, "orders": 11101, "running_sales": 130712450.00}, {"month": "2026-05-01", "sales": 33412425.00, "orders": 11420, "running_sales": 164124875.00}, {"month": "2026-06-01", "sales": 32067650.00, "orders": 10972, "running_sales": 196192525.00}, {"month": "2026-07-01", "sales": 33247525.00, "orders": 11359, "running_sales": 229440050.00}, {"month": "2026-08-01", "sales": 33570600.00, "orders": 11483, "running_sales": 263010650.00}, {"month": "2026-09-01", "sales": 29473850.00, "orders": 10067, "running_sales": 292484500.00}]
+(1 row)
+
+\echo '6. INSERT, UPDATE, DELETE with COMMIT on a dedicated disposable fixture'
+6. INSERT, UPDATE, DELETE with COMMIT on a dedicated disposable fixture
+SELECT gen_random_uuid()::text AS demo_key \gset
+BEGIN;
+BEGIN
+INSERT INTO reporting.customer(customer_ref,full_name,email,region)
+VALUES('EVIDENCE-'||:'demo_key','Disposable fixture',:'demo_key'||'@example.test','North');
+INSERT 0 1
+UPDATE reporting.customer SET region='South' WHERE customer_ref='EVIDENCE-'||:'demo_key';
+UPDATE 1
+SELECT customer_ref,region FROM reporting.customer WHERE customer_ref='EVIDENCE-'||:'demo_key';
+                 customer_ref                  | region 
+-----------------------------------------------+--------
+ EVIDENCE-9e3645e0-1117-4378-a364-530a7cee0cfd | South
+(1 row)
+
+COMMIT;
+COMMIT
+BEGIN;
+BEGIN
+DELETE FROM reporting.customer WHERE customer_ref='EVIDENCE-'||:'demo_key';
+DELETE 1
+COMMIT;
+COMMIT
+SELECT count(*) AS fixture_rows_after_delete FROM reporting.customer WHERE customer_ref='EVIDENCE-'||:'demo_key';
+ fixture_rows_after_delete 
+---------------------------
+                         0
+(1 row)
+
+\echo '7. Stored procedure plus transactional enqueue, then ROLLBACK'
+7. Stored procedure plus transactional enqueue, then ROLLBACK
+SELECT user_id AS owner_id FROM app_user WHERE username='sysadmin' \gset
+SELECT gen_random_uuid()::text AS submission \gset
+BEGIN;
+BEGIN
+CALL reporting.submit_run(:'submission','monthly_sales',NULL,'2026-01-01','2027-01-01',10,false,:owner_id,NULL);
+                p_run                 
+--------------------------------------
+ b5ba70cc-6b31-4fce-9427-8446f627710b
+(1 row)
+
+SELECT r.run_id,r.status,m.status AS queue_status
+FROM reporting.report_run r JOIN message m ON m.msg_key=r.run_id::text WHERE r.submission_key=:'submission';
+                run_id                |  status   | queue_status 
+--------------------------------------+-----------+--------------
+ b5ba70cc-6b31-4fce-9427-8446f627710b | preparing | pending
+(1 row)
+
+ROLLBACK;
+ROLLBACK
+SELECT count(*) AS requests_after_rollback FROM reporting.report_run WHERE submission_key=:'submission';
+ requests_after_rollback 
+-------------------------
+                       0
+(1 row)
+
+\echo '8. A controlled CHECK rejection'
+8. A controlled CHECK rejection
+DO $$ BEGIN
+ BEGIN
+  INSERT INTO reporting.product(sku,product_name,category,catalogue_price) VALUES('INVALID-CHECK-EVIDENCE','Invalid','Test',-1);
+  RAISE EXCEPTION 'Expected CHECK to reject the row';
+ EXCEPTION WHEN check_violation THEN RAISE NOTICE 'PASS: negative catalogue price rejected';
+ END;
+END $$;
+psql:C:/Users/asus/Desktop/Conduit/db/evidence/reporting_review.sql:56: NOTICE:  PASS: negative catalogue price rejected
+DO
+SELECT count(*) AS invalid_rows FROM reporting.product WHERE sku='INVALID-CHECK-EVIDENCE';
+ invalid_rows 
+--------------
+            0
+(1 row)
+
+\echo '9. Trigger-written state history and view of actual outcomes'
+9. Trigger-written state history and view of actual outcomes
+SELECT * FROM reporting.v_run_progress ORDER BY created_at DESC LIMIT 5;
+                run_id                |     code      | version | preparation_status |            created_at            |           prepared_at            | expected | queued | processing | completed | failed |         last_completion          
+--------------------------------------+---------------+---------+--------------------+----------------------------------+----------------------------------+----------+--------+------------+-----------+--------+----------------------------------
+ ed47bbc2-8449-47cc-8730-61bf1e0f1a8a | monthly_sales |       1 | ready              | 2026-10-17 14:37:00.88301+05:30  | 2026-10-17 14:37:01.67537+05:30  |        1 |      0 |          0 |         1 |      0 | 2026-10-17 14:37:01.735431+05:30
+ fc04512b-a013-4857-9dd6-2ef5e3281b98 | monthly_sales |       1 | ready              | 2026-10-17 12:57:59.583948+05:30 | 2026-10-17 12:58:00.487447+05:30 |        1 |      0 |          0 |         1 |      0 | 2026-10-17 12:58:00.532786+05:30
+ 1e3a2e3a-3850-415c-b0eb-2d0e73fa48d0 | monthly_sales |       1 | ready              | 2026-10-17 12:57:57.624985+05:30 | 2026-10-17 12:57:58.229661+05:30 |        1 |      0 |          0 |         1 |      0 | 2026-10-17 12:57:58.296519+05:30
+ 9aaf74d7-b869-44b0-be53-131da8c04421 | monthly_sales |       1 | ready              | 2026-10-17 12:55:38.685943+05:30 | 2026-10-17 12:55:39.627173+05:30 |        1 |      0 |          0 |         1 |      0 | 2026-10-17 12:55:39.654374+05:30
+ 69b35635-b181-4591-9a64-80be822638c6 | monthly_sales |       1 | ready              | 2026-10-17 12:55:36.825304+05:30 | 2026-10-17 12:55:37.447665+05:30 |        1 |      0 |          0 |         1 |      0 | 2026-10-17 12:55:37.511764+05:30
+(5 rows)
+
+SELECT request_id,old_state,new_state,event_at FROM reporting.report_audit ORDER BY audit_id DESC LIMIT 12;
+              request_id              | old_state  | new_state  |             event_at             
+--------------------------------------+------------+------------+----------------------------------
+ 473dbb65-7148-4574-9148-f4447e9a8434 | processing | completed  | 2026-10-17 14:37:01.735431+05:30
+ 473dbb65-7148-4574-9148-f4447e9a8434 | queued     | processing | 2026-10-17 14:37:01.717366+05:30
+ 473dbb65-7148-4574-9148-f4447e9a8434 |            | queued     | 2026-10-17 14:37:01.022343+05:30
+ 3e9b66a4-3372-4cc7-899c-7dc0c7a74875 | processing | completed  | 2026-10-17 12:58:00.532786+05:30
+ 3e9b66a4-3372-4cc7-899c-7dc0c7a74875 | queued     | processing | 2026-10-17 12:58:00.520634+05:30
+ 3e9b66a4-3372-4cc7-899c-7dc0c7a74875 |            | queued     | 2026-10-17 12:57:59.872117+05:30
+ ff95abeb-b3a8-4d36-b23b-07dfc774ce02 | processing | completed  | 2026-10-17 12:57:58.296519+05:30
+ ff95abeb-b3a8-4d36-b23b-07dfc774ce02 | queued     | processing | 2026-10-17 12:57:58.284817+05:30
+ ff95abeb-b3a8-4d36-b23b-07dfc774ce02 |            | queued     | 2026-10-17 12:57:57.718384+05:30
+ 15df2811-4799-44e7-89da-d120f39e9e34 | processing | completed  | 2026-10-17 12:55:39.654374+05:30
+ 15df2811-4799-44e7-89da-d120f39e9e34 | queued     | processing | 2026-10-17 12:55:39.640957+05:30
+ 15df2811-4799-44e7-89da-d120f39e9e34 |            | queued     | 2026-10-17 12:55:39.087842+05:30
+(12 rows)
+
+\echo '10. Indexes and a real SELECT execution plan'
+10. Indexes and a real SELECT execution plan
+SELECT indexname,indexdef FROM pg_indexes WHERE schemaname='reporting' ORDER BY indexname;
+               indexname               |                                                        indexdef                                                         
+---------------------------------------+-------------------------------------------------------------------------------------------------------------------------
+ customer_customer_ref_key             | CREATE UNIQUE INDEX customer_customer_ref_key ON reporting.customer USING btree (customer_ref)
+ customer_email_key                    | CREATE UNIQUE INDEX customer_email_key ON reporting.customer USING btree (email)
+ customer_pkey                         | CREATE UNIQUE INDEX customer_pkey ON reporting.customer USING btree (customer_id)
+ idx_web_session_expiry                | CREATE INDEX idx_web_session_expiry ON reporting.web_session USING btree (expires_at)
+ monthly_sales_key                     | CREATE UNIQUE INDEX monthly_sales_key ON reporting.mv_monthly_sales USING btree (month, category)
+ order_item_pkey                       | CREATE UNIQUE INDEX order_item_pkey ON reporting.order_item USING btree (order_id, line_number)
+ order_item_product                    | CREATE INDEX order_item_product ON reporting.order_item USING btree (product_id)
+ product_pkey                          | CREATE UNIQUE INDEX product_pkey ON reporting.product USING btree (product_id)
+ product_sku_key                       | CREATE UNIQUE INDEX product_sku_key ON reporting.product USING btree (sku)
+ report_audit_pkey                     | CREATE UNIQUE INDEX report_audit_pkey ON reporting.report_audit USING btree (audit_id)
+ report_audit_request                  | CREATE INDEX report_audit_request ON reporting.report_audit USING btree (request_id, event_at)
+ report_dataset_pkey                   | CREATE UNIQUE INDEX report_dataset_pkey ON reporting.report_dataset USING btree (request_id)
+ report_request_pkey                   | CREATE UNIQUE INDEX report_request_pkey ON reporting.report_request USING btree (request_id)
+ report_request_run_id_subject_key_key | CREATE UNIQUE INDEX report_request_run_id_subject_key_key ON reporting.report_request USING btree (run_id, subject_key)
+ report_result_csv_path_key            | CREATE UNIQUE INDEX report_result_csv_path_key ON reporting.report_result USING btree (csv_path)
+ report_result_html_path_key           | CREATE UNIQUE INDEX report_result_html_path_key ON reporting.report_result USING btree (html_path)
+ report_result_pkey                    | CREATE UNIQUE INDEX report_result_pkey ON reporting.report_result USING btree (request_id)
+ report_run_pkey                       | CREATE UNIQUE INDEX report_run_pkey ON reporting.report_run USING btree (run_id)
+ report_run_submission_key_key         | CREATE UNIQUE INDEX report_run_submission_key_key ON reporting.report_run USING btree (submission_key)
+ request_not_enqueued                  | CREATE INDEX request_not_enqueued ON reporting.report_request USING btree (run_id) WHERE (NOT enqueued)
+ request_run_state                     | CREATE INDEX request_run_state ON reporting.report_request USING btree (run_id, state)
+ sales_order_customer_date             | CREATE INDEX sales_order_customer_date ON reporting.sales_order USING btree (customer_id, ordered_at)
+ sales_order_date                      | CREATE INDEX sales_order_date ON reporting.sales_order USING btree (ordered_at)
+ sales_order_order_ref_key             | CREATE UNIQUE INDEX sales_order_order_ref_key ON reporting.sales_order USING btree (order_ref)
+ sales_order_pkey                      | CREATE UNIQUE INDEX sales_order_pkey ON reporting.sales_order USING btree (order_id)
+ template_version_code_version_key     | CREATE UNIQUE INDEX template_version_code_version_key ON reporting.template_version USING btree (code, version)
+ template_version_pkey                 | CREATE UNIQUE INDEX template_version_pkey ON reporting.template_version USING btree (template_id)
+ web_account_pkey                      | CREATE UNIQUE INDEX web_account_pkey ON reporting.web_account USING btree (account_id)
+ web_account_username_key              | CREATE UNIQUE INDEX web_account_username_key ON reporting.web_account USING btree (username)
+ web_session_pkey                      | CREATE UNIQUE INDEX web_session_pkey ON reporting.web_session USING btree (token_hash)
+(30 rows)
+
+EXPLAIN (ANALYZE,BUFFERS)
+SELECT * FROM reporting.sales_order WHERE customer_id=1 AND ordered_at >= '2026-01-01' AND ordered_at < '2027-01-01';
+                                                             QUERY PLAN                                                             
+------------------------------------------------------------------------------------------------------------------------------------
+ Bitmap Heap Scan on sales_order  (cost=4.55..41.62 rows=10 width=44) (actual time=0.010..0.013 rows=10 loops=1)
+   Recheck Cond: ((customer_id = 1) AND (ordered_at >= '2026-01-01'::date) AND (ordered_at < '2027-01-01'::date))
+   Heap Blocks: exact=6
+   Buffers: shared hit=9
+   ->  Bitmap Index Scan on sales_order_customer_date  (cost=0.00..4.54 rows=10 width=0) (actual time=0.007..0.007 rows=10 loops=1)
+         Index Cond: ((customer_id = 1) AND (ordered_at >= '2026-01-01'::date) AND (ordered_at < '2027-01-01'::date))
+         Buffers: shared hit=3
+ Planning:
+   Buffers: shared hit=6
+ Planning Time: 0.079 ms
+ Execution Time: 0.024 ms
+(11 rows)
+
+\echo '11. Materialized view refresh is explicit'
+11. Materialized view refresh is explicit
+REFRESH MATERIALIZED VIEW reporting.mv_monthly_sales;
+REFRESH MATERIALIZED VIEW
+SELECT * FROM reporting.mv_monthly_sales ORDER BY month,category LIMIT 12;
+   month    |  category   | units |    sales    
+------------+-------------+-------+-------------
+ 2026-01-01 | Electronics | 29006 | 11005150.00
+ 2026-01-01 | Home        | 29008 | 10718350.00
+ 2026-01-01 | Office      | 29009 | 12170475.00
+ 2026-02-01 | Electronics | 26132 |  9932200.00
+ 2026-02-01 | Home        | 26134 |  9668200.00
+ 2026-02-01 | Office      | 26131 | 10972725.00
+ 2026-03-01 | Electronics | 28855 | 10969325.00
+ 2026-03-01 | Home        | 28860 | 10684350.00
+ 2026-03-01 | Office      | 28848 | 12120300.00
+ 2026-04-01 | Electronics | 27758 | 10549450.00
+ 2026-04-01 | Home        | 27748 | 10265050.00
+ 2026-04-01 | Office      | 27755 | 11656875.00
+(12 rows)
+

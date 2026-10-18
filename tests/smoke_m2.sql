@@ -2,7 +2,7 @@
 
 \echo '================================================='
 \echo ' M2 SMOKE TEST - full broker loop against a FRESH'
-\echo ' volume (docker compose down -v && up -d db first)'
+\echo ' disposable database (apply db/sql/00 through 40)'
 \echo '================================================='
 
 \echo '[1] setup: user, app, topic(3 partitions), group, subscription, grants'

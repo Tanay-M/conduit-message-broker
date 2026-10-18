@@ -1,11 +1,12 @@
+import os
 import psycopg
 from psycopg_pool import ConnectionPool
 from psycopg.rows import dict_row
 
 from .errors import from_psycopg
 
-DEFAULT_APP_DSN = "postgresql://conduit_app:conduit_app_dev@localhost:5433/conduit"
-DEFAULT_ADMIN_DSN = "postgresql://conduit:conduit_dev@localhost:5433/conduit"
+DEFAULT_APP_DSN = os.environ.get('CONDUIT_APP_DSN', 'postgresql://conduit_app:conduit_app_dev@127.0.0.1:55432/conduit')
+DEFAULT_ADMIN_DSN = os.environ.get('CONDUIT_ADMIN_DSN', 'postgresql://conduit:conduit_dev@127.0.0.1:55432/conduit')
 
 
 class Database:

@@ -4,3 +4,12 @@ Desktop.ini
 *.tmp
 __pycache__/
 *.pyc
+.env
+.env.local
+.venv/
+.runtime/
+.local/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+artifacts/generated/

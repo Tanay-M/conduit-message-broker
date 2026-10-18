@@ -1,0 +1,3807 @@
+{
+  "checked_on": "2026-10-18",
+  "version": "PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit",
+  "database": "conduit",
+  "tables": [
+    {
+      "name": "access",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Topic-level access grants (produce/consume/admin) per user",
+      "columns": [
+        {
+          "name": "access_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": "nextval('access_access_id_seq'::regclass)",
+          "description": null
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "access_type",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "granted_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "granted_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "access_access_type_check",
+          "type": "c",
+          "definition": "CHECK (((access_type)::text = ANY ((ARRAY['produce'::character varying, 'consume'::character varying, 'admin'::character varying])::text[])))"
+        },
+        {
+          "name": "access_granted_by_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (granted_by) REFERENCES app_user(user_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "access_topic_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "access_user_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (user_id) REFERENCES app_user(user_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "access_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (access_id)"
+        },
+        {
+          "name": "uq_access",
+          "type": "u",
+          "definition": "UNIQUE (user_id, topic_id, access_type)"
+        }
+      ]
+    },
+    {
+      "name": "app_user",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Registered human users of the Conduit broker",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": "nextval('app_user_user_id_seq'::regclass)",
+          "description": null
+        },
+        {
+          "name": "username",
+          "type": "character varying(64)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "email",
+          "type": "character varying(255)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "role_id",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'active'::character varying",
+          "description": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "app_user_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'suspended'::character varying])::text[])))"
+        },
+        {
+          "name": "app_user_role_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (role_id) REFERENCES role(role_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "app_user_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (user_id)"
+        },
+        {
+          "name": "app_user_email_key",
+          "type": "u",
+          "definition": "UNIQUE (email)"
+        },
+        {
+          "name": "app_user_username_key",
+          "type": "u",
+          "definition": "UNIQUE (username)"
+        }
+      ]
+    },
+    {
+      "name": "application",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Registered client applications (producers/consumers) identified by API key",
+      "columns": [
+        {
+          "name": "app_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": "nextval('application_app_id_seq'::regclass)",
+          "description": null
+        },
+        {
+          "name": "app_name",
+          "type": "character varying(128)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "api_key",
+          "type": "uuid",
+          "not_null": true,
+          "identity": "",
+          "default": "gen_random_uuid()",
+          "description": null
+        },
+        {
+          "name": "owner_user_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "app_type",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'active'::character varying",
+          "description": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "application_app_type_check",
+          "type": "c",
+          "definition": "CHECK (((app_type)::text = ANY ((ARRAY['producer'::character varying, 'consumer'::character varying, 'both'::character varying])::text[])))"
+        },
+        {
+          "name": "application_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'revoked'::character varying])::text[])))"
+        },
+        {
+          "name": "application_owner_user_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (owner_user_id) REFERENCES app_user(user_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "application_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (app_id)"
+        },
+        {
+          "name": "application_api_key_key",
+          "type": "u",
+          "definition": "UNIQUE (api_key)"
+        },
+        {
+          "name": "application_app_name_key",
+          "type": "u",
+          "definition": "UNIQUE (app_name)"
+        }
+      ]
+    },
+    {
+      "name": "audit_log",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Trigger-written audit trail of all broker and admin events",
+      "columns": [
+        {
+          "name": "log_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": "nextval('audit_log_log_id_seq'::regclass)",
+          "description": null
+        },
+        {
+          "name": "user_id",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "app_id",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "event_type",
+          "type": "character varying(32)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'success'::character varying",
+          "description": null
+        },
+        {
+          "name": "details",
+          "type": "jsonb",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "event_timestamp",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "audit_log_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['success'::character varying, 'failure'::character varying])::text[])))"
+        },
+        {
+          "name": "audit_log_app_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (app_id) REFERENCES application(app_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "audit_log_topic_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "audit_log_user_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (user_id) REFERENCES app_user(user_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "audit_log_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (log_id)"
+        }
+      ]
+    },
+    {
+      "name": "broker_config",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Key/value broker runtime configuration",
+      "columns": [
+        {
+          "name": "config_id",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "nextval('broker_config_config_id_seq'::regclass)",
+          "description": null
+        },
+        {
+          "name": "config_key",
+          "type": "character varying(64)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "config_value",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "description",
+          "type": "character varying(255)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "updated_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "broker_config_updated_by_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (updated_by) REFERENCES app_user(user_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "broker_config_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (config_id)"
+        },
+        {
+          "name": "broker_config_config_key_key",
+          "type": "u",
+          "definition": "UNIQUE (config_key)"
+        }
+      ]
+    },
+    {
+      "name": "consumer_group",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Named consumer groups with shared delivery-attempt policy",
+      "columns": [
+        {
+          "name": "group_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": "nextval('consumer_group_group_id_seq'::regclass)",
+          "description": null
+        },
+        {
+          "name": "group_name",
+          "type": "character varying(128)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "created_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "max_delivery_attempts",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "3",
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'active'::character varying",
+          "description": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "consumer_group_max_delivery_attempts_check",
+          "type": "c",
+          "definition": "CHECK (((max_delivery_attempts >= 1) AND (max_delivery_attempts <= 10)))"
+        },
+        {
+          "name": "consumer_group_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'paused'::character varying])::text[])))"
+        },
+        {
+          "name": "consumer_group_created_by_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (created_by) REFERENCES app_user(user_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "consumer_group_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (group_id)"
+        },
+        {
+          "name": "consumer_group_group_name_key",
+          "type": "u",
+          "definition": "UNIQUE (group_name)"
+        }
+      ]
+    },
+    {
+      "name": "dead_letter_message",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Snapshot of messages that exceeded max delivery attempts",
+      "columns": [
+        {
+          "name": "dlq_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": "nextval('dead_letter_message_dlq_id_seq'::regclass)",
+          "description": null
+        },
+        {
+          "name": "original_topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "original_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_key",
+          "type": "character varying(128)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "failed_group_id",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "failure_reason",
+          "type": "text",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "attempts",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'pending'::character varying",
+          "description": null
+        },
+        {
+          "name": "dead_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "dead_letter_message_attempts_check",
+          "type": "c",
+          "definition": "CHECK ((attempts >= 0))"
+        },
+        {
+          "name": "dead_letter_message_original_offset_check",
+          "type": "c",
+          "definition": "CHECK ((original_offset >= 0))"
+        },
+        {
+          "name": "dead_letter_message_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'requeued'::character varying])::text[])))"
+        },
+        {
+          "name": "dead_letter_message_failed_group_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (failed_group_id) REFERENCES consumer_group(group_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "dead_letter_message_original_topic_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (original_topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "dead_letter_message_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (dlq_id)"
+        }
+      ]
+    },
+    {
+      "name": "group_offset",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Per (group, partition) committed offset; monotonic, enforced by trigger",
+      "columns": [
+        {
+          "name": "group_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "partition_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "committed_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "group_offset_committed_offset_check",
+          "type": "c",
+          "definition": "CHECK ((committed_offset >= 0))"
+        },
+        {
+          "name": "group_offset_group_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (group_id) REFERENCES consumer_group(group_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "group_offset_partition_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "pk_group_offset",
+          "type": "p",
+          "definition": "PRIMARY KEY (group_id, partition_id)"
+        }
+      ]
+    },
+    {
+      "name": "group_subscription",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "M:N subscriptions between consumer groups and topics",
+      "columns": [
+        {
+          "name": "group_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "subscribed_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "group_subscription_group_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (group_id) REFERENCES consumer_group(group_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "group_subscription_topic_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "pk_group_subscription",
+          "type": "p",
+          "definition": "PRIMARY KEY (group_id, topic_id)"
+        }
+      ]
+    },
+    {
+      "name": "message",
+      "schema": "public",
+      "relkind": "p",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "The messages themselves; range-partitioned monthly by created_at",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "partition_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_key",
+          "type": "character varying(128)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "size_bytes",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        },
+        {
+          "name": "producer_app_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "producer_seq",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'pending'::character varying",
+          "description": null
+        },
+        {
+          "name": "claimed_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "visible_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "attempts",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "message_attempts_check",
+          "type": "c",
+          "definition": "CHECK ((attempts >= 0))"
+        },
+        {
+          "name": "message_msg_offset_check",
+          "type": "c",
+          "definition": "CHECK ((msg_offset >= 0))"
+        },
+        {
+          "name": "message_producer_seq_check",
+          "type": "c",
+          "definition": "CHECK ((producer_seq >= 0))"
+        },
+        {
+          "name": "message_size_bytes_check",
+          "type": "c",
+          "definition": "CHECK ((size_bytes >= 0))"
+        },
+        {
+          "name": "message_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'claimed'::character varying, 'delivered'::character varying, 'dead'::character varying])::text[])))"
+        },
+        {
+          "name": "fk_message_claimed_by",
+          "type": "f",
+          "definition": "FOREIGN KEY (claimed_by) REFERENCES consumer_group(group_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "fk_message_partition",
+          "type": "f",
+          "definition": "FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_producer_app",
+          "type": "f",
+          "definition": "FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_topic",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "message_pk",
+          "type": "p",
+          "definition": "PRIMARY KEY (created_at, topic_id, partition_id, msg_offset)"
+        }
+      ]
+    },
+    {
+      "name": "message_2026_09",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": true,
+      "partition_bound": "FOR VALUES FROM ('2026-09-01 00:00:00+05:30') TO ('2026-10-01 00:00:00+05:30')",
+      "description": null,
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "partition_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_key",
+          "type": "character varying(128)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "size_bytes",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        },
+        {
+          "name": "producer_app_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "producer_seq",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'pending'::character varying",
+          "description": null
+        },
+        {
+          "name": "claimed_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "visible_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "attempts",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "message_attempts_check",
+          "type": "c",
+          "definition": "CHECK ((attempts >= 0))"
+        },
+        {
+          "name": "message_msg_offset_check",
+          "type": "c",
+          "definition": "CHECK ((msg_offset >= 0))"
+        },
+        {
+          "name": "message_producer_seq_check",
+          "type": "c",
+          "definition": "CHECK ((producer_seq >= 0))"
+        },
+        {
+          "name": "message_size_bytes_check",
+          "type": "c",
+          "definition": "CHECK ((size_bytes >= 0))"
+        },
+        {
+          "name": "message_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'claimed'::character varying, 'delivered'::character varying, 'dead'::character varying])::text[])))"
+        },
+        {
+          "name": "fk_message_claimed_by",
+          "type": "f",
+          "definition": "FOREIGN KEY (claimed_by) REFERENCES consumer_group(group_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "fk_message_partition",
+          "type": "f",
+          "definition": "FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_producer_app",
+          "type": "f",
+          "definition": "FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_topic",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "message_2026_09_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (created_at, topic_id, partition_id, msg_offset)"
+        }
+      ]
+    },
+    {
+      "name": "message_2026_10",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": true,
+      "partition_bound": "FOR VALUES FROM ('2026-10-01 00:00:00+05:30') TO ('2026-11-01 00:00:00+05:30')",
+      "description": null,
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "partition_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_key",
+          "type": "character varying(128)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "size_bytes",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        },
+        {
+          "name": "producer_app_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "producer_seq",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'pending'::character varying",
+          "description": null
+        },
+        {
+          "name": "claimed_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "visible_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "attempts",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "message_attempts_check",
+          "type": "c",
+          "definition": "CHECK ((attempts >= 0))"
+        },
+        {
+          "name": "message_msg_offset_check",
+          "type": "c",
+          "definition": "CHECK ((msg_offset >= 0))"
+        },
+        {
+          "name": "message_producer_seq_check",
+          "type": "c",
+          "definition": "CHECK ((producer_seq >= 0))"
+        },
+        {
+          "name": "message_size_bytes_check",
+          "type": "c",
+          "definition": "CHECK ((size_bytes >= 0))"
+        },
+        {
+          "name": "message_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'claimed'::character varying, 'delivered'::character varying, 'dead'::character varying])::text[])))"
+        },
+        {
+          "name": "fk_message_claimed_by",
+          "type": "f",
+          "definition": "FOREIGN KEY (claimed_by) REFERENCES consumer_group(group_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "fk_message_partition",
+          "type": "f",
+          "definition": "FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_producer_app",
+          "type": "f",
+          "definition": "FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_topic",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "message_2026_10_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (created_at, topic_id, partition_id, msg_offset)"
+        }
+      ]
+    },
+    {
+      "name": "message_2026_11",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": true,
+      "partition_bound": "FOR VALUES FROM ('2026-11-01 00:00:00+05:30') TO ('2026-12-01 00:00:00+05:30')",
+      "description": null,
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "partition_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_key",
+          "type": "character varying(128)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "size_bytes",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        },
+        {
+          "name": "producer_app_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "producer_seq",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'pending'::character varying",
+          "description": null
+        },
+        {
+          "name": "claimed_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "visible_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "attempts",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "message_attempts_check",
+          "type": "c",
+          "definition": "CHECK ((attempts >= 0))"
+        },
+        {
+          "name": "message_msg_offset_check",
+          "type": "c",
+          "definition": "CHECK ((msg_offset >= 0))"
+        },
+        {
+          "name": "message_producer_seq_check",
+          "type": "c",
+          "definition": "CHECK ((producer_seq >= 0))"
+        },
+        {
+          "name": "message_size_bytes_check",
+          "type": "c",
+          "definition": "CHECK ((size_bytes >= 0))"
+        },
+        {
+          "name": "message_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'claimed'::character varying, 'delivered'::character varying, 'dead'::character varying])::text[])))"
+        },
+        {
+          "name": "fk_message_claimed_by",
+          "type": "f",
+          "definition": "FOREIGN KEY (claimed_by) REFERENCES consumer_group(group_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "fk_message_partition",
+          "type": "f",
+          "definition": "FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_producer_app",
+          "type": "f",
+          "definition": "FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_topic",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "message_2026_11_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (created_at, topic_id, partition_id, msg_offset)"
+        }
+      ]
+    },
+    {
+      "name": "message_2026_12",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": true,
+      "partition_bound": "FOR VALUES FROM ('2026-12-01 00:00:00+05:30') TO ('2027-01-01 00:00:00+05:30')",
+      "description": null,
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "partition_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_key",
+          "type": "character varying(128)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "size_bytes",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        },
+        {
+          "name": "producer_app_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "producer_seq",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'pending'::character varying",
+          "description": null
+        },
+        {
+          "name": "claimed_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "visible_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "attempts",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "message_attempts_check",
+          "type": "c",
+          "definition": "CHECK ((attempts >= 0))"
+        },
+        {
+          "name": "message_msg_offset_check",
+          "type": "c",
+          "definition": "CHECK ((msg_offset >= 0))"
+        },
+        {
+          "name": "message_producer_seq_check",
+          "type": "c",
+          "definition": "CHECK ((producer_seq >= 0))"
+        },
+        {
+          "name": "message_size_bytes_check",
+          "type": "c",
+          "definition": "CHECK ((size_bytes >= 0))"
+        },
+        {
+          "name": "message_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'claimed'::character varying, 'delivered'::character varying, 'dead'::character varying])::text[])))"
+        },
+        {
+          "name": "fk_message_claimed_by",
+          "type": "f",
+          "definition": "FOREIGN KEY (claimed_by) REFERENCES consumer_group(group_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "fk_message_partition",
+          "type": "f",
+          "definition": "FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_producer_app",
+          "type": "f",
+          "definition": "FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_topic",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "message_2026_12_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (created_at, topic_id, partition_id, msg_offset)"
+        }
+      ]
+    },
+    {
+      "name": "message_2027_01",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": true,
+      "partition_bound": "FOR VALUES FROM ('2027-01-01 00:00:00+05:30') TO ('2027-02-01 00:00:00+05:30')",
+      "description": null,
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "partition_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_key",
+          "type": "character varying(128)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "size_bytes",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        },
+        {
+          "name": "producer_app_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "producer_seq",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'pending'::character varying",
+          "description": null
+        },
+        {
+          "name": "claimed_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "visible_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "attempts",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "message_attempts_check",
+          "type": "c",
+          "definition": "CHECK ((attempts >= 0))"
+        },
+        {
+          "name": "message_msg_offset_check",
+          "type": "c",
+          "definition": "CHECK ((msg_offset >= 0))"
+        },
+        {
+          "name": "message_producer_seq_check",
+          "type": "c",
+          "definition": "CHECK ((producer_seq >= 0))"
+        },
+        {
+          "name": "message_size_bytes_check",
+          "type": "c",
+          "definition": "CHECK ((size_bytes >= 0))"
+        },
+        {
+          "name": "message_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'claimed'::character varying, 'delivered'::character varying, 'dead'::character varying])::text[])))"
+        },
+        {
+          "name": "fk_message_claimed_by",
+          "type": "f",
+          "definition": "FOREIGN KEY (claimed_by) REFERENCES consumer_group(group_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "fk_message_partition",
+          "type": "f",
+          "definition": "FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_producer_app",
+          "type": "f",
+          "definition": "FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_topic",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "message_2027_01_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (created_at, topic_id, partition_id, msg_offset)"
+        }
+      ]
+    },
+    {
+      "name": "message_2027_02",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": true,
+      "partition_bound": "FOR VALUES FROM ('2027-02-01 00:00:00+05:30') TO ('2027-03-01 00:00:00+05:30')",
+      "description": null,
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "partition_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_key",
+          "type": "character varying(128)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "size_bytes",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        },
+        {
+          "name": "producer_app_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "producer_seq",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'pending'::character varying",
+          "description": null
+        },
+        {
+          "name": "claimed_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "visible_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "attempts",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "message_attempts_check",
+          "type": "c",
+          "definition": "CHECK ((attempts >= 0))"
+        },
+        {
+          "name": "message_msg_offset_check",
+          "type": "c",
+          "definition": "CHECK ((msg_offset >= 0))"
+        },
+        {
+          "name": "message_producer_seq_check",
+          "type": "c",
+          "definition": "CHECK ((producer_seq >= 0))"
+        },
+        {
+          "name": "message_size_bytes_check",
+          "type": "c",
+          "definition": "CHECK ((size_bytes >= 0))"
+        },
+        {
+          "name": "message_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'claimed'::character varying, 'delivered'::character varying, 'dead'::character varying])::text[])))"
+        },
+        {
+          "name": "fk_message_claimed_by",
+          "type": "f",
+          "definition": "FOREIGN KEY (claimed_by) REFERENCES consumer_group(group_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "fk_message_partition",
+          "type": "f",
+          "definition": "FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_producer_app",
+          "type": "f",
+          "definition": "FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_topic",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "message_2027_02_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (created_at, topic_id, partition_id, msg_offset)"
+        }
+      ]
+    },
+    {
+      "name": "message_2027_03",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": true,
+      "partition_bound": "FOR VALUES FROM ('2027-03-01 00:00:00+05:30') TO ('2027-04-01 00:00:00+05:30')",
+      "description": null,
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "partition_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_key",
+          "type": "character varying(128)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "size_bytes",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        },
+        {
+          "name": "producer_app_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "producer_seq",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'pending'::character varying",
+          "description": null
+        },
+        {
+          "name": "claimed_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "visible_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "attempts",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "message_attempts_check",
+          "type": "c",
+          "definition": "CHECK ((attempts >= 0))"
+        },
+        {
+          "name": "message_msg_offset_check",
+          "type": "c",
+          "definition": "CHECK ((msg_offset >= 0))"
+        },
+        {
+          "name": "message_producer_seq_check",
+          "type": "c",
+          "definition": "CHECK ((producer_seq >= 0))"
+        },
+        {
+          "name": "message_size_bytes_check",
+          "type": "c",
+          "definition": "CHECK ((size_bytes >= 0))"
+        },
+        {
+          "name": "message_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'claimed'::character varying, 'delivered'::character varying, 'dead'::character varying])::text[])))"
+        },
+        {
+          "name": "fk_message_claimed_by",
+          "type": "f",
+          "definition": "FOREIGN KEY (claimed_by) REFERENCES consumer_group(group_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "fk_message_partition",
+          "type": "f",
+          "definition": "FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_producer_app",
+          "type": "f",
+          "definition": "FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_topic",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "message_2027_03_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (created_at, topic_id, partition_id, msg_offset)"
+        }
+      ]
+    },
+    {
+      "name": "message_default",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": true,
+      "partition_bound": "DEFAULT",
+      "description": null,
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "partition_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_key",
+          "type": "character varying(128)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "size_bytes",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        },
+        {
+          "name": "producer_app_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "producer_seq",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'pending'::character varying",
+          "description": null
+        },
+        {
+          "name": "claimed_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "visible_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "attempts",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "message_attempts_check",
+          "type": "c",
+          "definition": "CHECK ((attempts >= 0))"
+        },
+        {
+          "name": "message_msg_offset_check",
+          "type": "c",
+          "definition": "CHECK ((msg_offset >= 0))"
+        },
+        {
+          "name": "message_producer_seq_check",
+          "type": "c",
+          "definition": "CHECK ((producer_seq >= 0))"
+        },
+        {
+          "name": "message_size_bytes_check",
+          "type": "c",
+          "definition": "CHECK ((size_bytes >= 0))"
+        },
+        {
+          "name": "message_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'claimed'::character varying, 'delivered'::character varying, 'dead'::character varying])::text[])))"
+        },
+        {
+          "name": "fk_message_claimed_by",
+          "type": "f",
+          "definition": "FOREIGN KEY (claimed_by) REFERENCES consumer_group(group_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "fk_message_partition",
+          "type": "f",
+          "definition": "FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_producer_app",
+          "type": "f",
+          "definition": "FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_message_topic",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "message_default_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (created_at, topic_id, partition_id, msg_offset)"
+        }
+      ]
+    },
+    {
+      "name": "partition",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Per-topic partitions; each owns a monotonically increasing offset counter",
+      "columns": [
+        {
+          "name": "partition_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": "nextval('partition_partition_id_seq'::regclass)",
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "partition_number",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "next_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "partition_next_offset_check",
+          "type": "c",
+          "definition": "CHECK ((next_offset >= 0))"
+        },
+        {
+          "name": "partition_partition_number_check",
+          "type": "c",
+          "definition": "CHECK ((partition_number >= 0))"
+        },
+        {
+          "name": "partition_topic_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "partition_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (partition_id)"
+        },
+        {
+          "name": "uq_partition_topic_number",
+          "type": "u",
+          "definition": "UNIQUE (topic_id, partition_number)"
+        }
+      ]
+    },
+    {
+      "name": "producer_sequence",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Producer idempotency ledger: one row per (app, seq); a duplicate produce returns the original message location",
+      "columns": [
+        {
+          "name": "producer_app_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "producer_seq",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "partition_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "msg_offset",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "producer_sequence_msg_offset_check",
+          "type": "c",
+          "definition": "CHECK ((msg_offset >= 0))"
+        },
+        {
+          "name": "producer_sequence_producer_seq_check",
+          "type": "c",
+          "definition": "CHECK ((producer_seq >= 0))"
+        },
+        {
+          "name": "producer_sequence_producer_app_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "pk_producer_sequence",
+          "type": "p",
+          "definition": "PRIMARY KEY (producer_app_id, producer_seq)"
+        }
+      ]
+    },
+    {
+      "name": "role",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "System roles used for role-based access control",
+      "columns": [
+        {
+          "name": "role_id",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "nextval('role_role_id_seq'::regclass)",
+          "description": null
+        },
+        {
+          "name": "role_name",
+          "type": "character varying(32)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "description",
+          "type": "character varying(255)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "role_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (role_id)"
+        },
+        {
+          "name": "role_role_name_key",
+          "type": "u",
+          "definition": "UNIQUE (role_name)"
+        }
+      ]
+    },
+    {
+      "name": "schema_migration",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": null,
+      "columns": [
+        {
+          "name": "name",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "sha256",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "applied_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "schema_migration_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (name)"
+        }
+      ]
+    },
+    {
+      "name": "schema_version",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Versioned JSON message contracts enforced at produce time",
+      "columns": [
+        {
+          "name": "schema_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": "nextval('schema_version_schema_id_seq'::regclass)",
+          "description": null
+        },
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "version",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "format",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'json'::character varying",
+          "description": null
+        },
+        {
+          "name": "definition",
+          "type": "jsonb",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'active'::character varying",
+          "description": null
+        },
+        {
+          "name": "created_by",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "schema_version_format_check",
+          "type": "c",
+          "definition": "CHECK (((format)::text = 'json'::text))"
+        },
+        {
+          "name": "schema_version_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'deprecated'::character varying])::text[])))"
+        },
+        {
+          "name": "schema_version_version_check",
+          "type": "c",
+          "definition": "CHECK ((version >= 1))"
+        },
+        {
+          "name": "schema_version_created_by_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (created_by) REFERENCES app_user(user_id) ON DELETE SET NULL"
+        },
+        {
+          "name": "schema_version_topic_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "schema_version_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (schema_id)"
+        },
+        {
+          "name": "uq_schema_topic_version",
+          "type": "u",
+          "definition": "UNIQUE (topic_id, version)"
+        }
+      ]
+    },
+    {
+      "name": "topic",
+      "schema": "public",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Message topics; the publish/subscribe naming endpoint",
+      "columns": [
+        {
+          "name": "topic_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": "nextval('topic_topic_id_seq'::regclass)",
+          "description": null
+        },
+        {
+          "name": "topic_name",
+          "type": "character varying(128)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "description",
+          "type": "character varying(512)",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "created_by",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "retention_days",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "7",
+          "description": null
+        },
+        {
+          "name": "max_message_bytes",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "1048576",
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "character varying(16)",
+          "not_null": true,
+          "identity": "",
+          "default": "'active'::character varying",
+          "description": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "topic_max_message_bytes_check",
+          "type": "c",
+          "definition": "CHECK ((max_message_bytes > 0))"
+        },
+        {
+          "name": "topic_retention_days_check",
+          "type": "c",
+          "definition": "CHECK (((retention_days >= 1) AND (retention_days <= 3650)))"
+        },
+        {
+          "name": "topic_status_check",
+          "type": "c",
+          "definition": "CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'archived'::character varying])::text[])))"
+        },
+        {
+          "name": "topic_created_by_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (created_by) REFERENCES app_user(user_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "topic_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (topic_id)"
+        },
+        {
+          "name": "topic_topic_name_key",
+          "type": "u",
+          "definition": "UNIQUE (topic_name)"
+        }
+      ]
+    },
+    {
+      "name": "customer",
+      "schema": "reporting",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": null,
+      "columns": [
+        {
+          "name": "customer_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "a",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "customer_ref",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "full_name",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "email",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "region",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "customer_full_name_check",
+          "type": "c",
+          "definition": "CHECK ((length(TRIM(BOTH FROM full_name)) > 0))"
+        },
+        {
+          "name": "customer_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (customer_id)"
+        },
+        {
+          "name": "customer_customer_ref_key",
+          "type": "u",
+          "definition": "UNIQUE (customer_ref)"
+        },
+        {
+          "name": "customer_email_key",
+          "type": "u",
+          "definition": "UNIQUE (email)"
+        }
+      ]
+    },
+    {
+      "name": "order_item",
+      "schema": "reporting",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": null,
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "line_number",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "quantity",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "unit_price",
+          "type": "numeric(12,2)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": "Historical sale-time price, independent of current catalogue price"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "order_item_line_number_check",
+          "type": "c",
+          "definition": "CHECK ((line_number > 0))"
+        },
+        {
+          "name": "order_item_quantity_check",
+          "type": "c",
+          "definition": "CHECK (((quantity >= 1) AND (quantity <= 1000000)))"
+        },
+        {
+          "name": "order_item_unit_price_check",
+          "type": "c",
+          "definition": "CHECK ((unit_price >= (0)::numeric))"
+        },
+        {
+          "name": "order_item_order_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (order_id) REFERENCES reporting.sales_order(order_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "order_item_product_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (product_id) REFERENCES reporting.product(product_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "order_item_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (order_id, line_number)"
+        }
+      ]
+    },
+    {
+      "name": "product",
+      "schema": "reporting",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": null,
+      "columns": [
+        {
+          "name": "product_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "a",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "sku",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "product_name",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "category",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "catalogue_price",
+          "type": "numeric(12,2)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "product_catalogue_price_check",
+          "type": "c",
+          "definition": "CHECK ((catalogue_price >= (0)::numeric))"
+        },
+        {
+          "name": "product_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (product_id)"
+        },
+        {
+          "name": "product_sku_key",
+          "type": "u",
+          "definition": "UNIQUE (sku)"
+        }
+      ]
+    },
+    {
+      "name": "report_audit",
+      "schema": "reporting",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": null,
+      "columns": [
+        {
+          "name": "audit_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "a",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "request_id",
+          "type": "uuid",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "old_state",
+          "type": "text",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "new_state",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "event_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "report_audit_request_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (request_id) REFERENCES reporting.report_request(request_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "report_audit_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (audit_id)"
+        }
+      ]
+    },
+    {
+      "name": "report_dataset",
+      "schema": "reporting",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": "Persisted report content, deliberately retained beyond MVCC transaction lifetime",
+      "columns": [
+        {
+          "name": "request_id",
+          "type": "uuid",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "rows",
+          "type": "jsonb",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "captured_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "report_dataset_rows_check",
+          "type": "c",
+          "definition": "CHECK ((jsonb_typeof(rows) = 'array'::text))"
+        },
+        {
+          "name": "report_dataset_request_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (request_id) REFERENCES reporting.report_request(request_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "report_dataset_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (request_id)"
+        }
+      ]
+    },
+    {
+      "name": "report_request",
+      "schema": "reporting",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": null,
+      "columns": [
+        {
+          "name": "request_id",
+          "type": "uuid",
+          "not_null": true,
+          "identity": "",
+          "default": "gen_random_uuid()",
+          "description": null
+        },
+        {
+          "name": "run_id",
+          "type": "uuid",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "subject_key",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "customer_id",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "state",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": "'queued'::text",
+          "description": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "last_error",
+          "type": "text",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "attempts",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "0",
+          "description": null
+        },
+        {
+          "name": "enqueued",
+          "type": "boolean",
+          "not_null": true,
+          "identity": "",
+          "default": "false",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "report_request_attempts_check",
+          "type": "c",
+          "definition": "CHECK ((attempts >= 0))"
+        },
+        {
+          "name": "report_request_state_check",
+          "type": "c",
+          "definition": "CHECK ((state = ANY (ARRAY['queued'::text, 'processing'::text, 'completed'::text, 'failed'::text])))"
+        },
+        {
+          "name": "report_request_customer_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "report_request_run_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (run_id) REFERENCES reporting.report_run(run_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "report_request_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (request_id)"
+        },
+        {
+          "name": "report_request_run_id_subject_key_key",
+          "type": "u",
+          "definition": "UNIQUE (run_id, subject_key)"
+        }
+      ]
+    },
+    {
+      "name": "report_result",
+      "schema": "reporting",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": null,
+      "columns": [
+        {
+          "name": "request_id",
+          "type": "uuid",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "csv_path",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "html_path",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "csv_sha256",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "html_sha256",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "row_count",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "worker_name",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "sql_seconds",
+          "type": "double precision",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "render_seconds",
+          "type": "double precision",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "report_result_csv_sha256_check",
+          "type": "c",
+          "definition": "CHECK ((csv_sha256 ~ '^[0-9a-f]{64}$'::text))"
+        },
+        {
+          "name": "report_result_html_sha256_check",
+          "type": "c",
+          "definition": "CHECK ((html_sha256 ~ '^[0-9a-f]{64}$'::text))"
+        },
+        {
+          "name": "report_result_render_seconds_check",
+          "type": "c",
+          "definition": "CHECK ((render_seconds >= (0)::double precision))"
+        },
+        {
+          "name": "report_result_row_count_check",
+          "type": "c",
+          "definition": "CHECK ((row_count >= 0))"
+        },
+        {
+          "name": "report_result_sql_seconds_check",
+          "type": "c",
+          "definition": "CHECK ((sql_seconds >= (0)::double precision))"
+        },
+        {
+          "name": "report_result_request_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (request_id) REFERENCES reporting.report_request(request_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "report_result_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (request_id)"
+        },
+        {
+          "name": "report_result_csv_path_key",
+          "type": "u",
+          "definition": "UNIQUE (csv_path)"
+        },
+        {
+          "name": "report_result_html_path_key",
+          "type": "u",
+          "definition": "UNIQUE (html_path)"
+        }
+      ]
+    },
+    {
+      "name": "report_run",
+      "schema": "reporting",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": null,
+      "columns": [
+        {
+          "name": "run_id",
+          "type": "uuid",
+          "not_null": true,
+          "identity": "",
+          "default": "gen_random_uuid()",
+          "description": null
+        },
+        {
+          "name": "submission_key",
+          "type": "uuid",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "template_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "requested_by",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "customer_id",
+          "type": "bigint",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "start_date",
+          "type": "date",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "end_date",
+          "type": "date",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "top_n",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": "10",
+          "description": null
+        },
+        {
+          "name": "bulk",
+          "type": "boolean",
+          "not_null": true,
+          "identity": "",
+          "default": "false",
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": "'preparing'::text",
+          "description": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        },
+        {
+          "name": "prepared_at",
+          "type": "timestamp with time zone",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "error",
+          "type": "text",
+          "not_null": false,
+          "identity": "",
+          "default": null,
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "report_run_check",
+          "type": "c",
+          "definition": "CHECK ((start_date < end_date))"
+        },
+        {
+          "name": "report_run_check1",
+          "type": "c",
+          "definition": "CHECK (((end_date - start_date) <= 3660))"
+        },
+        {
+          "name": "report_run_status_check",
+          "type": "c",
+          "definition": "CHECK ((status = ANY (ARRAY['preparing'::text, 'ready'::text, 'failed'::text])))"
+        },
+        {
+          "name": "report_run_top_n_check",
+          "type": "c",
+          "definition": "CHECK (((top_n >= 1) AND (top_n <= 100)))"
+        },
+        {
+          "name": "report_run_customer_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "report_run_requested_by_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (requested_by) REFERENCES app_user(user_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "report_run_template_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (template_id) REFERENCES reporting.template_version(template_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "report_run_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (run_id)"
+        },
+        {
+          "name": "report_run_submission_key_key",
+          "type": "u",
+          "definition": "UNIQUE (submission_key)"
+        }
+      ]
+    },
+    {
+      "name": "sales_order",
+      "schema": "reporting",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": null,
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "a",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "order_ref",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "customer_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "ordered_at",
+          "type": "date",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": "'completed'::text",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "sales_order_status_check",
+          "type": "c",
+          "definition": "CHECK ((status = ANY (ARRAY['completed'::text, 'cancelled'::text])))"
+        },
+        {
+          "name": "sales_order_customer_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT"
+        },
+        {
+          "name": "sales_order_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (order_id)"
+        },
+        {
+          "name": "sales_order_order_ref_key",
+          "type": "u",
+          "definition": "UNIQUE (order_ref)"
+        }
+      ]
+    },
+    {
+      "name": "template_version",
+      "schema": "reporting",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": null,
+      "columns": [
+        {
+          "name": "template_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "a",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "code",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "version",
+          "type": "integer",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "sql_text",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "template_version_code_check",
+          "type": "c",
+          "definition": "CHECK ((code = ANY (ARRAY['customer_statement'::text, 'product_sales'::text, 'monthly_sales'::text])))"
+        },
+        {
+          "name": "template_version_version_check",
+          "type": "c",
+          "definition": "CHECK ((version > 0))"
+        },
+        {
+          "name": "template_version_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (template_id)"
+        },
+        {
+          "name": "template_version_code_version_key",
+          "type": "u",
+          "definition": "UNIQUE (code, version)"
+        }
+      ]
+    },
+    {
+      "name": "web_account",
+      "schema": "reporting",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": null,
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "a",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "username",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "password_hash",
+          "type": "text",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "enabled",
+          "type": "boolean",
+          "not_null": true,
+          "identity": "",
+          "default": "true",
+          "description": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "web_account_username_check",
+          "type": "c",
+          "definition": "CHECK (((length(TRIM(BOTH FROM username)) >= 1) AND (length(TRIM(BOTH FROM username)) <= 64)))"
+        },
+        {
+          "name": "web_account_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (account_id)"
+        },
+        {
+          "name": "web_account_username_key",
+          "type": "u",
+          "definition": "UNIQUE (username)"
+        }
+      ]
+    },
+    {
+      "name": "web_session",
+      "schema": "reporting",
+      "relkind": "r",
+      "is_partition": false,
+      "partition_bound": null,
+      "description": null,
+      "columns": [
+        {
+          "name": "token_hash",
+          "type": "character(64)",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "account_id",
+          "type": "bigint",
+          "not_null": true,
+          "identity": "",
+          "default": null,
+          "description": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "now()",
+          "description": null
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "not_null": true,
+          "identity": "",
+          "default": "(now() + '08:00:00'::interval)",
+          "description": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "web_session_check",
+          "type": "c",
+          "definition": "CHECK ((expires_at > created_at))"
+        },
+        {
+          "name": "web_session_account_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (account_id) REFERENCES reporting.web_account(account_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "web_session_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (token_hash)"
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "schema": "public",
+      "name": "mv_topic_stats",
+      "relkind": "m",
+      "definition": " SELECT t.topic_name,\n    t.status AS topic_status,\n    t.retention_days,\n    count(m.msg_offset) FILTER (WHERE m.status::text = 'pending'::text) AS pending,\n    count(m.msg_offset) FILTER (WHERE m.status::text = 'claimed'::text) AS claimed,\n    count(m.msg_offset) FILTER (WHERE m.status::text = 'delivered'::text) AS delivered,\n    count(m.msg_offset) FILTER (WHERE m.status::text = 'dead'::text) AS dead,\n    ( SELECT count(*) AS count\n           FROM dead_letter_message d\n          WHERE d.original_topic_id = t.topic_id AND d.status::text = 'pending'::text) AS dlq_pending,\n    min(m.created_at) FILTER (WHERE m.status::text = 'pending'::text) AS oldest_pending,\n    max(m.created_at) AS last_message_at\n   FROM topic t\n     LEFT JOIN message m ON m.topic_id = t.topic_id\n  GROUP BY t.topic_id, t.topic_name, t.status, t.retention_days;"
+    },
+    {
+      "schema": "public",
+      "name": "v_audit_recent",
+      "relkind": "v",
+      "definition": " SELECT al.log_id,\n    COALESCE(u.username, 'system'::character varying) AS username,\n    a.app_name,\n    t.topic_name,\n    al.event_type,\n    al.status,\n    al.details,\n    al.event_timestamp\n   FROM audit_log al\n     LEFT JOIN app_user u ON u.user_id = al.user_id\n     LEFT JOIN application a ON a.app_id = al.app_id\n     LEFT JOIN topic t ON t.topic_id = al.topic_id\n  WHERE al.event_timestamp >= (now() - '24:00:00'::interval);"
+    },
+    {
+      "schema": "public",
+      "name": "v_consumer_lag",
+      "relkind": "v",
+      "definition": " SELECT t.topic_name,\n    cg.group_name,\n    pt.partition_number,\n    go.committed_offset,\n    pt.next_offset AS head_offset,\n    pt.next_offset - go.committed_offset AS lag_messages,\n    go.updated_at AS last_commit_at\n   FROM group_offset go\n     JOIN partition pt ON pt.partition_id = go.partition_id\n     JOIN topic t ON t.topic_id = pt.topic_id\n     JOIN consumer_group cg ON cg.group_id = go.group_id\n  ORDER BY t.topic_name, cg.group_name, pt.partition_number;"
+    },
+    {
+      "schema": "public",
+      "name": "v_throughput_by_minute",
+      "relkind": "v",
+      "definition": " SELECT topic_name,\n    minute_ts,\n    messages,\n    sum(messages) OVER (PARTITION BY topic_name ORDER BY minute_ts) AS cumulative_messages\n   FROM ( SELECT t.topic_name,\n            date_trunc('minute'::text, m.created_at) AS minute_ts,\n            count(*) AS messages\n           FROM message m\n             JOIN topic t ON t.topic_id = m.topic_id\n          WHERE m.created_at >= (now() - '02:00:00'::interval)\n          GROUP BY t.topic_name, (date_trunc('minute'::text, m.created_at))) per_minute;"
+    },
+    {
+      "schema": "public",
+      "name": "v_topic_stats",
+      "relkind": "v",
+      "definition": " SELECT t.topic_name,\n    t.status AS topic_status,\n    t.retention_days,\n    count(m.msg_offset) FILTER (WHERE m.status::text = 'pending'::text) AS pending,\n    count(m.msg_offset) FILTER (WHERE m.status::text = 'claimed'::text) AS claimed,\n    count(m.msg_offset) FILTER (WHERE m.status::text = 'delivered'::text) AS delivered,\n    count(m.msg_offset) FILTER (WHERE m.status::text = 'dead'::text) AS dead,\n    ( SELECT count(*) AS count\n           FROM dead_letter_message d\n          WHERE d.original_topic_id = t.topic_id AND d.status::text = 'pending'::text) AS dlq_pending,\n    min(m.created_at) FILTER (WHERE m.status::text = 'pending'::text) AS oldest_pending,\n    max(m.created_at) AS last_message_at\n   FROM topic t\n     LEFT JOIN message m ON m.topic_id = t.topic_id\n  GROUP BY t.topic_id, t.topic_name, t.status, t.retention_days;"
+    },
+    {
+      "schema": "reporting",
+      "name": "mv_monthly_sales",
+      "relkind": "m",
+      "definition": " SELECT date_trunc('month'::text, ordered_at::timestamp with time zone)::date AS month,\n    category,\n    sum(quantity) AS units,\n    sum(line_total) AS sales\n   FROM reporting.v_sales_lines\n  GROUP BY (date_trunc('month'::text, ordered_at::timestamp with time zone)::date), category;"
+    },
+    {
+      "schema": "reporting",
+      "name": "v_run_progress",
+      "relkind": "v",
+      "definition": " SELECT r.run_id,\n    t.code,\n    t.version,\n    r.status AS preparation_status,\n    r.created_at,\n    r.prepared_at,\n    count(q.request_id) AS expected,\n    count(*) FILTER (WHERE q.state = 'queued'::text) AS queued,\n    count(*) FILTER (WHERE q.state = 'processing'::text) AS processing,\n    count(*) FILTER (WHERE q.state = 'completed'::text) AS completed,\n    count(*) FILTER (WHERE q.state = 'failed'::text) AS failed,\n    max(q.completed_at) AS last_completion\n   FROM reporting.report_run r\n     JOIN reporting.template_version t USING (template_id)\n     LEFT JOIN reporting.report_request q USING (run_id)\n  GROUP BY r.run_id, t.code, t.version;"
+    },
+    {
+      "schema": "reporting",
+      "name": "v_sales_lines",
+      "relkind": "v",
+      "definition": " SELECT c.customer_id,\n    c.customer_ref,\n    c.full_name,\n    c.region,\n    o.order_id,\n    o.order_ref,\n    o.ordered_at,\n    i.line_number,\n    p.sku,\n    p.product_name,\n    p.category,\n    i.quantity,\n    i.unit_price,\n    (i.quantity::numeric * i.unit_price)::numeric(20,2) AS line_total\n   FROM reporting.customer c\n     JOIN reporting.sales_order o ON o.customer_id = c.customer_id\n     JOIN reporting.order_item i ON i.order_id = o.order_id\n     JOIN reporting.product p ON p.product_id = i.product_id\n  WHERE o.status = 'completed'::text;"
+    }
+  ]
+}

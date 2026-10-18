@@ -1,0 +1,159 @@
+=================================================
+ M2 SMOKE TEST - full broker loop against a FRESH
+ volume (docker compose down -v && up -d db first)
+=================================================
+[1] setup: user, app, topic(3 partitions), group, subscription, grants
+ partitions_wired 
+------------------
+                3
+(1 row)
+
+ produce_grant 
+---------------
+             1
+(1 row)
+
+ consume_grant 
+---------------
+             2
+(1 row)
+
+[2] produce: 6 keyed (hash-routed) + 4 unkeyed (least-loaded) via produce_batch
+ producer_seq | loc_topic_id | loc_partition_id | loc_msg_offset | is_duplicate 
+--------------+--------------+------------------+----------------+--------------
+            1 |            1 |                3 |              0 | f
+            2 |            1 |                2 |              0 | f
+            3 |            1 |                1 |              0 | f
+            4 |            1 |                3 |              1 | f
+            5 |            1 |                2 |              1 | f
+            6 |            1 |                1 |              1 | f
+            7 |            1 |                1 |              2 | f
+            8 |            1 |                2 |              2 | f
+            9 |            1 |                3 |              2 | f
+           10 |            1 |                1 |              3 | f
+(10 rows)
+
+[3] idempotency: same (app, seq) produce again -> is_duplicate = true, same location
+ loc_topic_id | loc_partition_id | loc_msg_offset | is_duplicate 
+--------------+------------------+----------------+--------------
+            1 |                3 |              0 | t
+(1 row)
+
+[4] error handling: expect CDT04 schema violation + CDT01 unknown topic
+DO
+[5] consume: batch of 5 (SKIP LOCKED claim), capture locations
+NOTICE:  OK: caught CDT04 payload violates active schema of topic orders
+NOTICE:  OK: caught CDT01 unknown topic no-such-topic
+[6] ack: those 5 -> delivered, committed_offset advances atomically
+ acked_now_delivered 
+---------------------
+                   5
+(1 row)
+
+ part_no | committed_offset | next_offset 
+---------+------------------+-------------
+       0 |                2 |           4
+       1 |                2 |           3
+       2 |                1 |           3
+(3 rows)
+
+[7] nack: consume 1 and reject it -> back to pending (attempts 2 < max 3)
+ retried | dead 
+---------+------
+       1 |    0
+(1 row)
+
+ msg_offset |  status   | attempts |          visible_at           
+------------+-----------+----------+-------------------------------
+          0 | delivered |        1 | 2026-10-13 06:59:46.769773+00
+          0 | delivered |        1 | 2026-10-13 06:59:46.769773+00
+          0 | delivered |        1 | 2026-10-13 06:59:46.769773+00
+          1 | delivered |        1 | 2026-10-13 06:59:46.769773+00
+          1 | delivered |        1 | 2026-10-13 06:59:46.769773+00
+          1 | pending   |        1 | 
+          2 | pending   |        0 | 
+          2 | pending   |        0 | 
+          2 | pending   |        0 | 
+          3 | pending   |        0 | 
+(10 rows)
+
+[8] poison message: nack the same message 2 more times -> attempts hits 3 -> DLQ
+ retried | dead 
+---------+------
+       1 |    0
+(1 row)
+
+ retried | dead 
+---------+------
+       0 |    1
+(1 row)
+
+ pending | claimed | delivered | dead | dlq_pending |        oldest_pending         | produced_last_hour 
+---------+---------+-----------+------+-------------+-------------------------------+--------------------
+       4 |       0 |         5 |    1 |           1 | 2026-10-13 06:58:46.746725+00 |                 10
+(1 row)
+
+[9] requeue: DLQ entry -> fresh message on the topic
+ dlq_id | requeued | loc_topic_id | loc_partition_id | loc_msg_offset 
+--------+----------+--------------+------------------+----------------
+      1 | t        |            1 |                3 |              3
+(1 row)
+
+ pending | claimed | delivered | dead | dlq_pending |        oldest_pending         | produced_last_hour 
+---------+---------+-----------+------+-------------+-------------------------------+--------------------
+       5 |       0 |         5 |    1 |           0 | 2026-10-13 06:58:46.746725+00 |                 11
+(1 row)
+
+[10] visibility timeout + reaper: claim with 2s timeout, sleep 3s, reap
+ pg_sleep 
+----------
+ 
+(1 row)
+
+ requeued | dead 
+----------+------
+        3 |    0
+(1 row)
+
+ pending | claimed | delivered | dead | dlq_pending |        oldest_pending         | produced_last_hour 
+---------+---------+-----------+------+-------------+-------------------------------+--------------------
+       5 |       0 |         5 |    1 |           0 | 2026-10-13 06:58:46.746725+00 |                 11
+(1 row)
+
+[11] broker config upsert + maintenance no-ops
+ update_broker_config 
+----------------------
+ 
+(1 row)
+
+          config_key          | config_value |          updated_at          
+------------------------------+--------------+------------------------------
+ default_visibility_timeout_s | 45           | 2026-10-13 06:58:50.66495+00
+(1 row)
+
+  new_partition  
+-----------------
+ message_2027_04
+(1 row)
+
+ purged_old_messages 
+---------------------
+                   0
+(1 row)
+
+ dropped_partitions 
+--------------------
+                  0
+(1 row)
+
+[12] final state: group offsets vs partition heads
+ topic_name | partition_number | committed_offset | next_offset 
+------------+------------------+------------------+-------------
+ orders     |                0 |                2 |           4
+ orders     |                1 |                2 |           3
+ orders     |                2 |                1 |           4
+(3 rows)
+
+=================================================
+ M2 SMOKE TEST COMPLETE - inspect outputs above
+=================================================

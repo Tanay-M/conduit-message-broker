@@ -1,0 +1,42 @@
+
+================================================================
+ DEMO 01 - BASIC FLOW: send a message, see it stored, read it, ack it
+================================================================
+  -> provisioned user=d1userad133f17 app=d1appad133f17 topic=d1topicad133f17 (2 partitions) group=d1groupad133f17
+  -> producing 5 messages (3 keyed, 2 unkeyed)
+     produce_batch of 5 took 16.1 ms
+     stored at topic=3 partition=6 offset=0
+     stored at topic=3 partition=7 offset=0
+     stored at topic=3 partition=6 offset=1
+     stored at topic=3 partition=7 offset=1
+     stored at topic=3 partition=6 offset=2
+  [PASS] all 5 produces returned a location
+  [PASS] same key routes to the same partition every time
+  -> opening the database and reading the stored rows back
+     partition 0 offset 0 status=pending key=alpha payload={'n': 1, 'event': 'created'}
+     partition 0 offset 1 status=pending key=alpha payload={'n': 3, 'event': 'paid'}
+     partition 0 offset 2 status=pending key=None payload={'n': 5, 'event': 'audit'}
+     partition 1 offset 0 status=pending key=beta payload={'n': 2, 'event': 'created'}
+     partition 1 offset 1 status=pending key=None payload={'n': 4, 'event': 'audit'}
+  [PASS] 5 rows found on disk in the message table
+  [PASS] all rows start as pending
+  -> consuming a batch of 5 (SKIP LOCKED claim with 60s visibility)
+     consume took 11.3 ms
+     claimed partition=6 offset=0 visible_until=2026-10-13 07:00:10.981275+00:00 attempts=1
+     claimed partition=7 offset=0 visible_until=2026-10-13 07:00:10.981275+00:00 attempts=1
+     claimed partition=6 offset=1 visible_until=2026-10-13 07:00:10.981275+00:00 attempts=1
+     claimed partition=7 offset=1 visible_until=2026-10-13 07:00:10.981275+00:00 attempts=1
+     claimed partition=6 offset=2 visible_until=2026-10-13 07:00:10.981275+00:00 attempts=1
+  [PASS] consumer claimed 5 messages
+  [PASS] claim increments the attempt counter (SQS ReceiveCount style)
+  [PASS] group offsets still 0 before ack
+  -> acknowledging all 5 (atomic claim->delivered + offset advance in one transaction)
+     ack took 7.8 ms, acknowledged 5
+  [PASS] 5 messages acknowledged
+     partition 0: committed_offset=3 head=3
+     partition 1: committed_offset=2 head=2
+  [PASS] committed offset caught up to the partition head
+  [PASS] topic stats show 5 delivered, 0 pending
+
+  DEMO COMPLETE - all checks passed
+

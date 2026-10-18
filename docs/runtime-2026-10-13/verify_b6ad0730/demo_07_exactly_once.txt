@@ -1,0 +1,28 @@
+
+================================================================
+ DEMO 07 - EXACTLY-ONCE EFFECT: atomic ack + offset commit, no regressions
+================================================================
+  -> provisioned topic=d7topice87fe7ca group=d7groupe87fe7ca
+  -> producing 10 messages and claiming all of them
+  [PASS] claimed all 10
+  -> processing completes for only the first 7 - acking a PARTIAL batch
+     ack returned 7
+  [PASS] 7 of 10 acknowledged
+     partition 0: committed=5/5 produced
+     partition 1: committed=2/5 produced
+  [PASS] committed offsets advance to EXACTLY the acked prefix (7/7)
+  -> the remaining 3 claims are still in-flight (claimed, not lost)
+     status mix: {'claimed': 3, 'delivered': 7}
+  [PASS] 7 delivered + 3 still claimed - the acked prefix is durable
+  -> duplicate ack of the same locations - offsets must not move (idempotent)
+     second ack returned 7, total committed now 7
+  [PASS] offsets unchanged after a duplicate ack
+  -> attempting to REGRESS committed offsets - the trigger refuses (CDT19)
+     caught typed exception: [CDT19] committed_offset cannot regress from 2 to 0
+  [PASS] monotonic offset guard rejected the regression
+  -> nacking the 3 in-flight, then draining the rest
+     final stats: delivered=10 pending=0
+  [PASS] all 10 delivered after the full cycle
+
+  DEMO COMPLETE - all checks passed
+

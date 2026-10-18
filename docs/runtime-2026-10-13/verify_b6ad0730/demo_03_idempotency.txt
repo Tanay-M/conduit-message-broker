@@ -1,0 +1,27 @@
+
+================================================================
+ DEMO 03 - IDEMPOTENCY: the same (app, seq) produced 6 times lands on disk exactly once
+================================================================
+  -> provisioned app=d3appd91d62fb topic=d3topicd91d62fb
+  -> first produce of seq=1 (the original)
+     original location: partition=11 offset=0 duplicate=False (470.4 ms)
+  [PASS] original produce is not a duplicate
+  -> 5 concurrent retries of the exact same (app, seq=1) - a retry storm
+  [PASS] all retries completed without error
+     retry returned: partition=11 offset=0 duplicate=True
+     retry returned: partition=11 offset=0 duplicate=True
+     retry returned: partition=11 offset=0 duplicate=True
+     retry returned: partition=11 offset=0 duplicate=True
+     retry returned: partition=11 offset=0 duplicate=True
+  [PASS] every retry was flagged as a duplicate
+  [PASS] every retry got the ORIGINAL location back
+     rows on disk for this topic: 1
+  [PASS] exactly one row exists on disk despite 6 produce calls
+     producer_sequence ledger rows: [(1, 0)]
+  [PASS] the idempotency ledger holds exactly one row for (app, seq=1)
+  -> and a fresh seq=2 behaves normally
+  [PASS] a new seq produces a new message
+  [PASS] 2 pending messages total (seq 1 and seq 2)
+
+  DEMO COMPLETE - all checks passed
+

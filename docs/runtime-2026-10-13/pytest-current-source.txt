@@ -1,0 +1,29 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.15, pytest-9.1.1, pluggy-1.6.0 -- /usr/local/bin/python
+cachedir: .pytest_cache
+rootdir: /app
+plugins: anyio-4.15.1
+collecting ... collected 20 items
+
+tests/py/test_m5.py::test_health PASSED                                  [  5%]
+tests/py/test_m5.py::test_admin_requires_token PASSED                    [ 10%]
+tests/py/test_m5.py::test_unknown_api_key PASSED                         [ 15%]
+tests/py/test_m5.py::test_sdk_roundtrip_and_idempotency PASSED           [ 20%]
+tests/py/test_m5.py::test_api_roundtrip PASSED                           [ 25%]
+tests/py/test_m5.py::test_error_mapping_schema_violation PASSED          [ 30%]
+tests/py/test_m5.py::test_rls_visibility PASSED                          [ 35%]
+tests/py/test_m5.py::test_monitoring_endpoints PASSED                    [ 40%]
+tests/py/test_m5.py::test_sql_console PASSED                             [ 45%]
+tests/py/test_m5.py::test_sse_notification PASSED                        [ 50%]
+tests/py/test_m6.py::test_login_page PASSED                              [ 55%]
+tests/py/test_m6.py::test_pages_redirect_without_session PASSED          [ 60%]
+tests/py/test_m6.py::test_admin_pages_render PASSED                      [ 65%]
+tests/py/test_m6.py::test_app_pages_render PASSED                        [ 70%]
+tests/py/test_m6.py::test_fragments PASSED                               [ 75%]
+tests/py/test_m6.py::test_cookie_auth_on_json_api PASSED                 [ 80%]
+tests/py/test_m6.py::test_playground_flow_via_cookies PASSED             [ 85%]
+tests/py/test_m6.py::test_web_sql_console PASSED                         [ 90%]
+tests/py/test_m6.py::test_sse_requires_session PASSED                    [ 95%]
+tests/py/test_m6.py::test_logout PASSED                                  [100%]
+
+============================= 20 passed in 13.65s ==============================

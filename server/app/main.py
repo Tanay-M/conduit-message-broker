@@ -9,8 +9,10 @@ from pathlib import Path
 from conduit.errors import ConduitError
 
 from . import db
-from .api import admin, broker, events, monitor, sql
+from .web_sessions import ensure_demo_account
+from .api import admin, broker, events, monitor, sql, reporting
 from .webui import router as webui
+from .webui import reports as reporting_web
 
 
 STATUS_MAP = {
@@ -42,8 +44,9 @@ STATUS_MAP = {
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await db.app_pool.open()
-    await db.admin_pool.open()
+    await db.app_pool.open(wait=True,timeout=10)
+    await db.admin_pool.open(wait=True,timeout=10)
+    await ensure_demo_account()
     yield
     await db.app_pool.close()
     await db.admin_pool.close()
@@ -69,6 +72,7 @@ async def conduit_error_handler(request: Request, exc: ConduitError):
 
 @app.get("/health")
 async def health():
+    await db.run('SELECT 1',pool=db.admin_pool,one=True)
     return {"status": "ok"}
 
 
@@ -77,7 +81,9 @@ app.include_router(monitor.router)
 app.include_router(admin.router)
 app.include_router(sql.router)
 app.include_router(events.router)
+app.include_router(reporting.router)
 app.include_router(webui.router)
+app.include_router(reporting_web.router)
 
 static_dir = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=static_dir), name="static")

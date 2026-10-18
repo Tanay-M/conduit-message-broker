@@ -1,0 +1,85 @@
+{
+  "checked_on": "2026-10-18",
+  "submission": {
+    "sql": "CALL reporting.submit_run('4032d496-693c-404b-9cf8-637b34420f7f'::uuid, 'monthly_sales', NULL, DATE '2026-01-01', DATE '2027-01-01', 10, false, 1, NULL);",
+    "run_id": "3a313ee3-8c65-4bfe-b0c4-d415cf96a87b",
+    "repeat_returned_same_run": true,
+    "run_rows_inside": 1,
+    "preparation_jobs_inside": 1
+  },
+  "trigger_states_inside": [
+    {
+      "old_state": null,
+      "new_state": "queued"
+    },
+    {
+      "old_state": "queued",
+      "new_state": "processing"
+    }
+  ],
+  "after_rollback": {
+    "run_rows": 0,
+    "preparation_jobs": 0
+  },
+  "immutable_rejections": [
+    {
+      "table": "template",
+      "sqlstate": "23514",
+      "message": "Historical template/dataset rows are immutable"
+    },
+    {
+      "table": "dataset",
+      "sqlstate": "23514",
+      "message": "Historical template/dataset rows are immutable"
+    }
+  ],
+  "function": {
+    "sql": "SELECT jsonb_array_length(reporting.calculate((SELECT template_id FROM reporting.template_version WHERE code='monthly_sales' ORDER BY version DESC LIMIT 1),NULL,DATE '2026-01-01',DATE '2027-01-01',10)) AS returned_months;",
+    "rows": [
+      {
+        "returned_months": 9
+      }
+    ]
+  },
+  "index_plan": {
+    "sql": "EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM reporting.sales_order WHERE customer_id=1 AND ordered_at >= DATE '2026-01-01' AND ordered_at < DATE '2027-01-01';",
+    "lines": [
+      "Bitmap Heap Scan on sales_order  (cost=4.55..41.62 rows=10 width=44) (actual time=0.020..0.024 rows=10 loops=1)",
+      "  Recheck Cond: ((customer_id = 1) AND (ordered_at >= '2026-01-01'::date) AND (ordered_at < '2027-01-01'::date))",
+      "  Heap Blocks: exact=6",
+      "  Buffers: shared hit=12",
+      "  ->  Bitmap Index Scan on sales_order_customer_date  (cost=0.00..4.54 rows=10 width=0) (actual time=0.017..0.017 rows=10 loops=1)",
+      "        Index Cond: ((customer_id = 1) AND (ordered_at >= '2026-01-01'::date) AND (ordered_at < '2027-01-01'::date))",
+      "        Buffers: shared hit=6",
+      "Planning:",
+      "  Buffers: shared hit=15",
+      "Planning Time: 0.138 ms",
+      "Execution Time: 0.040 ms"
+    ]
+  },
+  "materialized_view": {
+    "refresh": "REFRESH MATERIALIZED VIEW reporting.mv_monthly_sales;",
+    "sql": "SELECT * FROM reporting.mv_monthly_sales ORDER BY month,category LIMIT 3;",
+    "rows": [
+      {
+        "month": "2026-01-01",
+        "category": "Electronics",
+        "units": 29006,
+        "sales": "11005150.00"
+      },
+      {
+        "month": "2026-01-01",
+        "category": "Home",
+        "units": 29008,
+        "sales": "10718350.00"
+      },
+      {
+        "month": "2026-01-01",
+        "category": "Office",
+        "units": 29009,
+        "sales": "12170475.00"
+      }
+    ],
+    "transaction": "refresh demonstration rolled back"
+  }
+}

@@ -1,21 +1,11 @@
-<div class="card bg-base-100 shadow-sm p-4">
-  <div class="stat-label mb-2">{{ columns | length }} columns · {{ rows | length }} rows</div>
-  <div class="overflow-x-auto result-scroll">
-    <table class="table table-sm table-zebra">
-      <thead>
-        <tr>{% for c in columns %}<th>{{ c }}</th>{% endfor %}</tr>
-      </thead>
+<div class="panel">
+  <div class="panel-heading"><h2>Query results</h2><span class="muted small">{{ columns|length }} columns · {{ rows|length }} rows{% if rows|length==500 %} · Limit reached{% endif %}</span></div>
+  <div class="table-scroll result-scroll">
+    <table class="workspace-table">
+      <thead><tr>{% for column in columns %}<th>{{ column }}</th>{% endfor %}</tr></thead>
       <tbody>
-        {% for row in rows %}
-        <tr>
-          {% for c in columns %}
-          <td class="payload-cell"><code class="text-xs">{{ row[c] if row[c] is string else row[c] | tojson }}</code></td>
-          {% endfor %}
-        </tr>
-        {% endfor %}
-        {% if not rows %}
-        <tr><td colspan="{{ columns | length }}" class="opacity-50 text-center py-4">no rows</td></tr>
-        {% endif %}
+        {% for row in rows %}<tr>{% for column in columns %}<td class="payload-cell {% if row[column] is number %}numeric{% endif %}"><code>{{ row[column] if row[column] is not none else 'NULL' }}</code></td>{% endfor %}</tr>
+        {% else %}<tr><td colspan="{{ columns|length or 1 }}"><div class="empty-state"><h3>No matching rows</h3><p>The query completed successfully and returned an empty result.</p></div></td></tr>{% endfor %}
       </tbody>
     </table>
   </div>

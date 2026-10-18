@@ -11,6 +11,7 @@ from .. import db
 from ..api.sql import _sanitize
 from ..auth import SESSION_COOKIE, _extract_token, require_any
 from ..config import settings
+from ..web_sessions import SESSION_SECONDS, create_session, revoke_session
 
 router = APIRouter(tags=["webui"])
 
@@ -81,6 +82,15 @@ async def _q(ctx, sql, params=()):
     return await db.run(sql, params, pool=db.app_pool, user_id=ctx["owner_user_id"])
 
 
+async def _audit_rows(ctx,event_type):
+    if ctx['mode']=='admin':
+        return await db.run(AUDIT_SQL,(event_type,event_type,100),pool=db.admin_pool)
+    return await db.run('SELECT * FROM v_audit_recent WHERE (%s::text IS NULL OR event_type=%s) '
+        'AND (username=%s OR topic_name IN (SELECT topic_name FROM topic WHERE fn_user_can_read(%s,topic_id))) '
+        'ORDER BY log_id DESC LIMIT 100',
+        (event_type,event_type,ctx['owner_username'],ctx['owner_user_id']),pool=db.admin_pool)
+
+
 def _require_admin_ctx(ctx):
     if ctx is None:
         raise HTTPException(status_code=401, detail="admin session required")
@@ -101,34 +111,37 @@ def _fragment(request, name, **extra):
 
 @router.get("/web/login")
 async def login_page(request: Request):
-    return templates.TemplateResponse(request, "login.html", {"error": None})
+    return templates.TemplateResponse(
+        request, "login.html", {"error": None, "username": ""}
+    )
 
 
 @router.post("/web/login")
-async def login(request: Request, mode: str = Form(...), token: str = Form(...)):
-    token = token.strip()
-    if mode == "admin":
-        if token != settings.admin_token:
-            return templates.TemplateResponse(
-                request, "login.html", {"error": "invalid admin token"}, status_code=401
-            )
-    else:
-        try:
-            import uuid as _uuid
-
-            _uuid.UUID(token)
-            await db.run("SELECT * FROM fn_auth_app(%s::uuid)", (token,), one=True)
-        except (ValueError, ConduitError, psycopg.Error):
-            return templates.TemplateResponse(
-                request, "login.html", {"error": "invalid api key"}, status_code=401
-            )
+async def login(request: Request, username: str = Form(...), password: str = Form(...)):
+    username = username.strip()
+    token = (
+        await create_session(username, password)
+        if len(username) <= 64 and len(password) <= 1024
+        else None
+    )
+    if token is None:
+        return templates.TemplateResponse(
+            request, "login.html",
+            {"error": "Incorrect username or password.", "username": username[:64]},
+            status_code=401,
+        )
+    await revoke_session(request.cookies.get(SESSION_COOKIE))
     resp = RedirectResponse("/", status_code=303)
-    resp.set_cookie(SESSION_COOKIE, token, httponly=True, samesite="lax")
+    resp.set_cookie(
+        SESSION_COOKIE, token, httponly=True, samesite="lax",
+        secure=request.url.scheme == "https", max_age=SESSION_SECONDS,
+    )
     return resp
 
 
 @router.get("/web/logout")
-async def logout():
+async def logout(request: Request):
+    await revoke_session(request.cookies.get(SESSION_COOKIE))
     resp = RedirectResponse("/web/login", status_code=303)
     resp.delete_cookie(SESSION_COOKIE)
     return resp
@@ -139,9 +152,24 @@ async def overview(request: Request):
     ctx = await session(request)
     if ctx is None:
         return RedirectResponse("/web/login", status_code=303)
+    if ctx['mode']=='admin':
+        from .reports import home
+        return await home(request,ctx)
+    return await broker_overview(request,ctx)
+
+
+@router.get('/operations')
+async def operations_page(request: Request):
+    ctx=await session(request)
+    if ctx is None:
+        return RedirectResponse('/web/login',status_code=303)
+    return await broker_overview(request,ctx)
+
+
+async def broker_overview(request,ctx):
     stats = await _q(ctx, STATS_SQL)
     lag = await _q(ctx, LAG_SQL)
-    recent = await db.run(AUDIT_SQL, (None, None, 8), pool=db.admin_pool)
+    recent = (await _audit_rows(ctx,None))[:8]
     return _page(request, ctx, "overview", "overview", stats=stats, lag=lag, recent=recent)
 
 
@@ -212,7 +240,7 @@ async def audit_page(request: Request, event_type: str | None = None):
     ctx = await session(request)
     if ctx is None:
         return RedirectResponse("/web/login", status_code=303)
-    rows = await db.run(AUDIT_SQL, (event_type, event_type, 100), pool=db.admin_pool)
+    rows = await _audit_rows(ctx,event_type)
     return _page(request, ctx, "audit", "audit", audit=rows, event_type=event_type)
 
 
@@ -221,8 +249,8 @@ async def dlq_page(request: Request):
     ctx = await session(request)
     if ctx is None:
         return RedirectResponse("/web/login", status_code=303)
-    rows = await db.run(DLQ_SQL, pool=db.admin_pool)
-    apps = await db.run(APPS_SQL, pool=db.admin_pool)
+    rows = await _q(ctx, DLQ_SQL)
+    apps = await db.run(APPS_SQL, pool=db.admin_pool) if ctx['mode']=='admin' else []
     return _page(request, ctx, "dlq", "dlq", dlq=rows, apps=apps)
 
 
@@ -291,7 +319,7 @@ async def audit_fragment(request: Request, event_type: str | None = None):
     ctx = await session(request)
     if ctx is None:
         raise HTTPException(status_code=401)
-    rows = await db.run(AUDIT_SQL, (event_type, event_type, 100), pool=db.admin_pool)
+    rows = await _audit_rows(ctx,event_type)
     return _fragment(request, "_audit_table.html", audit=rows, event_type=event_type)
 
 
@@ -300,7 +328,7 @@ async def dlq_fragment(request: Request):
     ctx = await session(request)
     if ctx is None:
         raise HTTPException(status_code=401)
-    rows = await db.run(DLQ_SQL, pool=db.admin_pool)
+    rows = await _q(ctx, DLQ_SQL)
     return _fragment(request, "_dlq_table.html", dlq=rows)
 
 
@@ -460,7 +488,7 @@ async def grant_access(
     await _admin_action(request)
     await db.run(
         "SELECT grant_access(%s::text, %s::text, %s::text, %s::text)",
-        (username, topic, access_type, "admin"),
+        (username, topic, access_type, settings.admin_username),
         pool=db.admin_pool,
     )
     rows = await db.run(ACCESS_SQL, pool=db.admin_pool)

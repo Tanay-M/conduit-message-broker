@@ -1,19 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
-<h1 class="text-xl font-bold mb-1">SQL Console</h1>
-<div class="text-xs opacity-60 mb-4">read-only · single SELECT or EXPLAIN · 5s timeout · 500 row cap</div>
+{% from 'components/icons.html' import icon %}
+<div class="page-heading"><div><div class="eyebrow">DATABASE TOOLS</div><h1>SQL workspace</h1><p>Inspect business data with a read-only SELECT or EXPLAIN query.</p></div><span class="soft-label">5s timeout · 500 row limit</span></div>
+<div class="section-heading"><h2>Query editor</h2><div class="sql-presets"><button class="btn btn-secondary btn-sm" data-sql-preset="SELECT * FROM reporting.v_sales_lines LIMIT 20;">Sales joins</button><button class="btn btn-secondary btn-sm" data-sql-preset="SELECT category, sum(line_total) AS sales FROM reporting.v_sales_lines GROUP BY category ORDER BY sales DESC;">Sales by category</button><button class="btn btn-secondary btn-sm" data-sql-preset="SELECT * FROM reporting.v_run_progress ORDER BY created_at DESC LIMIT 10;">Run status</button></div></div>
 
-<div class="card bg-base-100 shadow-sm p-4">
-  <form hx-post="/web/sql" hx-target="#sql-results" hx-swap="innerHTML" class="flex flex-col gap-2">
-    <textarea id="sql-editor" name="query" class="textarea textarea-bordered" spellcheck="false">SELECT topic_name, pending, claimed, delivered, dead
-FROM v_topic_stats
-ORDER BY topic_name;</textarea>
-    <div class="flex items-center gap-2">
-      <button class="btn btn-primary btn-sm">Run</button>
-      <span class="text-xs opacity-50">Ctrl+Enter</span>
+<div class="panel sql-editor-panel">
+  <form hx-post="/web/sql" hx-target="#sql-results" hx-swap="innerHTML" class="flex flex-col">
+    <label class="sr-only" for="sql-editor">SQL query</label><textarea id="sql-editor" name="query" spellcheck="false">SELECT customer_ref, order_ref, sku,
+       quantity, unit_price, line_total
+FROM reporting.v_sales_lines
+WHERE customer_id = 1
+ORDER BY ordered_at, order_id, line_number
+LIMIT 20;</textarea>
+    <div class="sql-editor-footer">
+      <span>Read only · PostgreSQL<span class="inline-divider">·</span>Ctrl + Enter to run</span>
+      <button class="btn btn-primary btn-sm">{{ icon('code') }}Run query</button>
     </div>
   </form>
 </div>
 
-<div id="sql-results" class="mt-4"></div>
+<div id="sql-results" class="mt-4"><div class="empty-state"><h3>Your results will appear here</h3><p>Run a query or choose a preset to inspect the underlying data.</p></div></div>
 {% endblock %}

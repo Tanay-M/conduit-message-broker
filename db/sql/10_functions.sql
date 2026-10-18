@@ -250,7 +250,7 @@ BEGIN
         RAISE EXCEPTION 'application % is registered as consumer-only and cannot produce', p_producer_app_id USING ERRCODE = 'CDT20';
     END IF;
 
-    PERFORM pg_advisory_xact_lock(p_producer_app_id::int, p_producer_seq::int);
+    PERFORM pg_advisory_xact_lock(hashtextextended(p_producer_app_id::text || ':' || p_producer_seq::text, 0));
 
     SELECT ps.topic_id, ps.partition_id, ps.msg_offset
     INTO v_ledger_topic_id, v_ledger_partition_id, v_ledger_msg_offset

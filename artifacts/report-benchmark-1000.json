@@ -1,0 +1,46 @@
+{
+  "run_id": "f81a165a-e248-404a-be4e-371a3fff16ab",
+  "dataset": {
+    "customers": 1000,
+    "orders": 10000,
+    "items": 30000,
+    "seconds": 0.524
+  },
+  "workers": 4,
+  "submission_seconds": 0.07284180000715423,
+  "end_to_end_seconds": 12.593268399999943,
+  "completed_per_second": 79.40750313874074,
+  "status": {
+    "run_id": "f81a165a-e248-404a-be4e-371a3fff16ab",
+    "code": "customer_statement",
+    "version": 1,
+    "preparation_status": "ready",
+    "created_at": "2026-10-17 12:18:54.325775+05:30",
+    "prepared_at": "2026-10-17 12:18:56.273673+05:30",
+    "expected": 1000,
+    "queued": 0,
+    "processing": 0,
+    "completed": 1000,
+    "failed": 0,
+    "last_completion": "2026-10-17 12:19:05.929185+05:30"
+  },
+  "timing": {
+    "preparation_seconds": "1.947898",
+    "completion_p50_seconds": 5.9947535,
+    "completion_p95_seconds": 10.3249533
+  },
+  "verified_result_rows": 1000,
+  "verified_files": 2000,
+  "output_bytes": 8817596,
+  "sum_worker_sql_seconds": 6.004149900487391,
+  "sum_worker_render_seconds": 17.252471400162904,
+  "environment": {
+    "postgres": "PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit",
+    "shared_buffers": "128MB",
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.12",
+    "logical_cpus": 12,
+    "memory_bytes": 8297709568
+  },
+  "limits": "Single measured run, shared local machine; includes SQL, queue and CSV/HTML rendering. Not a pure PostgreSQL or PDF benchmark."
+}

@@ -1,0 +1,472 @@
+Pager usage is off.
+BEGIN
+Environment and deployed object counts
+                                                       version                                                        |       current_database       | current_user 
+----------------------------------------------------------------------------------------------------------------------+------------------------------+--------------
+ PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit | conduit_verify_seed_b6ad0730 | conduit
+(1 row)
+
+ logical_tables | child_tables | normal_views | materialized_views 
+----------------+--------------+--------------+--------------------
+             15 |            8 |            4 |                  1
+(1 row)
+
+     table_name      | is_physical_partition 
+---------------------+-----------------------
+ access              | f
+ app_user            | f
+ application         | f
+ audit_log           | f
+ broker_config       | f
+ consumer_group      | f
+ dead_letter_message | f
+ group_offset        | f
+ group_subscription  | f
+ message             | f
+ partition           | f
+ producer_sequence   | f
+ role                | f
+ schema_version      | f
+ topic               | f
+ message_2026_09     | t
+ message_2026_10     | t
+ message_2026_11     | t
+ message_2026_12     | t
+ message_2027_01     | t
+ message_2027_02     | t
+ message_2027_03     | t
+ message_default     | t
+(23 rows)
+
+Criterion 1: actual constraints, without double-counting child tables
+     table_name      |              constraint_name               | constraint_type |                                                                               definition                                                                                
+---------------------+--------------------------------------------+-----------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ access              | access_access_type_check                   | c               | CHECK (((access_type)::text = ANY ((ARRAY['produce'::character varying, 'consume'::character varying, 'admin'::character varying])::text[])))
+ access              | access_granted_by_fkey                     | f               | FOREIGN KEY (granted_by) REFERENCES app_user(user_id) ON DELETE SET NULL
+ access              | access_topic_id_fkey                       | f               | FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE CASCADE
+ access              | access_user_id_fkey                        | f               | FOREIGN KEY (user_id) REFERENCES app_user(user_id) ON DELETE CASCADE
+ access              | access_pkey                                | p               | PRIMARY KEY (access_id)
+ access              | uq_access                                  | u               | UNIQUE (user_id, topic_id, access_type)
+ app_user            | app_user_status_check                      | c               | CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'suspended'::character varying])::text[])))
+ app_user            | app_user_role_id_fkey                      | f               | FOREIGN KEY (role_id) REFERENCES role(role_id) ON DELETE RESTRICT
+ app_user            | app_user_pkey                              | p               | PRIMARY KEY (user_id)
+ app_user            | app_user_email_key                         | u               | UNIQUE (email)
+ app_user            | app_user_username_key                      | u               | UNIQUE (username)
+ application         | application_app_type_check                 | c               | CHECK (((app_type)::text = ANY ((ARRAY['producer'::character varying, 'consumer'::character varying, 'both'::character varying])::text[])))
+ application         | application_status_check                   | c               | CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'revoked'::character varying])::text[])))
+ application         | application_owner_user_id_fkey             | f               | FOREIGN KEY (owner_user_id) REFERENCES app_user(user_id) ON DELETE CASCADE
+ application         | application_pkey                           | p               | PRIMARY KEY (app_id)
+ application         | application_api_key_key                    | u               | UNIQUE (api_key)
+ application         | application_app_name_key                   | u               | UNIQUE (app_name)
+ audit_log           | audit_log_status_check                     | c               | CHECK (((status)::text = ANY ((ARRAY['success'::character varying, 'failure'::character varying])::text[])))
+ audit_log           | audit_log_app_id_fkey                      | f               | FOREIGN KEY (app_id) REFERENCES application(app_id) ON DELETE SET NULL
+ audit_log           | audit_log_topic_id_fkey                    | f               | FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE SET NULL
+ audit_log           | audit_log_user_id_fkey                     | f               | FOREIGN KEY (user_id) REFERENCES app_user(user_id) ON DELETE SET NULL
+ audit_log           | audit_log_pkey                             | p               | PRIMARY KEY (log_id)
+ broker_config       | broker_config_updated_by_fkey              | f               | FOREIGN KEY (updated_by) REFERENCES app_user(user_id) ON DELETE SET NULL
+ broker_config       | broker_config_pkey                         | p               | PRIMARY KEY (config_id)
+ broker_config       | broker_config_config_key_key               | u               | UNIQUE (config_key)
+ consumer_group      | consumer_group_max_delivery_attempts_check | c               | CHECK (((max_delivery_attempts >= 1) AND (max_delivery_attempts <= 10)))
+ consumer_group      | consumer_group_status_check                | c               | CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'paused'::character varying])::text[])))
+ consumer_group      | consumer_group_created_by_fkey             | f               | FOREIGN KEY (created_by) REFERENCES app_user(user_id) ON DELETE SET NULL
+ consumer_group      | consumer_group_pkey                        | p               | PRIMARY KEY (group_id)
+ consumer_group      | consumer_group_group_name_key              | u               | UNIQUE (group_name)
+ dead_letter_message | dead_letter_message_attempts_check         | c               | CHECK ((attempts >= 0))
+ dead_letter_message | dead_letter_message_original_offset_check  | c               | CHECK ((original_offset >= 0))
+ dead_letter_message | dead_letter_message_status_check           | c               | CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'requeued'::character varying])::text[])))
+ dead_letter_message | dead_letter_message_failed_group_id_fkey   | f               | FOREIGN KEY (failed_group_id) REFERENCES consumer_group(group_id) ON DELETE SET NULL
+ dead_letter_message | dead_letter_message_original_topic_id_fkey | f               | FOREIGN KEY (original_topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT
+ dead_letter_message | dead_letter_message_pkey                   | p               | PRIMARY KEY (dlq_id)
+ group_offset        | group_offset_committed_offset_check        | c               | CHECK ((committed_offset >= 0))
+ group_offset        | group_offset_group_id_fkey                 | f               | FOREIGN KEY (group_id) REFERENCES consumer_group(group_id) ON DELETE CASCADE
+ group_offset        | group_offset_partition_id_fkey             | f               | FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE CASCADE
+ group_offset        | pk_group_offset                            | p               | PRIMARY KEY (group_id, partition_id)
+ group_subscription  | group_subscription_group_id_fkey           | f               | FOREIGN KEY (group_id) REFERENCES consumer_group(group_id) ON DELETE CASCADE
+ group_subscription  | group_subscription_topic_id_fkey           | f               | FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE CASCADE
+ group_subscription  | pk_group_subscription                      | p               | PRIMARY KEY (group_id, topic_id)
+ message             | message_attempts_check                     | c               | CHECK ((attempts >= 0))
+ message             | message_msg_offset_check                   | c               | CHECK ((msg_offset >= 0))
+ message             | message_producer_seq_check                 | c               | CHECK ((producer_seq >= 0))
+ message             | message_size_bytes_check                   | c               | CHECK ((size_bytes >= 0))
+ message             | message_status_check                       | c               | CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'claimed'::character varying, 'delivered'::character varying, 'dead'::character varying])::text[])))
+ message             | fk_message_claimed_by                      | f               | FOREIGN KEY (claimed_by) REFERENCES consumer_group(group_id) ON DELETE SET NULL
+ message             | fk_message_partition                       | f               | FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE RESTRICT
+ message             | fk_message_producer_app                    | f               | FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE RESTRICT
+ message             | fk_message_topic                           | f               | FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT
+ message             | message_pk                                 | p               | PRIMARY KEY (created_at, topic_id, partition_id, msg_offset)
+ partition           | partition_next_offset_check                | c               | CHECK ((next_offset >= 0))
+ partition           | partition_partition_number_check           | c               | CHECK ((partition_number >= 0))
+ partition           | partition_topic_id_fkey                    | f               | FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE CASCADE
+ partition           | partition_pkey                             | p               | PRIMARY KEY (partition_id)
+ partition           | uq_partition_topic_number                  | u               | UNIQUE (topic_id, partition_number)
+ producer_sequence   | producer_sequence_msg_offset_check         | c               | CHECK ((msg_offset >= 0))
+ producer_sequence   | producer_sequence_producer_seq_check       | c               | CHECK ((producer_seq >= 0))
+ producer_sequence   | producer_sequence_producer_app_id_fkey     | f               | FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE CASCADE
+ producer_sequence   | pk_producer_sequence                       | p               | PRIMARY KEY (producer_app_id, producer_seq)
+ role                | role_pkey                                  | p               | PRIMARY KEY (role_id)
+ role                | role_role_name_key                         | u               | UNIQUE (role_name)
+ schema_version      | schema_version_format_check                | c               | CHECK (((format)::text = 'json'::text))
+ schema_version      | schema_version_status_check                | c               | CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'deprecated'::character varying])::text[])))
+ schema_version      | schema_version_version_check               | c               | CHECK ((version >= 1))
+ schema_version      | schema_version_created_by_fkey             | f               | FOREIGN KEY (created_by) REFERENCES app_user(user_id) ON DELETE SET NULL
+ schema_version      | schema_version_topic_id_fkey               | f               | FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE CASCADE
+ schema_version      | schema_version_pkey                        | p               | PRIMARY KEY (schema_id)
+ schema_version      | uq_schema_topic_version                    | u               | UNIQUE (topic_id, version)
+ topic               | topic_max_message_bytes_check              | c               | CHECK ((max_message_bytes > 0))
+ topic               | topic_retention_days_check                 | c               | CHECK (((retention_days >= 1) AND (retention_days <= 3650)))
+ topic               | topic_status_check                         | c               | CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'archived'::character varying])::text[])))
+ topic               | topic_created_by_fkey                      | f               | FOREIGN KEY (created_by) REFERENCES app_user(user_id) ON DELETE RESTRICT
+ topic               | topic_pkey                                 | p               | PRIMARY KEY (topic_id)
+ topic               | topic_topic_name_key                       | u               | UNIQUE (topic_name)
+(77 rows)
+
+     table_name     |   column_name   |        data_type         | is_nullable 
+--------------------+-----------------+--------------------------+-------------
+ group_subscription | group_id        | bigint                   | NO
+ group_subscription | topic_id        | bigint                   | NO
+ group_subscription | subscribed_at   | timestamp with time zone | NO
+ message            | created_at      | timestamp with time zone | NO
+ message            | topic_id        | bigint                   | NO
+ message            | partition_id    | bigint                   | NO
+ message            | msg_offset      | bigint                   | NO
+ message            | msg_key         | character varying        | YES
+ message            | payload         | jsonb                    | NO
+ message            | size_bytes      | integer                  | NO
+ message            | producer_app_id | bigint                   | NO
+ message            | producer_seq    | bigint                   | NO
+ message            | status          | character varying        | NO
+ message            | claimed_by      | bigint                   | YES
+ message            | visible_at      | timestamp with time zone | YES
+ message            | attempts        | integer                  | NO
+ producer_sequence  | producer_app_id | bigint                   | NO
+ producer_sequence  | producer_seq    | bigint                   | NO
+ producer_sequence  | topic_id        | bigint                   | NO
+ producer_sequence  | partition_id    | bigint                   | NO
+ producer_sequence  | msg_offset      | bigint                   | NO
+ producer_sequence  | created_at      | timestamp with time zone | NO
+(22 rows)
+
+ physical_partition |                              time_boundary                               
+--------------------+--------------------------------------------------------------------------
+ message_2026_09    | FOR VALUES FROM ('2026-09-01 00:00:00+00') TO ('2026-10-01 00:00:00+00')
+ message_2026_10    | FOR VALUES FROM ('2026-10-01 00:00:00+00') TO ('2026-11-01 00:00:00+00')
+ message_2026_11    | FOR VALUES FROM ('2026-11-01 00:00:00+00') TO ('2026-12-01 00:00:00+00')
+ message_2026_12    | FOR VALUES FROM ('2026-12-01 00:00:00+00') TO ('2027-01-01 00:00:00+00')
+ message_2027_01    | FOR VALUES FROM ('2027-01-01 00:00:00+00') TO ('2027-02-01 00:00:00+00')
+ message_2027_02    | FOR VALUES FROM ('2027-02-01 00:00:00+00') TO ('2027-03-01 00:00:00+00')
+ message_2027_03    | FOR VALUES FROM ('2027-03-01 00:00:00+00') TO ('2027-04-01 00:00:00+00')
+ message_default    | DEFAULT
+(8 rows)
+
+Criterion 2: current data, stored messages, and deduplication ledger
+  status   | message_count 
+-----------+---------------
+ claimed   |            30
+ dead      |             2
+ delivered |          1553
+ pending   |           394
+(4 rows)
+
+      topic_name      | pending | claimed | delivered | dead | dlq_pending 
+----------------------+---------+---------+-----------+------+-------------
+ notifications        |       8 |       7 |       256 |    0 |           0
+ orders               |     210 |      10 |       580 |    0 |           0
+ payments             |      68 |       8 |       425 |    1 |           1
+ probec1c71d9bcharts  |       1 |       0 |         0 |    0 |           0
+ probec1c71d9bdlq     |       0 |       0 |         0 |    1 |           1
+ probec1c71d9bgroups  |       0 |       0 |         1 |    0 |           0
+ probec1c71d9boffsets |       0 |       1 |         1 |    0 |           0
+ user-activity        |     107 |       4 |       290 |    0 |           0
+(8 rows)
+
+          created_at           |      topic_name      | partition_number | msg_offset |     app_name     | producer_seq |                                   payload                                   |  status   
+-------------------------------+----------------------+------------------+------------+------------------+--------------+-----------------------------------------------------------------------------+-----------
+ 2026-10-13 07:01:23.419078+00 | probec1c71d9bgroups  |                0 |          0 | probec1c71d9bapp |            5 | {"event": "group-copy-test"}                                                | delivered
+ 2026-10-13 07:01:23.368353+00 | probec1c71d9boffsets |                0 |          1 | probec1c71d9bapp |            4 | {"event": "later"}                                                          | delivered
+ 2026-10-13 07:01:23.364649+00 | probec1c71d9boffsets |                0 |          0 | probec1c71d9bapp |            3 | {"event": "earlier"}                                                        | claimed
+ 2026-10-13 07:01:23.133875+00 | probec1c71d9bdlq     |                0 |          0 | probec1c71d9bapp |            2 | {"event": "poison", "marker": "PRIVATE_PAYLOAD_probec1c71d9b"}              | dead
+ 2026-10-13 07:01:23.040917+00 | probec1c71d9bcharts  |                0 |          0 | probec1c71d9bapp |            1 | {"event": "small-sequence-control"}                                         | pending
+ 2026-10-13 06:59:10.123249+00 | user-activity        |                1 |        133 | checkout-service |         1100 | {"page": "/p1", "user": "user-1", "event": "click"}                         | pending
+ 2026-10-13 06:59:10.076399+00 | notifications        |                0 |        144 | fraud-detector   |          301 | {"event": "email", "channel": "email", "recipient": "user-9"}               | delivered
+ 2026-10-13 06:59:10.057312+00 | payments             |                0 |        302 | payment-service  |          502 | {"event": "captured", "currency": "INR", "order_id": 2, "payment_id": 9002} | pending
+ 2026-10-13 06:59:10.041083+00 | payments             |                0 |        301 | payment-service  |          501 | {"event": "captured", "currency": "INR", "order_id": 1, "payment_id": 9001} | pending
+ 2026-10-13 06:59:02.547509+00 | user-activity        |                0 |        124 | checkout-service |          973 | {"page": "/p13", "user": "user-13", "event": "click"}                       | pending
+(10 rows)
+
+     app_name     | producer_seq | partition_id | msg_offset 
+------------------+--------------+--------------+------------
+ probec1c71d9bapp |            5 |           15 |          0
+ probec1c71d9bapp |            4 |           14 |          1
+ probec1c71d9bapp |            3 |           14 |          0
+ probec1c71d9bapp |            2 |           13 |          0
+ probec1c71d9bapp |            1 |           12 |          0
+ checkout-service |         1100 |           10 |        133
+ fraud-detector   |          301 |            7 |        144
+ payment-service  |          502 |            5 |        302
+ payment-service  |          501 |            5 |        301
+ checkout-service |          601 |            9 |          0
+(10 rows)
+
+Criterion 3: filtering, joins, aggregation, and window totals
+  topic_name   | partition_number | msg_offset |                            payload                             
+---------------+------------------+------------+----------------------------------------------------------------
+ notifications |                1 |        148 | {"event": "email", "channel": "email", "recipient": "user-48"}
+ notifications |                1 |        149 | {"event": "push", "channel": "push", "recipient": "user-50"}
+ notifications |                1 |        150 | {"event": "sms", "channel": "sms", "recipient": "user-52"}
+ notifications |                1 |        151 | {"event": "push", "channel": "push", "recipient": "user-53"}
+ notifications |                1 |        152 | {"event": "sms", "channel": "sms", "recipient": "user-55"}
+ notifications |                1 |        153 | {"event": "push", "channel": "push", "recipient": "user-56"}
+ notifications |                1 |        154 | {"event": "sms", "channel": "sms", "recipient": "user-58"}
+ notifications |                1 |        155 | {"event": "push", "channel": "push", "recipient": "user-59"}
+ orders        |                0 |        149 | {"event": "created", "amount": 250, "order_id": 424}
+ orders        |                0 |        150 | {"event": "shipped", "amount": 270, "order_id": 426}
+(10 rows)
+
+      topic_name      | total | pending | claimed | delivered 
+----------------------+-------+---------+---------+-----------
+ notifications        |   271 |       8 |       7 |       256
+ orders               |   800 |     210 |      10 |       580
+ payments             |   502 |      68 |       8 |       425
+ probec1c71d9bcharts  |     1 |       1 |       0 |         0
+ probec1c71d9bdlq     |     1 |       0 |       0 |         0
+ probec1c71d9bgroups  |     1 |       0 |       0 |         1
+ probec1c71d9boffsets |     2 |       0 |       1 |         1
+ user-activity        |   401 |     107 |       4 |       290
+(8 rows)
+
+      topic_name      |         group_name          | partition_number | committed_offset | head_offset | lag_messages |        last_commit_at         
+----------------------+-----------------------------+------------------+------------------+-------------+--------------+-------------------------------
+ notifications        | email-workers               |                0 |              145 |         145 |            0 | 2026-10-13 06:59:10.098682+00
+ notifications        | email-workers               |                1 |              146 |         156 |           10 | 2026-10-13 06:59:07.738725+00
+ orders               | analytics-team              |                0 |                0 |         288 |          288 | 2026-10-13 06:59:05.24885+00
+ orders               | analytics-team              |                1 |                0 |         192 |          192 | 2026-10-13 06:59:05.24885+00
+ orders               | analytics-team              |                2 |                0 |         144 |          144 | 2026-10-13 06:59:05.24885+00
+ orders               | analytics-team              |                3 |                0 |         176 |          176 | 2026-10-13 06:59:05.24885+00
+ orders               | billing-workers             |                0 |              146 |         288 |          142 | 2026-10-13 06:59:07.477285+00
+ orders               | billing-workers             |                1 |              145 |         192 |           47 | 2026-10-13 06:59:07.477285+00
+ orders               | billing-workers             |                2 |              144 |         144 |            0 | 2026-10-13 06:59:07.477285+00
+ orders               | billing-workers             |                3 |              145 |         176 |           31 | 2026-10-13 06:59:07.477285+00
+ payments             | fraud-team                  |                0 |              232 |         303 |           71 | 2026-10-13 06:59:07.645509+00
+ payments             | fraud-team                  |                1 |              199 |         199 |            0 | 2026-10-13 06:59:07.645509+00
+ payments             | payment-processors          |                0 |              198 |         303 |          105 | 2026-10-13 06:59:07.604191+00
+ payments             | payment-processors          |                1 |              198 |         199 |            1 | 2026-10-13 06:59:07.604191+00
+ probec1c71d9bcharts  | probec1c71d9bchartsworkers  |                0 |                0 |           1 |            1 | 2026-10-13 07:01:22.934387+00
+ probec1c71d9bdlq     | probec1c71d9bdlqworkers     |                0 |                0 |           1 |            1 | 2026-10-13 07:01:23.132019+00
+ probec1c71d9bgroups  | probec1c71d9bgroupssecond   |                0 |                0 |           1 |            1 | 2026-10-13 07:01:23.417797+00
+ probec1c71d9bgroups  | probec1c71d9bgroupsworkers  |                0 |                1 |           1 |            0 | 2026-10-13 07:01:23.429162+00
+ probec1c71d9boffsets | probec1c71d9boffsetsworkers |                0 |                2 |           2 |            0 | 2026-10-13 07:01:23.382569+00
+ user-activity        | analytics-team              |                0 |               97 |         134 |           37 | 2026-10-13 06:59:07.813953+00
+ user-activity        | analytics-team              |                1 |               97 |         134 |           37 | 2026-10-13 06:59:07.813953+00
+ user-activity        | analytics-team              |                2 |               96 |         133 |           37 | 2026-10-13 06:59:07.813953+00
+(22 rows)
+
+  topic_name   |       minute_ts        | messages | cumulative_messages 
+---------------+------------------------+----------+---------------------
+ notifications | 2026-10-13 06:59:00+00 |        1 |                 264
+ notifications | 2026-10-13 06:58:00+00 |        4 |                 263
+ notifications | 2026-10-13 06:57:00+00 |        2 |                 259
+ notifications | 2026-10-13 06:56:00+00 |        1 |                 257
+ notifications | 2026-10-13 06:55:00+00 |        1 |                 256
+ notifications | 2026-10-13 06:54:00+00 |        2 |                 255
+ notifications | 2026-10-13 06:53:00+00 |        2 |                 253
+ notifications | 2026-10-13 06:52:00+00 |        2 |                 251
+ notifications | 2026-10-13 06:51:00+00 |        1 |                 249
+ notifications | 2026-10-13 06:50:00+00 |        1 |                 248
+ notifications | 2026-10-13 06:49:00+00 |        4 |                 247
+ notifications | 2026-10-13 06:47:00+00 |        3 |                 243
+ notifications | 2026-10-13 06:46:00+00 |        2 |                 240
+ notifications | 2026-10-13 06:45:00+00 |        2 |                 238
+ notifications | 2026-10-13 06:44:00+00 |        2 |                 236
+ notifications | 2026-10-13 06:43:00+00 |        3 |                 234
+ notifications | 2026-10-13 06:42:00+00 |        1 |                 231
+ notifications | 2026-10-13 06:41:00+00 |        3 |                 230
+ notifications | 2026-10-13 06:40:00+00 |        1 |                 227
+ notifications | 2026-10-13 06:39:00+00 |        2 |                 226
+(20 rows)
+
+ log_id |   username    |     app_name     |      topic_name      |   event_type   | status  
+--------+---------------+------------------+----------------------+----------------+---------
+   3637 | system        |                  | probec1c71d9bgroups  | DELIVERED      | success
+   3636 | probec1c71d9b | probec1c71d9bapp | probec1c71d9bgroups  | PRODUCE        | success
+   3635 | probec1c71d9b |                  | probec1c71d9bgroups  | ACL_GRANT      | success
+   3634 | probec1c71d9b |                  | probec1c71d9bgroups  | ACL_GRANT      | success
+   3633 | probec1c71d9b |                  | probec1c71d9bgroups  | SCHEMA_PUBLISH | success
+   3632 | probec1c71d9b |                  | probec1c71d9bgroups  | TOPIC_CREATE   | success
+   3631 | system        |                  | probec1c71d9boffsets | DELIVERED      | success
+   3630 | probec1c71d9b | probec1c71d9bapp | probec1c71d9boffsets | PRODUCE        | success
+   3629 | probec1c71d9b | probec1c71d9bapp | probec1c71d9boffsets | PRODUCE        | success
+   3628 | probec1c71d9b |                  | probec1c71d9boffsets | ACL_GRANT      | success
+(10 rows)
+
+Criterion 4: deployed functions, triggers, policies, and indexes
+       proname       |                                              arguments                                              | routine_kind 
+---------------------+-----------------------------------------------------------------------------------------------------+--------------
+ ack                 | p_group_name text, p_locations jsonb                                                                | function
+ consume             | p_group_name text, p_topic_name text, p_batch_size integer, p_visibility_timeout_s integer          | function
+ nack                | p_group_name text, p_locations jsonb, p_reason text                                                 | function
+ produce             | p_topic_name text, p_msg_key text, p_payload jsonb, p_producer_app_id bigint, p_producer_seq bigint | function
+ produce_batch       | p_topic_name text, p_messages jsonb, p_producer_app_id bigint                                       | function
+ reap_expired_claims |                                                                                                     | function
+ refresh_dashboard   |                                                                                                     | function
+ validate_schema     | p_payload jsonb, p_definition jsonb                                                                 | function
+(8 rows)
+
+     table_name      |         trigger_name          |                                                                                                           definition                                                                                                           
+---------------------+-------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ access              | access_grant_audit            | CREATE TRIGGER access_grant_audit AFTER INSERT ON public.access FOR EACH ROW EXECUTE FUNCTION trg_audit_access_grant()
+ access              | access_revoke_audit           | CREATE TRIGGER access_revoke_audit AFTER DELETE ON public.access FOR EACH ROW EXECUTE FUNCTION trg_audit_access_revoke()
+ broker_config       | broker_config_bump_updated_at | CREATE TRIGGER broker_config_bump_updated_at BEFORE UPDATE ON public.broker_config FOR EACH ROW EXECUTE FUNCTION trg_bump_updated_at()
+ broker_config       | broker_config_insert_audit    | CREATE TRIGGER broker_config_insert_audit AFTER INSERT ON public.broker_config FOR EACH ROW EXECUTE FUNCTION trg_audit_config_create()
+ broker_config       | broker_config_update_audit    | CREATE TRIGGER broker_config_update_audit AFTER UPDATE ON public.broker_config FOR EACH ROW EXECUTE FUNCTION trg_audit_config_change()
+ dead_letter_message | dead_letter_insert_audit      | CREATE TRIGGER dead_letter_insert_audit AFTER INSERT ON public.dead_letter_message FOR EACH ROW EXECUTE FUNCTION trg_audit_dlq()
+ group_offset        | group_offset_monotonic        | CREATE TRIGGER group_offset_monotonic BEFORE UPDATE ON public.group_offset FOR EACH ROW EXECUTE FUNCTION trg_group_offset_monotonic()
+ message             | message_consume_acl           | CREATE TRIGGER message_consume_acl BEFORE UPDATE ON public.message FOR EACH ROW WHEN ((((old.status)::text = 'pending'::text) AND ((new.status)::text = 'claimed'::text))) EXECUTE FUNCTION trg_acl_consume()
+ message             | message_delivered_audit       | CREATE TRIGGER message_delivered_audit AFTER UPDATE ON public.message FOR EACH ROW WHEN ((((old.status)::text = 'claimed'::text) AND ((new.status)::text = 'delivered'::text))) EXECUTE FUNCTION trg_audit_message_delivered()
+ message             | message_insert_audit          | CREATE TRIGGER message_insert_audit AFTER INSERT ON public.message FOR EACH ROW EXECUTE FUNCTION trg_audit_message_insert()
+ message             | message_notify                | CREATE TRIGGER message_notify AFTER INSERT ON public.message FOR EACH ROW EXECUTE FUNCTION trg_notify_message()
+ message             | message_produce_acl           | CREATE TRIGGER message_produce_acl BEFORE INSERT ON public.message FOR EACH ROW EXECUTE FUNCTION trg_acl_produce()
+ schema_version      | schema_version_insert_audit   | CREATE TRIGGER schema_version_insert_audit AFTER INSERT ON public.schema_version FOR EACH ROW EXECUTE FUNCTION trg_audit_schema_publish()
+ topic               | topic_insert_audit            | CREATE TRIGGER topic_insert_audit AFTER INSERT ON public.topic FOR EACH ROW EXECUTE FUNCTION trg_audit_topic_create()
+(14 rows)
+
+ schemaname |      tablename      |   policyname   |     roles     |  cmd   |                                                    qual                                                     |                                                   with_check                                                   
+------------+---------------------+----------------+---------------+--------+-------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------
+ public     | dead_letter_message | dlq_insert     | {conduit_app} | INSERT |                                                                                                             | fn_user_can_consume((NULLIF(current_setting('app.user_id'::text, true), ''::text))::bigint, original_topic_id)
+ public     | dead_letter_message | dlq_select     | {conduit_app} | SELECT | fn_user_can_read((NULLIF(current_setting('app.user_id'::text, true), ''::text))::bigint, original_topic_id) | 
+ public     | message             | message_insert | {conduit_app} | INSERT |                                                                                                             | fn_user_can_produce((NULLIF(current_setting('app.user_id'::text, true), ''::text))::bigint, topic_id)
+ public     | message             | message_select | {conduit_app} | SELECT | fn_user_can_read((NULLIF(current_setting('app.user_id'::text, true), ''::text))::bigint, topic_id)          | 
+ public     | message             | message_update | {conduit_app} | UPDATE | fn_user_can_consume((NULLIF(current_setting('app.user_id'::text, true), ''::text))::bigint, topic_id)       | fn_user_can_consume((NULLIF(current_setting('app.user_id'::text, true), ''::text))::bigint, topic_id)
+(5 rows)
+
+     tablename     |             indexname              |                                                                     indexdef                                                                      
+-------------------+------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------
+ audit_log         | audit_log_pkey                     | CREATE UNIQUE INDEX audit_log_pkey ON public.audit_log USING btree (log_id)
+ audit_log         | idx_audit_event_type_time          | CREATE INDEX idx_audit_event_type_time ON public.audit_log USING btree (event_type, event_timestamp)
+ audit_log         | idx_audit_timestamp_brin           | CREATE INDEX idx_audit_timestamp_brin ON public.audit_log USING brin (event_timestamp)
+ audit_log         | idx_audit_topic                    | CREATE INDEX idx_audit_topic ON public.audit_log USING btree (topic_id)
+ audit_log         | idx_audit_user                     | CREATE INDEX idx_audit_user ON public.audit_log USING btree (user_id)
+ message           | idx_message_claimed_visible_at     | CREATE INDEX idx_message_claimed_visible_at ON ONLY public.message USING btree (visible_at) WHERE ((status)::text = 'claimed'::text)
+ message           | idx_message_created_brin           | CREATE INDEX idx_message_created_brin ON ONLY public.message USING brin (created_at)
+ message           | idx_message_pending                | CREATE INDEX idx_message_pending ON ONLY public.message USING btree (topic_id, partition_id, msg_offset) WHERE ((status)::text = 'pending'::text)
+ message           | idx_message_producer               | CREATE INDEX idx_message_producer ON ONLY public.message USING btree (producer_app_id, producer_seq)
+ message           | idx_message_topic_partition_offset | CREATE INDEX idx_message_topic_partition_offset ON ONLY public.message USING btree (topic_id, partition_id, msg_offset)
+ message           | message_pk                         | CREATE UNIQUE INDEX message_pk ON ONLY public.message USING btree (created_at, topic_id, partition_id, msg_offset)
+ mv_topic_stats    | uq_mv_topic_stats                  | CREATE UNIQUE INDEX uq_mv_topic_stats ON public.mv_topic_stats USING btree (topic_name)
+ producer_sequence | pk_producer_sequence               | CREATE UNIQUE INDEX pk_producer_sequence ON public.producer_sequence USING btree (producer_app_id, producer_seq)
+(13 rows)
+
+        viewname        |                                                   definition                                                   
+------------------------+----------------------------------------------------------------------------------------------------------------
+ v_audit_recent         |  SELECT al.log_id,                                                                                            +
+                        |     COALESCE(u.username, 'system'::character varying) AS username,                                            +
+                        |     a.app_name,                                                                                               +
+                        |     t.topic_name,                                                                                             +
+                        |     al.event_type,                                                                                            +
+                        |     al.status,                                                                                                +
+                        |     al.details,                                                                                               +
+                        |     al.event_timestamp                                                                                        +
+                        |    FROM (((audit_log al                                                                                       +
+                        |      LEFT JOIN app_user u ON ((u.user_id = al.user_id)))                                                      +
+                        |      LEFT JOIN application a ON ((a.app_id = al.app_id)))                                                     +
+                        |      LEFT JOIN topic t ON ((t.topic_id = al.topic_id)))                                                       +
+                        |   WHERE (al.event_timestamp >= (now() - '24:00:00'::interval));
+ v_consumer_lag         |  SELECT t.topic_name,                                                                                         +
+                        |     cg.group_name,                                                                                            +
+                        |     pt.partition_number,                                                                                      +
+                        |     go.committed_offset,                                                                                      +
+                        |     pt.next_offset AS head_offset,                                                                            +
+                        |     (pt.next_offset - go.committed_offset) AS lag_messages,                                                   +
+                        |     go.updated_at AS last_commit_at                                                                           +
+                        |    FROM (((group_offset go                                                                                    +
+                        |      JOIN partition pt ON ((pt.partition_id = go.partition_id)))                                              +
+                        |      JOIN topic t ON ((t.topic_id = pt.topic_id)))                                                            +
+                        |      JOIN consumer_group cg ON ((cg.group_id = go.group_id)))                                                 +
+                        |   ORDER BY t.topic_name, cg.group_name, pt.partition_number;
+ v_throughput_by_minute |  SELECT topic_name,                                                                                           +
+                        |     minute_ts,                                                                                                +
+                        |     messages,                                                                                                 +
+                        |     sum(messages) OVER (PARTITION BY topic_name ORDER BY minute_ts) AS cumulative_messages                    +
+                        |    FROM ( SELECT t.topic_name,                                                                                +
+                        |             date_trunc('minute'::text, m.created_at) AS minute_ts,                                            +
+                        |             count(*) AS messages                                                                              +
+                        |            FROM (message m                                                                                    +
+                        |              JOIN topic t ON ((t.topic_id = m.topic_id)))                                                     +
+                        |           WHERE (m.created_at >= (now() - '02:00:00'::interval))                                              +
+                        |           GROUP BY t.topic_name, (date_trunc('minute'::text, m.created_at))) per_minute;
+ v_topic_stats          |  SELECT t.topic_name,                                                                                         +
+                        |     t.status AS topic_status,                                                                                 +
+                        |     t.retention_days,                                                                                         +
+                        |     count(m.msg_offset) FILTER (WHERE ((m.status)::text = 'pending'::text)) AS pending,                       +
+                        |     count(m.msg_offset) FILTER (WHERE ((m.status)::text = 'claimed'::text)) AS claimed,                       +
+                        |     count(m.msg_offset) FILTER (WHERE ((m.status)::text = 'delivered'::text)) AS delivered,                   +
+                        |     count(m.msg_offset) FILTER (WHERE ((m.status)::text = 'dead'::text)) AS dead,                             +
+                        |     ( SELECT count(*) AS count                                                                                +
+                        |            FROM dead_letter_message d                                                                         +
+                        |           WHERE ((d.original_topic_id = t.topic_id) AND ((d.status)::text = 'pending'::text))) AS dlq_pending,+
+                        |     min(m.created_at) FILTER (WHERE ((m.status)::text = 'pending'::text)) AS oldest_pending,                  +
+                        |     max(m.created_at) AS last_message_at                                                                      +
+                        |    FROM (topic t                                                                                              +
+                        |      LEFT JOIN message m ON ((m.topic_id = t.topic_id)))                                                      +
+                        |   GROUP BY t.topic_id, t.topic_name, t.status, t.retention_days;
+(4 rows)
+
+  matviewname   | ispopulated |                                                   definition                                                   
+----------------+-------------+----------------------------------------------------------------------------------------------------------------
+ mv_topic_stats | t           |  SELECT t.topic_name,                                                                                         +
+                |             |     t.status AS topic_status,                                                                                 +
+                |             |     t.retention_days,                                                                                         +
+                |             |     count(m.msg_offset) FILTER (WHERE ((m.status)::text = 'pending'::text)) AS pending,                       +
+                |             |     count(m.msg_offset) FILTER (WHERE ((m.status)::text = 'claimed'::text)) AS claimed,                       +
+                |             |     count(m.msg_offset) FILTER (WHERE ((m.status)::text = 'delivered'::text)) AS delivered,                   +
+                |             |     count(m.msg_offset) FILTER (WHERE ((m.status)::text = 'dead'::text)) AS dead,                             +
+                |             |     ( SELECT count(*) AS count                                                                                +
+                |             |            FROM dead_letter_message d                                                                         +
+                |             |           WHERE ((d.original_topic_id = t.topic_id) AND ((d.status)::text = 'pending'::text))) AS dlq_pending,+
+                |             |     min(m.created_at) FILTER (WHERE ((m.status)::text = 'pending'::text)) AS oldest_pending,                  +
+                |             |     max(m.created_at) AS last_message_at                                                                      +
+                |             |    FROM (topic t                                                                                              +
+                |             |      LEFT JOIN message m ON ((m.topic_id = t.topic_id)))                                                      +
+                |             |   GROUP BY t.topic_id, t.topic_name, t.status, t.retention_days;
+(1 row)
+
+                                                                        QUERY PLAN                                                                        
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=220.98..221.00 rows=10 width=24)
+   InitPlan 2 (returns $1)
+     ->  Result  (cost=0.69..0.70 rows=1 width=8)
+           InitPlan 1 (returns $0)
+             ->  Limit  (cost=0.14..0.69 rows=1 width=8)
+                   ->  Index Only Scan using topic_pkey on topic  (cost=0.14..49.72 rows=90 width=8)
+                         Index Cond: (topic_id IS NOT NULL)
+   ->  Sort  (cost=220.27..220.34 rows=27 width=24)
+         Sort Key: message.msg_offset
+         ->  Append  (cost=0.12..219.69 rows=27 width=24)
+               ->  Index Scan using message_2026_09_topic_id_partition_id_msg_offset_idx1 on message_2026_09 message_1  (cost=0.12..8.15 rows=1 width=24)
+                     Index Cond: (topic_id = $1)
+                     Filter: ((visible_at IS NULL) OR (visible_at <= now()))
+               ->  Bitmap Heap Scan on message_2026_10 message_2  (cost=21.01..162.52 rows=20 width=24)
+                     Recheck Cond: ((topic_id = $1) AND ((status)::text = 'pending'::text))
+                     Filter: ((visible_at IS NULL) OR (visible_at <= now()))
+                     ->  Bitmap Index Scan on message_2026_10_topic_id_partition_id_msg_offset_idx1  (cost=0.00..21.01 rows=98 width=0)
+                           Index Cond: (topic_id = $1)
+               ->  Index Scan using message_2026_11_topic_id_partition_id_msg_offset_idx1 on message_2026_11 message_3  (cost=0.12..8.15 rows=1 width=24)
+                     Index Cond: (topic_id = $1)
+                     Filter: ((visible_at IS NULL) OR (visible_at <= now()))
+               ->  Index Scan using message_2026_12_topic_id_partition_id_msg_offset_idx1 on message_2026_12 message_4  (cost=0.12..8.15 rows=1 width=24)
+                     Index Cond: (topic_id = $1)
+                     Filter: ((visible_at IS NULL) OR (visible_at <= now()))
+               ->  Index Scan using message_2027_01_topic_id_partition_id_msg_offset_idx1 on message_2027_01 message_5  (cost=0.12..8.15 rows=1 width=24)
+                     Index Cond: (topic_id = $1)
+                     Filter: ((visible_at IS NULL) OR (visible_at <= now()))
+               ->  Index Scan using message_2027_02_topic_id_partition_id_msg_offset_idx1 on message_2027_02 message_6  (cost=0.12..8.15 rows=1 width=24)
+                     Index Cond: (topic_id = $1)
+                     Filter: ((visible_at IS NULL) OR (visible_at <= now()))
+               ->  Index Scan using message_2027_03_topic_id_partition_id_msg_offset_idx1 on message_2027_03 message_7  (cost=0.12..8.15 rows=1 width=24)
+                     Index Cond: (topic_id = $1)
+                     Filter: ((visible_at IS NULL) OR (visible_at <= now()))
+               ->  Index Scan using message_default_topic_id_partition_id_msg_offset_idx1 on message_default message_8  (cost=0.12..8.15 rows=1 width=24)
+                     Index Cond: (topic_id = $1)
+                     Filter: ((visible_at IS NULL) OR (visible_at <= now()))
+(36 rows)
+
+COMMIT

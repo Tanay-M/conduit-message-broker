@@ -1,0 +1,131 @@
+{
+  "checked_on": "2026-10-18",
+  "query": "SELECT c.customer_ref, o.order_ref, i.line_number,\n       p.product_name, i.quantity, i.unit_price,\n       (i.quantity * i.unit_price)::numeric(20,2) AS line_total\nFROM reporting.customer c\nJOIN reporting.sales_order o ON o.customer_id = c.customer_id\nJOIN reporting.order_item i ON i.order_id = o.order_id\nJOIN reporting.product p ON p.product_id = i.product_id\nWHERE c.customer_id = 1 AND o.status = 'completed'\nORDER BY o.ordered_at, o.order_id, i.line_number\nLIMIT 3;",
+  "rows": [
+    {
+      "customer_ref": "DEMO-000001",
+      "order_ref": "DEMO-000001-1",
+      "line_number": 1,
+      "product_name": "Product 3",
+      "quantity": 3,
+      "unit_price": "75.00",
+      "line_total": "225.00"
+    },
+    {
+      "customer_ref": "DEMO-000001",
+      "order_ref": "DEMO-000001-1",
+      "line_number": 2,
+      "product_name": "Product 4",
+      "quantity": 4,
+      "unit_price": "100.00",
+      "line_total": "400.00"
+    },
+    {
+      "customer_ref": "DEMO-000001",
+      "order_ref": "DEMO-000001-1",
+      "line_number": 3,
+      "product_name": "Product 5",
+      "quantity": 1,
+      "unit_price": "125.00",
+      "line_total": "125.00"
+    }
+  ],
+  "keys": [
+    {
+      "relation": "reporting.customer",
+      "definition": "PRIMARY KEY (customer_id)"
+    },
+    {
+      "relation": "reporting.order_item",
+      "definition": "FOREIGN KEY (order_id) REFERENCES reporting.sales_order(order_id) ON DELETE RESTRICT"
+    },
+    {
+      "relation": "reporting.order_item",
+      "definition": "FOREIGN KEY (product_id) REFERENCES reporting.product(product_id) ON DELETE RESTRICT"
+    },
+    {
+      "relation": "reporting.order_item",
+      "definition": "PRIMARY KEY (order_id, line_number)"
+    },
+    {
+      "relation": "reporting.product",
+      "definition": "PRIMARY KEY (product_id)"
+    },
+    {
+      "relation": "reporting.report_audit",
+      "definition": "FOREIGN KEY (request_id) REFERENCES reporting.report_request(request_id) ON DELETE RESTRICT"
+    },
+    {
+      "relation": "reporting.report_audit",
+      "definition": "PRIMARY KEY (audit_id)"
+    },
+    {
+      "relation": "reporting.report_dataset",
+      "definition": "FOREIGN KEY (request_id) REFERENCES reporting.report_request(request_id) ON DELETE RESTRICT"
+    },
+    {
+      "relation": "reporting.report_dataset",
+      "definition": "PRIMARY KEY (request_id)"
+    },
+    {
+      "relation": "reporting.report_request",
+      "definition": "FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT"
+    },
+    {
+      "relation": "reporting.report_request",
+      "definition": "FOREIGN KEY (run_id) REFERENCES reporting.report_run(run_id) ON DELETE RESTRICT"
+    },
+    {
+      "relation": "reporting.report_request",
+      "definition": "PRIMARY KEY (request_id)"
+    },
+    {
+      "relation": "reporting.report_result",
+      "definition": "FOREIGN KEY (request_id) REFERENCES reporting.report_request(request_id) ON DELETE RESTRICT"
+    },
+    {
+      "relation": "reporting.report_result",
+      "definition": "PRIMARY KEY (request_id)"
+    },
+    {
+      "relation": "reporting.report_run",
+      "definition": "FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT"
+    },
+    {
+      "relation": "reporting.report_run",
+      "definition": "FOREIGN KEY (requested_by) REFERENCES app_user(user_id) ON DELETE RESTRICT"
+    },
+    {
+      "relation": "reporting.report_run",
+      "definition": "FOREIGN KEY (template_id) REFERENCES reporting.template_version(template_id) ON DELETE RESTRICT"
+    },
+    {
+      "relation": "reporting.report_run",
+      "definition": "PRIMARY KEY (run_id)"
+    },
+    {
+      "relation": "reporting.sales_order",
+      "definition": "FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT"
+    },
+    {
+      "relation": "reporting.sales_order",
+      "definition": "PRIMARY KEY (order_id)"
+    },
+    {
+      "relation": "reporting.template_version",
+      "definition": "PRIMARY KEY (template_id)"
+    },
+    {
+      "relation": "reporting.web_account",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "relation": "reporting.web_session",
+      "definition": "FOREIGN KEY (account_id) REFERENCES reporting.web_account(account_id) ON DELETE CASCADE"
+    },
+    {
+      "relation": "reporting.web_session",
+      "definition": "PRIMARY KEY (token_hash)"
+    }
+  ]
+}

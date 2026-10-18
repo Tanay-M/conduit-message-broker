@@ -1,0 +1,29 @@
+
+================================================================
+ DEMO 06 - SECURITY: ACL triggers, RLS zero-visibility, suspend semantics, app revocation
+================================================================
+  -> provisioned granted user=d6user57301965 app=d6app57301965 topic=d6topic57301965
+  -> creating a second user + app with NO grants on the topic
+  -> intruder=d6intruder263c0ff6 (no access rows anywhere)
+  -> granted app produces -> allowed
+     produced at partition=17 offset=0
+  [PASS] granted produce succeeded
+  -> intruder produces -> BLOCKED by the ACL trigger (CDT17)
+     caught typed exception: [CDT17] produce access denied for application 10 on topic 8
+  [PASS] produce denied at the database layer
+  [PASS] AUTH_FAIL recorded in the audit trail
+  -> RLS row visibility: SELECT * FROM message through the app role
+     granted app sees 1 message rows; intruder sees 0
+  [PASS] ungranted app sees ZERO rows - row-level security
+  [PASS] granted app sees its topic's rows
+  -> suspending the granted user -> access cut at BOTH trigger and RLS layers
+     caught typed exception: [CDT17] produce access denied for application 9 on topic 8
+  [PASS] suspension cuts access (trigger layer)
+  [PASS] suspension cuts access (RLS layer: zero rows visible)
+  [PASS] reactivation restores access
+  -> revoking the app -> CDT03 even though the user is active
+     caught typed exception: [CDT03] unknown or revoked application 9
+  [PASS] revoked application blocked (CDT03)
+
+  DEMO COMPLETE - all checks passed
+

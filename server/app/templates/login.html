@@ -3,33 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Conduit — login</title>
+  <title>Sign in · Conduit</title>
   <link rel="stylesheet" href="/static/vendor/daisyui.min.css">
-  <script src="/static/vendor/tailwind.js"></script>
+  <link rel="stylesheet" href="/static/vendor/tailwind.min.css">
   <link rel="stylesheet" href="/static/app.css">
+  <link rel="stylesheet" href="/static/workspace.css">
 </head>
-<body class="min-h-screen bg-base-200 flex items-center justify-center">
-  <div class="card bg-base-100 shadow-lg w-96 p-8">
-    <div class="font-black text-primary text-2xl">Conduit</div>
-    <div class="text-sm opacity-60 mb-6">PostgreSQL message broker</div>
-    {% if error %}
-    <div class="alert alert-error text-sm mb-4">{{ error }}</div>
-    {% endif %}
-    <form method="post" action="/web/login" class="flex flex-col gap-3">
-      <label class="form-control">
-        <div class="label"><span class="label-text">Session type</span></div>
-        <select name="mode" class="select select-bordered">
-          <option value="admin">Admin token</option>
-          <option value="app">App api key</option>
-        </select>
-      </label>
-      <label class="form-control">
-        <div class="label"><span class="label-text">Token / api key</span></div>
-        <input name="token" type="password" class="input input-bordered mono" required autofocus>
-      </label>
-      <button class="btn btn-primary mt-2">Sign in</button>
+<body>
+{% from 'components/icons.html' import icon %}
+<div class="login-page"><section class="login-story"><a class="brand" href="/web/login"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Conduit<span class="brand-caption">REPORTING WORKSPACE</span></span></a><div class="login-story-copy"><div class="eyebrow">BUSINESS REPORTING, WITH A RECORD.</div><h1>From business data<br>to a report you can trust.</h1><p>Generate reports, inspect the SQL and preserve the data behind every result.</p><div class="login-proof"><div><strong>SQL</strong><small>Inspectable queries</small></div><div><strong>Async</strong><small>Background processing</small></div><div><strong>Replay</strong><small>Retained report data</small></div></div></div><div class="login-story-footer">Conduit · PostgreSQL reporting &amp; asynchronous processing</div></section><section class="login-form-side"><div class="login-form-inner"><div class="eyebrow">YOUR WORKSPACE</div><h2>Welcome back</h2><p>Sign in to manage reports and inspect your data.</p>
+    {% if error %}<div class="form-error" role="alert">{{ error }}</div>{% endif %}
+    <form method="post" action="/web/login">
+      <div class="field"><label for="login-username">Username</label><input id="login-username" name="username" type="text" class="control" placeholder="Enter your username" value="{{ username }}" maxlength="64" required autofocus autocomplete="username"></div>
+      <div class="field"><label for="login-password">Password</label><input id="login-password" name="password" type="password" class="control" placeholder="Enter your password" maxlength="1024" required autocomplete="current-password"></div>
+      <button class="btn btn-primary">Sign in {{ icon('arrow') }}</button>
     </form>
-    <div class="text-xs opacity-50 mt-4">admin demo token: conduit-admin-token · app keys are listed on the Admin page</div>
-  </div>
+    <div class="login-security">{{ icon('shield') }}Your session stays on this local workspace.</div>
+  </div></section></div>
 </body>
 </html>

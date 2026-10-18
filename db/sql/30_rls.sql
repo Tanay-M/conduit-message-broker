@@ -1,6 +1,10 @@
 BEGIN;
 
-CREATE ROLE conduit_app LOGIN PASSWORD 'conduit_app_dev';
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'conduit_app') THEN
+        CREATE ROLE conduit_app LOGIN PASSWORD 'conduit_app_dev';
+    END IF;
+END $$;
 
 GRANT USAGE ON SCHEMA public TO conduit_app;
 

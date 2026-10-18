@@ -1,14 +1,15 @@
 import threading
 import time
 import uuid
+import os
 
 import httpx
 import pytest
 import conduit
 
-API = "http://localhost:8000"
+API = os.environ.get('CONDUIT_API_URL','http://127.0.0.1:8000')
 ADMIN = {"Authorization": "Bearer conduit-admin-token"}
-DB_DSN = "postgresql://conduit_app:conduit_app_dev@db:5432/conduit"
+DB_DSN = os.environ.get('CONDUIT_APP_DSN','postgresql://conduit_app:conduit_app_dev@127.0.0.1:55432/conduit')
 
 
 @pytest.fixture(scope="session")
@@ -230,3 +231,14 @@ def test_sse_notification(api, env):
     finally:
         c.close()
     assert received
+
+
+def test_dashboard_counts_match_stored_rows(api,env):
+    c=conduit.Conduit(env['api_key'],dsn=DB_DSN)
+    try:
+        c.produce(env['topic'],{'event':'count-probe'},seq=2**40)
+        stored=c.query("SELECT count(*) AS n FROM message m JOIN topic t USING(topic_id) WHERE t.topic_name=%s AND m.status='pending'",(env['topic'],))[0]['n']
+        rows=api.get('/api/dashboard',headers={'Authorization':'Bearer '+env['api_key']}).json()
+        assert next(r for r in rows if r['topic_name']==env['topic'])['pending']==stored
+    finally:
+        c.close()

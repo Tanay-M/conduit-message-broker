@@ -4,8 +4,8 @@ import uuid
 
 from conduit import Conduit, ConduitAdmin
 
-DSN = os.environ.get("CONDUIT_APP_DSN", "postgresql://conduit_app:conduit_app_dev@db:5432/conduit")
-ADMIN_DSN = os.environ.get("CONDUIT_ADMIN_DSN", "postgresql://conduit:conduit_dev@db:5432/conduit")
+DSN = os.environ.get("CONDUIT_APP_DSN", "postgresql://conduit_app:conduit_app_dev@127.0.0.1:55432/conduit")
+ADMIN_DSN = os.environ.get("CONDUIT_ADMIN_DSN", "postgresql://conduit:conduit_dev@127.0.0.1:55432/conduit")
 
 
 def banner(title):

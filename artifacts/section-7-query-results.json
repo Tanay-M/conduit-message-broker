@@ -1,0 +1,327 @@
+{
+  "checked_on": "2026-10-18",
+  "database": "conduit",
+  "queries": [
+    {
+      "id": "Q1",
+      "title": "Customer statement: selection, filtering, sorting and a window total",
+      "purpose": "A three-row preview of the real customer_statement template with customer/date values filled in. Its production template has no LIMIT 3.",
+      "sql": "SELECT customer_ref, order_ref, product_name,\n       quantity, unit_price, line_total,\n       sum(line_total) OVER () AS statement_total\nFROM reporting.v_sales_lines\nWHERE customer_id = 1\n  AND ordered_at >= DATE '2026-01-01'\n  AND ordered_at < DATE '2027-01-01'\nORDER BY ordered_at, order_id, line_number\nLIMIT 3;",
+      "explanation": "WHERE selects the customer's completed-sale lines in the period; the view already excludes cancelled orders. ORDER BY makes the display deterministic. SUM OVER adds the full matching statement total while retaining detail rows. LIMIT is applied after that window result, so the repeated statement_total is for all 30 matching lines, not only the three displayed rows. The date interval includes 1 January 2026 and excludes 1 January 2027.",
+      "rows": [
+        {
+          "customer_ref": "DEMO-000001",
+          "order_ref": "DEMO-000001-1",
+          "product_name": "Product 3",
+          "quantity": 3,
+          "unit_price": "75.00",
+          "line_total": "225.00",
+          "statement_total": "25500.00"
+        },
+        {
+          "customer_ref": "DEMO-000001",
+          "order_ref": "DEMO-000001-1",
+          "product_name": "Product 4",
+          "quantity": 4,
+          "unit_price": "100.00",
+          "line_total": "400.00",
+          "statement_total": "25500.00"
+        },
+        {
+          "customer_ref": "DEMO-000001",
+          "order_ref": "DEMO-000001-1",
+          "product_name": "Product 5",
+          "quantity": 1,
+          "unit_price": "125.00",
+          "line_total": "125.00",
+          "statement_total": "25500.00"
+        }
+      ]
+    },
+    {
+      "id": "Q2",
+      "title": "The explicit four-table JOIN behind the reporting view",
+      "purpose": "A review query exposing the table relationships already used by reporting.v_sales_lines.",
+      "sql": "SELECT c.customer_ref, o.order_ref, i.line_number,\n       p.product_name, i.quantity, i.unit_price,\n       (i.quantity * i.unit_price)::numeric(20,2) AS line_total\nFROM reporting.customer c\nJOIN reporting.sales_order o ON o.customer_id = c.customer_id\nJOIN reporting.order_item i ON i.order_id = o.order_id\nJOIN reporting.product p ON p.product_id = i.product_id\nWHERE c.customer_id = 1 AND o.status = 'completed'\n  AND o.ordered_at >= DATE '2026-01-01'\n  AND o.ordered_at < DATE '2027-01-01'\nORDER BY o.ordered_at, o.order_id, i.line_number\nLIMIT 3;",
+      "explanation": "The three JOIN predicates follow declared foreign keys: order to customer, item to order, and item to product. One result row represents an order line. The SELECT calculates the line value without updating source tables. Queries against the view still execute its underlying relational logic.",
+      "rows": [
+        {
+          "customer_ref": "DEMO-000001",
+          "order_ref": "DEMO-000001-1",
+          "line_number": 1,
+          "product_name": "Product 3",
+          "quantity": 3,
+          "unit_price": "75.00",
+          "line_total": "225.00"
+        },
+        {
+          "customer_ref": "DEMO-000001",
+          "order_ref": "DEMO-000001-1",
+          "line_number": 2,
+          "product_name": "Product 4",
+          "quantity": 4,
+          "unit_price": "100.00",
+          "line_total": "400.00"
+        },
+        {
+          "customer_ref": "DEMO-000001",
+          "order_ref": "DEMO-000001-1",
+          "line_number": 3,
+          "product_name": "Product 5",
+          "quantity": 1,
+          "unit_price": "125.00",
+          "line_total": "125.00"
+        }
+      ]
+    },
+    {
+      "id": "Q3",
+      "title": "GROUP BY and aggregate totals by category",
+      "purpose": "Category aggregation, as available in the SQL workspace; this is an evidence query rather than a fourth downloadable report template.",
+      "sql": "SELECT category, sum(quantity) AS units,\n       sum(line_total) AS sales\nFROM reporting.v_sales_lines\nWHERE ordered_at >= DATE '2026-01-01'\n  AND ordered_at < DATE '2027-01-01'\nGROUP BY category\nORDER BY sales DESC;",
+      "explanation": "GROUP BY collects rows for the same category. SUM(quantity) counts units rather than order lines, and SUM(line_total) adds their sales values. The output has one row per category, unlike Q1's detail rows.",
+      "rows": [
+        {
+          "category": "Office",
+          "units": 249992,
+          "sales": "104988900.00"
+        },
+        {
+          "category": "Electronics",
+          "units": 250002,
+          "sales": "94998150.00"
+        },
+        {
+          "category": "Home",
+          "units": 250006,
+          "sales": "92497450.00"
+        }
+      ]
+    },
+    {
+      "id": "Q4",
+      "title": "HAVING filters groups after aggregation",
+      "purpose": "A threshold-specific variation of the HAVING demonstration in the review evidence script.",
+      "sql": "SELECT category, sum(line_total) AS sales\nFROM reporting.v_sales_lines\nWHERE ordered_at >= DATE '2026-01-01'\n  AND ordered_at < DATE '2027-01-01'\nGROUP BY category\nHAVING sum(line_total) > 100000000\nORDER BY sales DESC;",
+      "explanation": "WHERE filters individual input rows before grouping. HAVING filters the resulting groups using their aggregate totals. The threshold here is 100 million units of sales value; it is chosen for the demonstration, not hardcoded into report submission.",
+      "rows": [
+        {
+          "category": "Office",
+          "sales": "104988900.00"
+        }
+      ]
+    },
+    {
+      "id": "Q5",
+      "title": "Correlated NOT EXISTS subquery",
+      "purpose": "Find customers without a completed order in February 2026; a review query, not a separate UI report template.",
+      "sql": "SELECT c.customer_ref\nFROM reporting.customer c\nWHERE NOT EXISTS (\n    SELECT 1\n    FROM reporting.sales_order o\n    WHERE o.customer_id = c.customer_id\n      AND o.status = 'completed'\n      AND o.ordered_at >= DATE '2026-02-01'\n      AND o.ordered_at < DATE '2026-03-01'\n)\nORDER BY c.customer_ref\nLIMIT 3;",
+      "explanation": "The inner query refers to the outer customer's c.customer_id, making it correlated. EXISTS asks whether a qualifying order exists; NOT EXISTS keeps customers for whom it does not. SELECT 1 is an existence test, not a returned order count. LIMIT shows only the first three matching customers; it does not imply only three exist.",
+      "rows": [
+        {
+          "customer_ref": "DEMO-000032"
+        },
+        {
+          "customer_ref": "DEMO-000033"
+        },
+        {
+          "customer_ref": "DEMO-000034"
+        }
+      ]
+    },
+    {
+      "id": "Q6",
+      "title": "Product sales ranking: the product_sales template",
+      "purpose": "The real approved template with dates filled in and top_n set to 3.",
+      "sql": "SELECT sku, product_name, category,\n       sum(quantity) AS units, sum(line_total) AS sales,\n       dense_rank() OVER (ORDER BY sum(line_total) DESC) AS sales_rank\nFROM reporting.v_sales_lines\nWHERE ordered_at >= DATE '2026-01-01'\n  AND ordered_at < DATE '2027-01-01'\nGROUP BY sku, product_name, category\nORDER BY sales DESC, sku\nLIMIT 3;",
+      "explanation": "Aggregate each product's units and value first, then rank products by sales value. DENSE_RANK gives equal totals the same rank and leaves no gap in the next rank. LIMIT 3 returns three product rows, not necessarily every product in the first three rank groups if ties occur.",
+      "rows": [
+        {
+          "sku": "SKU-30",
+          "product_name": "Product 30",
+          "category": "Office",
+          "units": 29988,
+          "sales": "22491000.00",
+          "sales_rank": 1
+        },
+        {
+          "sku": "SKU-28",
+          "product_name": "Product 28",
+          "category": "Home",
+          "units": 29988,
+          "sales": "20991600.00",
+          "sales_rank": 2
+        },
+        {
+          "sku": "SKU-26",
+          "product_name": "Product 26",
+          "category": "Electronics",
+          "units": 29988,
+          "sales": "19492200.00",
+          "sales_rank": 3
+        }
+      ]
+    },
+    {
+      "id": "Q7",
+      "title": "Monthly summary: a CTE and running-total window",
+      "purpose": "The real monthly_sales template with dates filled in. No preview LIMIT is added: all returned months are recorded below.",
+      "sql": "WITH totals AS (\n    SELECT date_trunc('month', ordered_at)::date AS month,\n           sum(line_total) AS sales,\n           count(DISTINCT order_id) AS orders\n    FROM reporting.v_sales_lines\n    WHERE ordered_at >= DATE '2026-01-01'\n      AND ordered_at < DATE '2027-01-01'\n    GROUP BY 1\n)\nSELECT month, orders, sales,\n       sum(sales) OVER (ORDER BY month) AS running_sales\nFROM totals\nORDER BY month;",
+      "explanation": "The WITH clause defines a named intermediate query for monthly aggregates, not a persistent table. date_trunc maps order dates to the start of their month; GROUP BY 1 groups by that first SELECT expression. COUNT(DISTINCT order_id) avoids counting an order repeatedly because it has multiple item lines. The window then accumulates sales in month order. Months without matching sales are absent; zero-filled calendar months are not implemented.",
+      "rows": [
+        {
+          "month": "2026-01-01",
+          "orders": 11603,
+          "sales": "33893975.00",
+          "running_sales": "33893975.00"
+        },
+        {
+          "month": "2026-02-01",
+          "orders": 10453,
+          "sales": "30573125.00",
+          "running_sales": "64467100.00"
+        },
+        {
+          "month": "2026-03-01",
+          "orders": 11542,
+          "sales": "33773975.00",
+          "running_sales": "98241075.00"
+        },
+        {
+          "month": "2026-04-01",
+          "orders": 11101,
+          "sales": "32471375.00",
+          "running_sales": "130712450.00"
+        },
+        {
+          "month": "2026-05-01",
+          "orders": 11420,
+          "sales": "33412425.00",
+          "running_sales": "164124875.00"
+        },
+        {
+          "month": "2026-06-01",
+          "orders": 10972,
+          "sales": "32067650.00",
+          "running_sales": "196192525.00"
+        },
+        {
+          "month": "2026-07-01",
+          "orders": 11359,
+          "sales": "33247525.00",
+          "running_sales": "229440050.00"
+        },
+        {
+          "month": "2026-08-01",
+          "orders": 11483,
+          "sales": "33570600.00",
+          "running_sales": "263010650.00"
+        },
+        {
+          "month": "2026-09-01",
+          "orders": 10067,
+          "sales": "29473850.00",
+          "running_sales": "292484500.00"
+        }
+      ],
+      "web_sql": "SELECT * FROM (\nWITH totals AS (\n    SELECT date_trunc('month', ordered_at)::date AS month,\n           sum(line_total) AS sales,\n           count(DISTINCT order_id) AS orders\n    FROM reporting.v_sales_lines\n    WHERE ordered_at >= DATE '2026-01-01'\n      AND ordered_at < DATE '2027-01-01'\n    GROUP BY 1\n)\nSELECT month, orders, sales,\n       sum(sales) OVER (ORDER BY month) AS running_sales\nFROM totals\nORDER BY month\n) AS monthly_report\nORDER BY month;"
+    },
+    {
+      "id": "Q8",
+      "title": "Operational query used for reporting progress",
+      "purpose": "Inspect the latest three runs through the application's progress view.",
+      "sql": "SELECT run_id, code, preparation_status,\n       expected, queued, processing, completed, failed\nFROM reporting.v_run_progress\nORDER BY created_at DESC\nLIMIT 3;",
+      "explanation": "This view aggregates individual request states. expected is the number of individual reports, while queued/processing/completed/failed are mutually exclusive request-state counts. preparation_status describes dataset preparation separately from output completion. These are captured observations, not permanently fixed values.",
+      "rows": [
+        {
+          "run_id": "39e4c54e-1b88-419a-b238-42e217bb50ee",
+          "code": "product_sales",
+          "preparation_status": "ready",
+          "expected": 1,
+          "queued": 0,
+          "processing": 0,
+          "completed": 1,
+          "failed": 0
+        },
+        {
+          "run_id": "5d1c679a-df8f-40c2-8b89-0d1de0cce7c3",
+          "code": "monthly_sales",
+          "preparation_status": "ready",
+          "expected": 1,
+          "queued": 0,
+          "processing": 0,
+          "completed": 1,
+          "failed": 0
+        },
+        {
+          "run_id": "c9b5ae7c-1ce4-461e-9708-b55f48b1f704",
+          "code": "monthly_sales",
+          "preparation_status": "ready",
+          "expected": 1,
+          "queued": 0,
+          "processing": 0,
+          "completed": 1,
+          "failed": 0
+        }
+      ]
+    }
+  ],
+  "crud": [
+    {
+      "operation": "INSERT",
+      "sql": "INSERT INTO reporting.customer(customer_ref, full_name, email, region)\nVALUES ('VIVA-OPS-a02a1b83', 'Operations demo customer', 'viva-ops-a02a1b83@example.test', 'North')\nRETURNING customer_ref, full_name, region;",
+      "rows": [
+        {
+          "customer_ref": "VIVA-OPS-a02a1b83",
+          "full_name": "Operations demo customer",
+          "region": "North"
+        }
+      ]
+    },
+    {
+      "operation": "UPDATE",
+      "sql": "UPDATE reporting.customer\nSET region = 'South'\nWHERE customer_ref = 'VIVA-OPS-a02a1b83'\nRETURNING customer_ref, region;",
+      "rows": [
+        {
+          "customer_ref": "VIVA-OPS-a02a1b83",
+          "region": "South"
+        }
+      ]
+    },
+    {
+      "operation": "SELECT",
+      "sql": "SELECT customer_ref, region\nFROM reporting.customer\nWHERE customer_ref = 'VIVA-OPS-a02a1b83';",
+      "rows": [
+        {
+          "customer_ref": "VIVA-OPS-a02a1b83",
+          "region": "South"
+        }
+      ]
+    },
+    {
+      "operation": "DELETE",
+      "sql": "DELETE FROM reporting.customer\nWHERE customer_ref = 'VIVA-OPS-a02a1b83'\nRETURNING customer_ref;",
+      "rows": [
+        {
+          "customer_ref": "VIVA-OPS-a02a1b83"
+        }
+      ]
+    },
+    {
+      "operation": "CHECK",
+      "sql": "SELECT count(*) AS remaining_rows\nFROM reporting.customer\nWHERE customer_ref = 'VIVA-OPS-a02a1b83';",
+      "rows": [
+        {
+          "remaining_rows": 0
+        }
+      ]
+    }
+  ],
+  "crud_transaction": "rolled back",
+  "fixture_rows_after_transaction": 0,
+  "cross_check": {
+    "sum_category_sales": "292484500.00",
+    "last_month_running_sales": "292484500.00",
+    "equal": true
+  }
+}

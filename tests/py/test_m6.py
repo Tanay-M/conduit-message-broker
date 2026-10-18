@@ -1,9 +1,10 @@
 import uuid
+import os
 
 import httpx
 import pytest
 
-API = "http://localhost:8000"
+API = os.environ.get('CONDUIT_API_URL','http://127.0.0.1:8000')
 ADMIN_TOKEN = "conduit-admin-token"
 ADMIN = {"Authorization": f"Bearer {ADMIN_TOKEN}"}
 
@@ -16,10 +17,10 @@ def api():
 
 @pytest.fixture(scope="session")
 def admin_session(api):
-    r = api.post("/web/login", data={"mode": "admin", "token": ADMIN_TOKEN})
+    r = api.post("/web/login", data={"username": "admin", "password": "Conduit@123"})
     assert r.status_code == 303
     cookie = r.cookies.get("conduit_session")
-    assert cookie == ADMIN_TOKEN
+    assert cookie.startswith("ws_") and cookie != ADMIN_TOKEN
     return {"Cookie": f"conduit_session={cookie}"}
 
 
@@ -60,18 +61,15 @@ def app_env(api):
 
 @pytest.fixture(scope="session")
 def app_session(api, app_env):
-    r = api.post("/web/login", data={"mode": "app", "token": app_env["api_key"]})
-    assert r.status_code == 303
-    cookie = r.cookies.get("conduit_session")
-    assert cookie == app_env["api_key"]
-    return {"Cookie": f"conduit_session={cookie}"}
+    # Legacy broker contracts use application authentication directly; there is no app-key login UI.
+    return {"Cookie": f"conduit_session={app_env['api_key']}"}
 
 
 def test_login_page(api):
     assert api.get("/web/login").status_code == 200
-    r = api.post("/web/login", data={"mode": "admin", "token": "wrong"})
+    r = api.post("/web/login", data={"username": "admin", "password": "wrong"})
     assert r.status_code == 401
-    r = api.post("/web/login", data={"mode": "app", "token": "not-a-uuid"})
+    r = api.post("/web/login", data={"username": "unknown-user", "password": "wrong"})
     assert r.status_code == 401
 
 

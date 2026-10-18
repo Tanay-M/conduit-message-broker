@@ -1,0 +1,8 @@
+{
+  "fresh_checkout_with_spaces": true,
+  "independent_database_port": 55433,
+  "api_port": 8001,
+  "completed": 1,
+  "download_bytes": 60,
+  "limitation": "Fresh checkout on this Windows computer, not a second physical laptop."
+}

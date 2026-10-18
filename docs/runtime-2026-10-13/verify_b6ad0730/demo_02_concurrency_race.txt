@@ -1,0 +1,21 @@
+
+================================================================
+ DEMO 02 - CONCURRENCY: 3 consumers racing, SKIP LOCKED guarantees no double delivery
+================================================================
+  -> provisioned topic=d2topic613368d0 group=d2group613368d0
+  -> producing 30 unkeyed messages
+     produced 30 messages in 53.4 ms
+  [PASS] 30 messages produced
+  -> starting 3 consumer threads simultaneously (threading.Barrier)
+  [PASS] no worker raised an exception
+     worker 0 claimed 20 messages
+     worker 1 claimed 0 messages
+     worker 2 claimed 10 messages
+     drained the backlog in 63.5 ms (473 msg/s)
+  [PASS] every message was claimed exactly once in total (30/30)
+  [PASS] no message was ever claimed by two workers (30 unique locations)
+  -> acknowledging everything the three workers claimed
+  [PASS] all 30 messages delivered
+
+  DEMO COMPLETE - all checks passed
+

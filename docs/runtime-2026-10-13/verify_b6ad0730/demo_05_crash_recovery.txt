@@ -1,0 +1,32 @@
+
+================================================================
+ DEMO 05 - CRASHED CONSUMER RECOVERY: visibility timeout + reaper = at-least-once delivery
+================================================================
+  -> provisioned topic=d5topic74653b60 group=d5group74653b60
+  -> producing 3 messages
+     3 messages pending
+  -> worker A claims all 3 with a 2-second visibility timeout...
+     claimed offset=0 visible_until=2026-10-13 06:59:20.068649+00:00 attempts=1
+     claimed offset=0 visible_until=2026-10-13 06:59:20.068649+00:00 attempts=1
+     claimed offset=1 visible_until=2026-10-13 06:59:20.068649+00:00 attempts=1
+  [PASS] worker A holds 3 claims
+  -> worker A CRASHES - it never acks, it just disappears
+     (in a real crash the process dies holding these claims; the rows stay status='claimed')
+     (no other consumer can take them while the visibility window is open)
+     ... 3 seconds later: the visibility timeout has expired
+  -> running the reaper: expired claims are re-queued or dead-lettered
+     reap_expired_claims: requeued=3 dead=0
+  [PASS] all 3 expired claims returned to pending
+     offset=0 status=pending attempts=1
+     offset=0 status=pending attempts=1
+     offset=1 status=pending attempts=1
+  [PASS] messages are pending again
+  [PASS] attempt counter records the crashed claim (attempts=1)
+  -> worker B (a new process) picks them up and completes the work
+  [PASS] worker B claimed all 3 recovered messages
+  [PASS] worker B's claim bumps attempts to 2 (crash counted as a receive)
+  [PASS] worker B acknowledged all 3 - nothing was lost
+  [PASS] final state: 3 delivered - at-least-once delivery held
+
+  DEMO COMPLETE - all checks passed
+

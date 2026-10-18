@@ -3,10 +3,11 @@ import sys
 import time
 from pathlib import Path
 
-sys.path.insert(0, "/app/demos")
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'demos'))
 from _common import ADMIN_DSN, DSN, fixtures, new_admin, new_client  # noqa: E402,F401
 
-RESULTS_DIR = Path("/app/benchmarks/results")
+RESULTS_DIR = ROOT / 'benchmarks/results'
 
 
 def percentiles(samples_ms):

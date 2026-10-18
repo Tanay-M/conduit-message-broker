@@ -1,0 +1,297 @@
+=================================================
+ M4 SMOKE TEST - seed dataset + data management
+ (run against a SEEDED volume: CONDUIT_SEED=true)
+=================================================
+CREATE FUNCTION
+[1] dataset shape: 2,000 messages with realistic status mix
+ total_messages 
+----------------
+           2000
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+  status   | count 
+-----------+-------
+ claimed   |    29
+ dead      |     1
+ delivered |  1580
+ pending   |   390
+(4 rows)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+  topic_name   | topic_status | retention_days | pending | claimed | delivered | dead | dlq_pending |        oldest_pending         |        last_message_at        
+---------------+--------------+----------------+---------+---------+-----------+------+-------------+-------------------------------+-------------------------------
+ notifications | active       |              7 |       8 |       7 |       285 |    0 |           0 | 2026-10-13 05:03:44.830059+00 | 2026-10-13 06:58:50.693308+00
+ orders        | active       |              7 |     210 |      10 |       580 |    0 |           0 | 2026-10-13 04:59:21.266994+00 | 2026-10-13 06:58:29.98521+00
+ payments      | active       |              7 |      66 |       8 |       425 |    1 |           1 | 2026-10-13 04:59:37.638474+00 | 2026-10-13 06:59:01.052797+00
+ user-activity | active       |              7 |     106 |       4 |       290 |    0 |           0 | 2026-10-13 05:01:54.476152+00 | 2026-10-13 06:59:02.547509+00
+(4 rows)
+
+[2] audit coverage of the seeded lifecycle
+   event_type   | count 
+----------------+-------
+ ACL_GRANT      |    16
+ CONFIG_CHANGE  |     3
+ DELIVERED      |  1580
+ DLQ            |     1
+ PRODUCE        |  2000
+ SCHEMA_PUBLISH |     3
+ TOPIC_CREATE   |     4
+(7 rows)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+[3] monitoring views populated: lag + throughput timeline
+ lag_rows 
+----------
+       17
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ throughput_minutes 
+--------------------
+                461
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ dead_letter_entries 
+---------------------
+                   1
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+[4] retention purge: exactly the 30 aged notifications expire
+ purged 
+--------
+     30
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+[5] schema evolution: payments v2 published, v1 deprecated, old shape rejected
+ new_version 
+-------------
+           2
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ version |   status   
+---------+------------
+       1 | deprecated
+       2 | active
+(2 rows)
+
+DO
+ fn_assert 
+-----------
+ 
+(1 row)
+
+[6] suspend semantics: suspended user loses produce access at trigger AND RLS layers
+ suspend_user 
+--------------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+DO
+ activate_user 
+---------------
+ 
+(1 row)
+
+DO
+[7] application revocation: revoked app cannot produce (CDT03), restored app can
+ set_application_status 
+------------------------
+ 
+(1 row)
+
+DO
+ set_application_status 
+------------------------
+ 
+(1 row)
+
+DO
+[8] group lifecycle: paused group cannot consume (CDT06), reactivated group can
+ pause_group 
+-------------
+ 
+(1 row)
+
+DO
+ activate_group 
+----------------
+ 
+(1 row)
+
+ email_acked 
+-------------
+           1
+(1 row)
+
+[9] topic lifecycle: archived topic rejects produce (CDT02), reactivated topic accepts
+ archive_topic 
+---------------
+ 
+(1 row)
+
+DO
+ update_topic_config 
+---------------------
+ 
+(1 row)
+
+DO
+[10] final state: matview refreshed and consistent, message ledger balances
+ refresh_dashboard 
+-------------------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+ fn_assert 
+-----------
+ 
+(1 row)
+
+  topic_name   | topic_status | retention_days | pending | claimed | delivered | dead | dlq_pending |        oldest_pending         |        last_message_at        
+---------------+--------------+----------------+---------+---------+-----------+------+-------------+-------------------------------+-------------------------------
+ notifications | active       |              7 |       8 |       7 |       256 |    0 |           0 | 2026-10-13 05:03:44.830059+00 | 2026-10-13 06:59:10.076399+00
+ orders        | active       |              7 |     210 |      10 |       580 |    0 |           0 | 2026-10-13 04:59:21.266994+00 | 2026-10-13 06:58:29.98521+00
+ payments      | active       |              7 |      68 |       8 |       425 |    1 |           1 | 2026-10-13 04:59:37.638474+00 | 2026-10-13 06:59:10.057312+00
+ user-activity | active       |              7 |     107 |       4 |       290 |    0 |           0 | 2026-10-13 05:01:54.476152+00 | 2026-10-13 06:59:10.123249+00
+(4 rows)
+
+=================================================
+ M4 SMOKE TEST COMPLETE
+=================================================

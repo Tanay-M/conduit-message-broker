@@ -1,0 +1,110 @@
+{
+  "broker_tables": [
+    {
+      "table_name": "access"
+    },
+    {
+      "table_name": "app_user"
+    },
+    {
+      "table_name": "application"
+    },
+    {
+      "table_name": "audit_log"
+    },
+    {
+      "table_name": "broker_config"
+    },
+    {
+      "table_name": "consumer_group"
+    },
+    {
+      "table_name": "dead_letter_message"
+    },
+    {
+      "table_name": "group_offset"
+    },
+    {
+      "table_name": "group_subscription"
+    },
+    {
+      "table_name": "message"
+    },
+    {
+      "table_name": "partition"
+    },
+    {
+      "table_name": "producer_sequence"
+    },
+    {
+      "table_name": "role"
+    },
+    {
+      "table_name": "schema_migration"
+    },
+    {
+      "table_name": "schema_version"
+    },
+    {
+      "table_name": "topic"
+    }
+  ],
+  "reporting_app": [
+    {
+      "app_id": 1,
+      "app_name": "reporting-service",
+      "app_type": "both",
+      "status": "active"
+    }
+  ],
+  "reporting_topics": [
+    {
+      "topic_name": "report-prepare",
+      "partitions": 1
+    },
+    {
+      "topic_name": "report-render",
+      "partitions": 4
+    }
+  ],
+  "subscriptions": [
+    {
+      "group_name": "report-preparers",
+      "topic_name": "report-prepare"
+    },
+    {
+      "group_name": "report-workers",
+      "topic_name": "report-render"
+    }
+  ],
+  "reporting_messages": [
+    {
+      "topic_name": "report-prepare",
+      "status": "delivered",
+      "jobs": 19
+    },
+    {
+      "topic_name": "report-render",
+      "status": "delivered",
+      "jobs": 12115
+    }
+  ],
+  "broker_audit": [
+    {
+      "event_type": "DELIVERED",
+      "events": 12134
+    },
+    {
+      "event_type": "PRODUCE",
+      "events": 12134
+    },
+    {
+      "event_type": "SCHEMA_PUBLISH",
+      "events": 2
+    },
+    {
+      "event_type": "TOPIC_CREATE",
+      "events": 2
+    }
+  ]
+}

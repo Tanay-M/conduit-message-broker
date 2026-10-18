@@ -1,0 +1,52 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.12, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\asus\Desktop\Conduit\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\asus\Desktop\Conduit
+plugins: anyio-4.15.1
+collecting ... collected 43 items
+
+tests/py/test_m5.py::test_health PASSED                                  [  2%]
+tests/py/test_m5.py::test_admin_requires_token PASSED                    [  4%]
+tests/py/test_m5.py::test_unknown_api_key PASSED                         [  6%]
+tests/py/test_m5.py::test_sdk_roundtrip_and_idempotency PASSED           [  9%]
+tests/py/test_m5.py::test_api_roundtrip PASSED                           [ 11%]
+tests/py/test_m5.py::test_error_mapping_schema_violation PASSED          [ 13%]
+tests/py/test_m5.py::test_rls_visibility PASSED                          [ 16%]
+tests/py/test_m5.py::test_monitoring_endpoints PASSED                    [ 18%]
+tests/py/test_m5.py::test_sql_console PASSED                             [ 20%]
+tests/py/test_m5.py::test_sse_notification PASSED                        [ 23%]
+tests/py/test_m5.py::test_dashboard_counts_match_stored_rows PASSED      [ 25%]
+tests/py/test_m6.py::test_login_page PASSED                              [ 27%]
+tests/py/test_m6.py::test_pages_redirect_without_session PASSED          [ 30%]
+tests/py/test_m6.py::test_admin_pages_render PASSED                      [ 32%]
+tests/py/test_m6.py::test_app_pages_render PASSED                        [ 34%]
+tests/py/test_m6.py::test_fragments PASSED                               [ 37%]
+tests/py/test_m6.py::test_cookie_auth_on_json_api PASSED                 [ 39%]
+tests/py/test_m6.py::test_playground_flow_via_cookies PASSED             [ 41%]
+tests/py/test_m6.py::test_web_sql_console PASSED                         [ 44%]
+tests/py/test_m6.py::test_sse_requires_session PASSED                    [ 46%]
+tests/py/test_m6.py::test_logout PASSED                                  [ 48%]
+tests/py/test_reporting_api.py::test_reporting_auth_and_parameter_validation PASSED [ 51%]
+tests/py/test_reporting_api.py::test_real_report_download_replay_and_evidence PASSED [ 53%]
+tests/py/test_reporting_api.py::test_big_sequence_and_out_of_order_acknowledgement PASSED [ 55%]
+tests/py/test_reporting_api.py::test_private_dlq_and_seeded_admin_grant PASSED [ 58%]
+tests/py/test_reporting_ui.py::test_report_pages_require_session PASSED  [ 60%]
+tests/py/test_reporting_ui.py::test_workspace_data_filters_and_guardrails PASSED [ 62%]
+tests/py/test_reporting_ui.py::test_form_error_is_visible_and_preserves_values PASSED [ 65%]
+tests/py/test_reporting_ui.py::test_sql_workspace_renders_database_types_and_escaped_text PASSED [ 67%]
+tests/py/test_reporting_ui.py::test_form_submission_run_inspector_and_idempotency PASSED [ 69%]
+tests/py/test_web_login.py::test_simple_login_form_and_invalid_credentials PASSED [ 72%]
+tests/py/test_web_login.py::test_session_rotation_and_logout_revoke_access PASSED [ 74%]
+tests/py/test_web_login.py::test_expiry_and_disabled_accounts PASSED     [ 76%]
+tests/test_reporting.py::test_real_statement_and_sql_totals PASSED       [ 79%]
+tests/test_reporting.py::test_expired_final_claim_updates_report_state PASSED [ 81%]
+tests/test_reporting.py::test_constraints PASSED                         [ 83%]
+tests/test_reporting.py::test_transaction_rollback_has_no_orphan_job PASSED [ 86%]
+tests/test_reporting.py::test_idempotent_submission_and_conflicting_parameters PASSED [ 88%]
+tests/test_reporting.py::test_replay_survives_source_edit PASSED         [ 90%]
+tests/test_reporting.py::test_summary_and_bulk_counts PASSED             [ 93%]
+tests/test_reporting.py::test_duplicate_delivery_after_publication PASSED [ 95%]
+tests/test_reporting.py::test_poison_uuid_job_is_dead_lettered PASSED    [ 97%]
+tests/test_reporting.py::test_failed_render_reaches_dlq PASSED           [100%]
+
+============================= 43 passed in 31.00s =============================

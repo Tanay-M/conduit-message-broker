@@ -1,0 +1,366 @@
+[seed] users (6, across all roles)
+ register_user 
+---------------
+             1
+(1 row)
+
+ register_user 
+---------------
+             2
+(1 row)
+
+ register_user 
+---------------
+             3
+(1 row)
+
+ register_user 
+---------------
+             4
+(1 row)
+
+ register_user 
+---------------
+             5
+(1 row)
+
+ register_user 
+---------------
+             6
+(1 row)
+
+[seed] client applications (6 service apps)
+[seed] topics (4: three schema-validated, one schemaless)
+ create_topic 
+--------------
+            1
+(1 row)
+
+ create_topic 
+--------------
+            2
+(1 row)
+
+ create_topic 
+--------------
+            3
+(1 row)
+
+ create_topic 
+--------------
+            4
+(1 row)
+
+[seed] access grants (16) - guest.viewer deliberately ungranted
+ grant_access 
+--------------
+            1
+(1 row)
+
+ grant_access 
+--------------
+            2
+(1 row)
+
+ grant_access 
+--------------
+            3
+(1 row)
+
+ grant_access 
+--------------
+            4
+(1 row)
+
+ grant_access 
+--------------
+            5
+(1 row)
+
+ grant_access 
+--------------
+            6
+(1 row)
+
+ grant_access 
+--------------
+            7
+(1 row)
+
+ grant_access 
+--------------
+            8
+(1 row)
+
+ grant_access 
+--------------
+            9
+(1 row)
+
+ grant_access 
+--------------
+           10
+(1 row)
+
+ grant_access 
+--------------
+           11
+(1 row)
+
+ grant_access 
+--------------
+           12
+(1 row)
+
+ grant_access 
+--------------
+           13
+(1 row)
+
+ grant_access 
+--------------
+           14
+(1 row)
+
+ grant_access 
+--------------
+           15
+(1 row)
+
+ grant_access 
+--------------
+           16
+(1 row)
+
+[seed] consumer groups (5) and subscriptions (6, incl. a two-topic group)
+ create_group 
+--------------
+            1
+(1 row)
+
+ create_group 
+--------------
+            2
+(1 row)
+
+ create_group 
+--------------
+            3
+(1 row)
+
+ create_group 
+--------------
+            4
+(1 row)
+
+ create_group 
+--------------
+            5
+(1 row)
+
+ subscribe_group 
+-----------------
+               4
+(1 row)
+
+ subscribe_group 
+-----------------
+               2
+(1 row)
+
+ subscribe_group 
+-----------------
+               2
+(1 row)
+
+ subscribe_group 
+-----------------
+               4
+(1 row)
+
+ subscribe_group 
+-----------------
+               3
+(1 row)
+
+ subscribe_group 
+-----------------
+               2
+(1 row)
+
+[seed] broker configuration defaults
+ update_broker_config 
+----------------------
+ 
+(1 row)
+
+ update_broker_config 
+----------------------
+ 
+(1 row)
+
+ update_broker_config 
+----------------------
+ 
+(1 row)
+
+[seed] producing 2,000 messages through the real broker API
+ orders_from_checkout 
+----------------------
+                  600
+(1 row)
+
+ orders_from_inventory 
+-----------------------
+                   200
+(1 row)
+
+ payments_produced 
+-------------------
+               500
+(1 row)
+
+ notifications_produced 
+------------------------
+                    300
+(1 row)
+
+ activity_produced 
+-------------------
+               400
+(1 row)
+
+[seed] poison message on payments: 3 claim+nack cycles -> dead + DLQ
+ retried | dead 
+---------+------
+       1 |    0
+(1 row)
+
+ retried | dead 
+---------+------
+       1 |    0
+(1 row)
+
+ retried | dead 
+---------+------
+       0 |    1
+(1 row)
+
+[seed] billing-workers on orders: 600 consumed, 580 acked, 10 in-flight, 10 nacked
+ batch1_acked 
+--------------
+          200
+(1 row)
+
+ batch2_acked 
+--------------
+          200
+(1 row)
+
+ batch3_acked 
+--------------
+          180
+(1 row)
+
+ retried | dead 
+---------+------
+      10 |    0
+(1 row)
+
+[seed] payment-processors on payments: 390 acked, 5 in-flight, 5 nacked
+ pbatch1_acked 
+---------------
+           190
+(1 row)
+
+ retried | dead 
+---------+------
+       5 |    0
+(1 row)
+
+ pbatch2_acked 
+---------------
+           200
+(1 row)
+
+[seed] fraud-team on payments leftovers: 35 acked, 3 in-flight, 2 nacked
+ fraud_acked 
+-------------
+          35
+(1 row)
+
+ retried | dead 
+---------+------
+       2 |    0
+(1 row)
+
+[seed] email-workers on notifications: 285 acked, 7 in-flight, 8 nacked
+ nbatch1_acked 
+---------------
+           140
+(1 row)
+
+ retried | dead 
+---------+------
+       5 |    0
+(1 row)
+
+ nbatch2_acked 
+---------------
+           145
+(1 row)
+
+ retried | dead 
+---------+------
+       3 |    0
+(1 row)
+
+[seed] analytics-team on user-activity: 290 acked, 4 in-flight, 6 nacked
+ analytics_acked 
+-----------------
+             290
+(1 row)
+
+ retried | dead 
+---------+------
+       6 |    0
+(1 row)
+
+[seed] backdating: spread all messages over the last 2 hours, age 30 notifications past retention
+UPDATE 2000
+UPDATE 30
+ refresh_dashboard 
+-------------------
+ 
+(1 row)
+
+[seed] dataset summary
+  topic_name   | topic_status | retention_days | pending | claimed | delivered | dead | dlq_pending |        oldest_pending         |        last_message_at        
+---------------+--------------+----------------+---------+---------+-----------+------+-------------+-------------------------------+-------------------------------
+ notifications | active       |              7 |       8 |       7 |       285 |    0 |           0 | 2026-10-13 05:03:44.830059+00 | 2026-10-13 06:58:50.693308+00
+ orders        | active       |              7 |     210 |      10 |       580 |    0 |           0 | 2026-10-13 04:59:21.266994+00 | 2026-10-13 06:58:29.98521+00
+ payments      | active       |              7 |      66 |       8 |       425 |    1 |           1 | 2026-10-13 04:59:37.638474+00 | 2026-10-13 06:59:01.052797+00
+ user-activity | active       |              7 |     106 |       4 |       290 |    0 |           0 | 2026-10-13 05:01:54.476152+00 | 2026-10-13 06:59:02.547509+00
+(4 rows)
+
+  topic_name   |     group_name     | partition_number | committed_offset | head_offset | lag_messages |        last_commit_at         
+---------------+--------------------+------------------+------------------+-------------+--------------+-------------------------------
+ notifications | email-workers      |                0 |              144 |         144 |            0 | 2026-10-13 06:59:07.738725+00
+ notifications | email-workers      |                1 |              146 |         156 |           10 | 2026-10-13 06:59:07.738725+00
+ orders        | analytics-team     |                0 |                0 |         288 |          288 | 2026-10-13 06:59:05.24885+00
+ orders        | analytics-team     |                1 |                0 |         192 |          192 | 2026-10-13 06:59:05.24885+00
+ orders        | analytics-team     |                2 |                0 |         144 |          144 | 2026-10-13 06:59:05.24885+00
+ orders        | analytics-team     |                3 |                0 |         176 |          176 | 2026-10-13 06:59:05.24885+00
+ orders        | billing-workers    |                0 |              146 |         288 |          142 | 2026-10-13 06:59:07.477285+00
+ orders        | billing-workers    |                1 |              145 |         192 |           47 | 2026-10-13 06:59:07.477285+00
+ orders        | billing-workers    |                2 |              144 |         144 |            0 | 2026-10-13 06:59:07.477285+00
+ orders        | billing-workers    |                3 |              145 |         176 |           31 | 2026-10-13 06:59:07.477285+00
+ payments      | fraud-team         |                0 |              232 |         301 |           69 | 2026-10-13 06:59:07.645509+00
+ payments      | fraud-team         |                1 |              199 |         199 |            0 | 2026-10-13 06:59:07.645509+00
+ payments      | payment-processors |                0 |              198 |         301 |          103 | 2026-10-13 06:59:07.604191+00
+ payments      | payment-processors |                1 |              198 |         199 |            1 | 2026-10-13 06:59:07.604191+00
+ user-activity | analytics-team     |                0 |               97 |         134 |           37 | 2026-10-13 06:59:07.813953+00
+ user-activity | analytics-team     |                1 |               97 |         133 |           36 | 2026-10-13 06:59:07.813953+00
+ user-activity | analytics-team     |                2 |               96 |         133 |           37 | 2026-10-13 06:59:07.813953+00
+(17 rows)
+

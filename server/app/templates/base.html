@@ -3,47 +3,40 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Conduit</title>
+  <title>{% block title %}Conduit · Reporting workspace{% endblock %}</title>
   <link rel="stylesheet" href="/static/vendor/daisyui.min.css">
-  <script src="/static/vendor/tailwind.js"></script>
+  <link rel="stylesheet" href="/static/vendor/tailwind.min.css">
   <link rel="stylesheet" href="/static/app.css">
+  <link rel="stylesheet" href="/static/workspace.css">
   <script src="/static/vendor/htmx.min.js"></script>
   <script src="/static/vendor/sse.js"></script>
   <script src="/static/vendor/chart.umd.min.js"></script>
   <script defer src="/static/vendor/alpine.min.js"></script>
   <script src="/static/app.js"></script>
+  <script defer src="/static/workspace.js"></script>
 </head>
-<body class="min-h-screen bg-base-200" data-mode="{{ ctx.mode }}">
-  <div class="flex min-h-screen">
-    <aside class="w-56 shrink-0 bg-base-100 border-r border-base-300 p-3 flex flex-col gap-1">
-      <div class="px-3 py-2 mb-3">
-        <div class="font-black text-primary text-xl leading-none">Conduit</div>
-        <div class="text-xs opacity-60 mt-1">PostgreSQL message broker</div>
-      </div>
-      <a href="/" class="nav-link {% if active == 'overview' %}active{% endif %}">Overview</a>
-      <a href="/messages" class="nav-link {% if active == 'messages' %}active{% endif %}">Messages</a>
-      <a href="/playground" class="nav-link {% if active == 'playground' %}active{% endif %}">Playground</a>
-      <a href="/topics" class="nav-link {% if active == 'topics' %}active{% endif %}">Topics</a>
-      <a href="/groups" class="nav-link {% if active == 'groups' %}active{% endif %}">Groups</a>
-      <a href="/audit" class="nav-link {% if active == 'audit' %}active{% endif %}">Audit</a>
-      <a href="/dlq" class="nav-link {% if active == 'dlq' %}active{% endif %}">DLQ</a>
+<body data-mode="{{ ctx.mode }}">
+  {% from 'components/icons.html' import icon %}
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <button class="nav-scrim" aria-label="Close navigation" data-nav-toggle></button>
+  <aside id="workspace-navigation" class="workspace-sidebar" aria-label="Main navigation">
+    <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Conduit<span class="brand-caption">REPORTING WORKSPACE</span></span></a>
+    <div class="workspace-switch"><span class="workspace-avatar">R</span><span>Retail analytics<small>Local workspace</small></span></div>
+    <nav>
+      <div class="nav-section-label">WORKSPACE</div>
       {% if ctx.mode == 'admin' %}
-      <a href="/admin" class="nav-link {% if active == 'admin' %}active{% endif %}">Admin</a>
-      <a href="/sql" class="nav-link {% if active == 'sql' %}active{% endif %}">SQL Console</a>
+      <a href="/" class="nav-link {% if active == 'reports' %}active{% endif %}" {% if active=='reports' %}aria-current="page"{% endif %}>{{ icon('reports') }}Reports</a>
+      <a href="/data" class="nav-link {% if active == 'data' %}active{% endif %}">{{ icon('data') }}Data explorer</a>
+      <a href="/sql" class="nav-link {% if active == 'sql' %}active{% endif %}">{{ icon('code') }}SQL workspace</a>
       {% endif %}
-      <div class="mt-auto px-3 py-2 text-xs border-t border-base-300">
-        {% if ctx.mode == 'admin' %}
-          <span class="badge badge-primary badge-sm">admin</span>
-        {% else %}
-          <span class="badge badge-secondary badge-sm">{{ ctx.app_name }}</span>
-          <div class="opacity-60 mt-1">{{ ctx.owner_username }} · {{ ctx.owner_role }}</div>
-        {% endif %}
-        <a href="/web/logout" class="link link-hover block mt-1">logout</a>
-      </div>
-    </aside>
-    <main class="flex-1 p-6 overflow-x-auto">
-      {% block content %}{% endblock %}
-    </main>
+    </nav>
+    <div class="sidebar-bottom"><div class="connection-label"><span class="status-dot"></span>PostgreSQL<span>Local</span></div><div class="profile"><span class="profile-avatar">{{ 'AD' if ctx.mode=='admin' else ctx.app_name[:2]|upper }}</span><div><strong>{{ 'Administrator' if ctx.mode=='admin' else ctx.app_name }}</strong><small>{{ 'Workspace administrator' if ctx.mode=='admin' else ctx.owner_username }}</small></div><a href="/web/logout" title="Sign out" aria-label="Sign out">{{ icon('logout') }}</a></div></div>
+  </aside>
+  <div class="workspace-main">
+    <header class="workspace-topbar"><div class="breadcrumb"><button class="icon-button mobile-nav" aria-label="Open navigation" aria-controls="workspace-navigation" aria-expanded="false" data-nav-toggle>{{ icon('menu') }}</button><span>Workspace</span>{{ icon('chevron') }}<strong>{{ {'reports':'Reports','data':'Data explorer','sql':'SQL workspace','overview':'Queue overview','messages':'Messages','topics':'Topics','groups':'Consumer groups','audit':'Audit log','dlq':'Failed messages','playground':'Broker playground','admin':'Administration'}.get(active,'Reports') }}</strong></div><span class="environment-label"><span class="status-dot"></span>Local environment</span></header>
+    <main id="main-content" class="workspace-content">{% block content %}{% endblock %}</main>
+    <footer class="workspace-footer"><span>Conduit</span><span>PostgreSQL reporting &amp; asynchronous processing</span></footer>
   </div>
+  <div id="workspace-toast" role="status" class="workspace-toast" hidden></div>
 </body>
 </html>

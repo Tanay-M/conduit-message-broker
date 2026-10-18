@@ -36,20 +36,20 @@ async def my_groups(app=Depends(require_app)):
 
 @router.get("/dashboard")
 async def dashboard(ctx=Depends(require_any)):
-    pool, _ = _pools(ctx)
-    return await db.run("SELECT * FROM v_topic_stats ORDER BY topic_name", pool=pool)
+    pool, user_id = _pools(ctx)
+    return await db.run("SELECT * FROM v_topic_stats ORDER BY topic_name", pool=pool, user_id=user_id)
 
 
 @router.get("/lag")
 async def lag(ctx=Depends(require_any)):
-    pool, _ = _pools(ctx)
-    return await db.run("SELECT * FROM v_consumer_lag", pool=pool)
+    pool, user_id = _pools(ctx)
+    return await db.run("SELECT * FROM v_consumer_lag", pool=pool, user_id=user_id)
 
 
 @router.get("/throughput")
 async def throughput(minutes: int = 120, ctx=Depends(require_any)):
-    pool, _ = _pools(ctx)
-    return await db.run("SELECT * FROM v_throughput_by_minute ORDER BY topic_name, minute_ts", pool=pool)
+    pool, user_id = _pools(ctx)
+    return await db.run("SELECT * FROM v_throughput_by_minute ORDER BY topic_name, minute_ts", pool=pool, user_id=user_id)
 
 
 @router.get("/messages")
