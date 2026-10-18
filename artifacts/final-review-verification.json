@@ -1,0 +1,16 @@
+{
+  "checked_on": "2026-10-19",
+  "tests": {
+    "passed": 57,
+    "seconds": 26.88
+  },
+  "lint": "Ruff passed on new modules/tests",
+  "api_url": "http://127.0.0.1:8001",
+  "database_port": 55432,
+  "logical_tables": 34,
+  "logical_table_columns": 227,
+  "ai_live_verified": false,
+  "ai_adapter": "mocked success/error and model-output boundaries tested",
+  "sample_preview_batch": "5d129fc9-bae8-443a-bf27-11a7aacb6c5b",
+  "stock_evidence": "artifacts/retail-operations-evidence.json"
+}

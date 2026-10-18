@@ -1,5 +1,9 @@
 # Native reporting implementation status
 
+## Final-review expansion — verified 19 October 2026
+
+Implemented sales CSV staging/whole-order validation/manual or optional Gemini mapping/duplicate-safe commit; basic inventory receipts, atomic sales posting, immutable movements, reorder thresholds and reconciliation; five-kind natural-language to approved SQL with preview/execution/queued sales reports; SQL-backed analysis and optional Gemini explanations. Added six workflow tables and one inventory view through migration 150. Current logical table count is 34 (including schema_migration). Full regression: **57 passed in 26.88s**; new code passes Ruff. Real HTTP tests cover forms/auth/error/preview/commit and report integration. A database stock/rollback experiment is captured in artifacts/retail-operations-evidence.json. Live Gemini inference awaits the user's key and was not claimed as verified. The newer scope supersedes the earlier notes below about UI navigation, table count and deferred AI/inventory. No cache or query optimizer advisor was added. See FINAL_REVIEW_DEMO.md and FINAL_REVIEW_SCHEMA.md.
+
 Verified on 17 October 2026. The accepted implementation plan is in IMPLEMENTATION_PLAN.md. The application now runs natively on Windows without Docker. Existing Docker installations and volumes were not removed; Docker packaging and the old Docker crash script were removed from this repository's active run path.
 
 ## Implemented

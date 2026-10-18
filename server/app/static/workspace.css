@@ -2135,6 +2135,21 @@ h1 {
     font-size: 10px;
   }
 }
+.ops-grid {display:grid;grid-template-columns: minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+.ops-grid > * {min-width:0}.page-heading > div {min-width:0}.page-heading h1 {overflow-wrap:anywhere}
+.ops-panel {padding:24px}.ops-panel h2 {font-size:17px;font-weight:650;margin:0 0 12px}
+.ops-panel .field {margin:16px 0}.ops-panel .sql-code {margin:16px 0;border-radius:8px;max-height:400px;overflow:auto}
+.ops-muted {font-size:12px;line-height:1.7;color:#657386}.ops-metrics {display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.ops-metric {padding:20px;flex:1;min-width:150px}.ops-metric small {display:block;color:#657386;font-size:12px}.ops-metric strong {display:block;font-size:26px;font-weight:650;margin-top:8px}
+.ops-spaced {margin-top:24px}.ops-checkbox {display:flex;gap:8px;align-items:center;font-size:13px;margin:16px 0}
+.ops-steps {padding-left:20px;font-size:13px;line-height:2.1;color:#475569}.ops-mapping {display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0 16px}
+.ops-inline {display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:space-between}.ops-inline h2 {margin:0}
+.ops-details {display:flex;flex-wrap:wrap;gap:20px;margin:20px 0}.ops-details dt {font-size:11px;color:#657386;text-transform:uppercase}.ops-details dd {margin:5px 0;font-size:13px}
+.ops-wrap {white-space:normal!important;min-width:240px;max-width:450px}.ops-narrative {font-size:14px;line-height:1.8;margin:16px 0}
+.ops-success {padding:16px;border-radius:8px;background:#ecfdf5;color:#166534;margin-bottom:20px;font-size:13px}
+.ops-alert {padding:14px 16px;background:#fffbeb;border-left:3px solid #d97706;margin:12px 0;font-size:13px}.ops-alert span {display:block;margin-top:5px;color:#657386}
+@media(max-width:1000px){.ops-grid{grid-template-columns:1fr}.ops-panel{padding:18px}}
+@media(max-width:650px){.page-heading{flex-direction:column;align-items:stretch;gap:14px}.page-heading > form,.page-heading > .btn{align-self:flex-start;max-width:100%}.page-heading > form .btn{white-space:normal;height:auto;min-height:40px;max-width:100%;text-align:left}.ops-inline .field{flex:1 1 160px;min-width:0}.ops-inline .control{max-width:100%}}
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

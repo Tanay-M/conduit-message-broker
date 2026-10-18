@@ -13,6 +13,7 @@ from .web_sessions import ensure_demo_account
 from .api import admin, broker, events, monitor, sql, reporting
 from .webui import router as webui
 from .webui import reports as reporting_web
+from .webui import operations as operations_web
 
 
 STATUS_MAP = {
@@ -84,6 +85,7 @@ app.include_router(events.router)
 app.include_router(reporting.router)
 app.include_router(webui.router)
 app.include_router(reporting_web.router)
+app.include_router(operations_web.router)
 
 static_dir = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=static_dir), name="static")

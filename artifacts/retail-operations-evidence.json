@@ -1,0 +1,76 @@
+{
+  "checked_on": "2026-10-19",
+  "notices": [
+    "Expected insufficient-stock rejection: Insufficient stock: 43 available, 45 requested"
+  ],
+  "results": [
+    {
+      "columns": [
+        "post_stock"
+      ],
+      "rows": [
+        {
+          "post_stock": 6
+        }
+      ]
+    },
+    {
+      "columns": [
+        "post_stock"
+      ],
+      "rows": [
+        {
+          "post_stock": 7
+        }
+      ]
+    },
+    {
+      "columns": [
+        "sku",
+        "quantity",
+        "ledger_quantity",
+        "reconciled"
+      ],
+      "rows": [
+        {
+          "sku": "FINAL-EVIDENCE-P",
+          "quantity": 43,
+          "ledger_quantity": 43,
+          "reconciled": true
+        }
+      ]
+    },
+    {
+      "columns": [
+        "order_ref",
+        "sales_value"
+      ],
+      "rows": [
+        {
+          "order_ref": "STOCK-FINAL-EVIDENCE-SALE",
+          "sales_value": "175.00"
+        }
+      ]
+    },
+    {
+      "columns": [
+        "evidence_products_after_rollback"
+      ],
+      "rows": [
+        {
+          "evidence_products_after_rollback": 0
+        }
+      ]
+    },
+    {
+      "columns": [
+        "oversell_orders_after_rollback"
+      ],
+      "rows": [
+        {
+          "oversell_orders_after_rollback": 0
+        }
+      ]
+    }
+  ]
+}

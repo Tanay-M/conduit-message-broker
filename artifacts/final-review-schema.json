@@ -1,0 +1,4511 @@
+{
+  "checked_on": "2026-10-19",
+  "logical_table_count": 34,
+  "tables": [
+    {
+      "schema": "public",
+      "name": "access",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "app_user",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "application",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "audit_log",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "broker_config",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "consumer_group",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "dead_letter_message",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "group_offset",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "group_subscription",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "message",
+      "relkind": "p"
+    },
+    {
+      "schema": "public",
+      "name": "partition",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "producer_sequence",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "role",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "schema_migration",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "schema_version",
+      "relkind": "r"
+    },
+    {
+      "schema": "public",
+      "name": "topic",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "analysis_run",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "assistant_request",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "customer",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_batch",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_row",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "inventory_balance",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "order_item",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "product",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_audit",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_dataset",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_request",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_result",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_run",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "sales_order",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "stock_movement",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "template_version",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "web_account",
+      "relkind": "r"
+    },
+    {
+      "schema": "reporting",
+      "name": "web_session",
+      "relkind": "r"
+    }
+  ],
+  "columns": [
+    {
+      "table_schema": "public",
+      "table_name": "access",
+      "column_name": "access_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": "nextval('access_access_id_seq'::regclass)"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "access",
+      "column_name": "user_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "access",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "access",
+      "column_name": "access_type",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "access",
+      "column_name": "granted_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "access",
+      "column_name": "granted_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "app_user",
+      "column_name": "user_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": "nextval('app_user_user_id_seq'::regclass)"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "app_user",
+      "column_name": "username",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "app_user",
+      "column_name": "email",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "app_user",
+      "column_name": "role_id",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "app_user",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'active'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "app_user",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "application",
+      "column_name": "app_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": "nextval('application_app_id_seq'::regclass)"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "application",
+      "column_name": "app_name",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "application",
+      "column_name": "api_key",
+      "data_type": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "application",
+      "column_name": "owner_user_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "application",
+      "column_name": "app_type",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "application",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'active'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "application",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "audit_log",
+      "column_name": "log_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": "nextval('audit_log_log_id_seq'::regclass)"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "audit_log",
+      "column_name": "user_id",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "audit_log",
+      "column_name": "app_id",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "audit_log",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "audit_log",
+      "column_name": "event_type",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "audit_log",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'success'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "audit_log",
+      "column_name": "details",
+      "data_type": "jsonb",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "audit_log",
+      "column_name": "event_timestamp",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "broker_config",
+      "column_name": "config_id",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "nextval('broker_config_config_id_seq'::regclass)"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "broker_config",
+      "column_name": "config_key",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "broker_config",
+      "column_name": "config_value",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "broker_config",
+      "column_name": "description",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "broker_config",
+      "column_name": "updated_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "broker_config",
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "consumer_group",
+      "column_name": "group_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": "nextval('consumer_group_group_id_seq'::regclass)"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "consumer_group",
+      "column_name": "group_name",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "consumer_group",
+      "column_name": "created_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "consumer_group",
+      "column_name": "max_delivery_attempts",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "3"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "consumer_group",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'active'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "consumer_group",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "dead_letter_message",
+      "column_name": "dlq_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": "nextval('dead_letter_message_dlq_id_seq'::regclass)"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "dead_letter_message",
+      "column_name": "original_topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "dead_letter_message",
+      "column_name": "original_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "dead_letter_message",
+      "column_name": "msg_key",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "dead_letter_message",
+      "column_name": "payload",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "dead_letter_message",
+      "column_name": "failed_group_id",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "dead_letter_message",
+      "column_name": "failure_reason",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "dead_letter_message",
+      "column_name": "attempts",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "dead_letter_message",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'pending'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "dead_letter_message",
+      "column_name": "dead_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "group_offset",
+      "column_name": "group_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "group_offset",
+      "column_name": "partition_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "group_offset",
+      "column_name": "committed_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "group_offset",
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "group_subscription",
+      "column_name": "group_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "group_subscription",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "group_subscription",
+      "column_name": "subscribed_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "partition_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "msg_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "msg_key",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "payload",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "size_bytes",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "producer_app_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "producer_seq",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'pending'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "claimed_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "visible_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message",
+      "column_name": "attempts",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "partition_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "msg_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "msg_key",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "payload",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "size_bytes",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "producer_app_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "producer_seq",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'pending'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "claimed_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "visible_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_09",
+      "column_name": "attempts",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "partition_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "msg_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "msg_key",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "payload",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "size_bytes",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "producer_app_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "producer_seq",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'pending'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "claimed_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "visible_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_10",
+      "column_name": "attempts",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "partition_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "msg_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "msg_key",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "payload",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "size_bytes",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "producer_app_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "producer_seq",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'pending'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "claimed_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "visible_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_11",
+      "column_name": "attempts",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "partition_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "msg_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "msg_key",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "payload",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "size_bytes",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "producer_app_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "producer_seq",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'pending'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "claimed_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "visible_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2026_12",
+      "column_name": "attempts",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "partition_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "msg_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "msg_key",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "payload",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "size_bytes",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "producer_app_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "producer_seq",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'pending'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "claimed_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "visible_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_01",
+      "column_name": "attempts",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "partition_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "msg_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "msg_key",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "payload",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "size_bytes",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "producer_app_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "producer_seq",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'pending'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "claimed_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "visible_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_02",
+      "column_name": "attempts",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "partition_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "msg_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "msg_key",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "payload",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "size_bytes",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "producer_app_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "producer_seq",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'pending'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "claimed_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "visible_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_2027_03",
+      "column_name": "attempts",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "partition_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "msg_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "msg_key",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "payload",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "size_bytes",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "producer_app_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "producer_seq",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'pending'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "claimed_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "visible_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "message_default",
+      "column_name": "attempts",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "partition",
+      "column_name": "partition_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": "nextval('partition_partition_id_seq'::regclass)"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "partition",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "partition",
+      "column_name": "partition_number",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "partition",
+      "column_name": "next_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "producer_sequence",
+      "column_name": "producer_app_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "producer_sequence",
+      "column_name": "producer_seq",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "producer_sequence",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "producer_sequence",
+      "column_name": "partition_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "producer_sequence",
+      "column_name": "msg_offset",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "producer_sequence",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "role",
+      "column_name": "role_id",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "nextval('role_role_id_seq'::regclass)"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "role",
+      "column_name": "role_name",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "role",
+      "column_name": "description",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "schema_migration",
+      "column_name": "name",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "schema_migration",
+      "column_name": "sha256",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "schema_migration",
+      "column_name": "applied_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "schema_version",
+      "column_name": "schema_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": "nextval('schema_version_schema_id_seq'::regclass)"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "schema_version",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "schema_version",
+      "column_name": "version",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "schema_version",
+      "column_name": "format",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'json'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "schema_version",
+      "column_name": "definition",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "schema_version",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'active'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "schema_version",
+      "column_name": "created_by",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "schema_version",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "topic",
+      "column_name": "topic_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": "nextval('topic_topic_id_seq'::regclass)"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "topic",
+      "column_name": "topic_name",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "topic",
+      "column_name": "description",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "topic",
+      "column_name": "created_by",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "topic",
+      "column_name": "retention_days",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "7"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "topic",
+      "column_name": "max_message_bytes",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "1048576"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "topic",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "NO",
+      "column_default": "'active'::character varying"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "topic",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_audit_recent",
+      "column_name": "log_id",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_audit_recent",
+      "column_name": "username",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_audit_recent",
+      "column_name": "app_name",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_audit_recent",
+      "column_name": "topic_name",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_audit_recent",
+      "column_name": "event_type",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_audit_recent",
+      "column_name": "status",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_audit_recent",
+      "column_name": "details",
+      "data_type": "jsonb",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_audit_recent",
+      "column_name": "event_timestamp",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_consumer_lag",
+      "column_name": "topic_name",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_consumer_lag",
+      "column_name": "group_name",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_consumer_lag",
+      "column_name": "partition_number",
+      "data_type": "integer",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_consumer_lag",
+      "column_name": "committed_offset",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_consumer_lag",
+      "column_name": "head_offset",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_consumer_lag",
+      "column_name": "lag_messages",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_consumer_lag",
+      "column_name": "last_commit_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_throughput_by_minute",
+      "column_name": "topic_name",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_throughput_by_minute",
+      "column_name": "minute_ts",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_throughput_by_minute",
+      "column_name": "messages",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_throughput_by_minute",
+      "column_name": "cumulative_messages",
+      "data_type": "numeric",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_topic_stats",
+      "column_name": "topic_name",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_topic_stats",
+      "column_name": "topic_status",
+      "data_type": "character varying",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_topic_stats",
+      "column_name": "retention_days",
+      "data_type": "integer",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_topic_stats",
+      "column_name": "pending",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_topic_stats",
+      "column_name": "claimed",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_topic_stats",
+      "column_name": "delivered",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_topic_stats",
+      "column_name": "dead",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_topic_stats",
+      "column_name": "dlq_pending",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_topic_stats",
+      "column_name": "oldest_pending",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "public",
+      "table_name": "v_topic_stats",
+      "column_name": "last_message_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "analysis_run",
+      "column_name": "analysis_id",
+      "data_type": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "analysis_run",
+      "column_name": "actor",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "analysis_run",
+      "column_name": "start_date",
+      "data_type": "date",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "analysis_run",
+      "column_name": "end_date",
+      "data_type": "date",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "analysis_run",
+      "column_name": "facts",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "analysis_run",
+      "column_name": "narrative",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "analysis_run",
+      "column_name": "source",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "analysis_run",
+      "column_name": "model",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "analysis_run",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "assistant_request",
+      "column_name": "request_id",
+      "data_type": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "assistant_request",
+      "column_name": "actor",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "assistant_request",
+      "column_name": "prompt",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "assistant_request",
+      "column_name": "interpretation",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "assistant_request",
+      "column_name": "sql_text",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "assistant_request",
+      "column_name": "parameters",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "assistant_request",
+      "column_name": "source",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "assistant_request",
+      "column_name": "model",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "assistant_request",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "customer",
+      "column_name": "customer_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "customer",
+      "column_name": "customer_ref",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "customer",
+      "column_name": "full_name",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "customer",
+      "column_name": "email",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "customer",
+      "column_name": "region",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_batch",
+      "column_name": "batch_id",
+      "data_type": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_batch",
+      "column_name": "filename",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_batch",
+      "column_name": "file_sha256",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_batch",
+      "column_name": "headers",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_batch",
+      "column_name": "mapping",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_batch",
+      "column_name": "mapping_source",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_batch",
+      "column_name": "actor",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_batch",
+      "column_name": "state",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": "'preview'::text"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_batch",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_batch",
+      "column_name": "committed_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_row",
+      "column_name": "batch_id",
+      "data_type": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_row",
+      "column_name": "row_number",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_row",
+      "column_name": "raw",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_row",
+      "column_name": "cleaned",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": "'{}'::jsonb"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_row",
+      "column_name": "errors",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": "'[]'::jsonb"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "import_row",
+      "column_name": "state",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "inventory_balance",
+      "column_name": "product_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "inventory_balance",
+      "column_name": "quantity",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "inventory_balance",
+      "column_name": "reorder_level",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "10"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "inventory_balance",
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "order_item",
+      "column_name": "order_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "order_item",
+      "column_name": "line_number",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "order_item",
+      "column_name": "product_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "order_item",
+      "column_name": "quantity",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "order_item",
+      "column_name": "unit_price",
+      "data_type": "numeric",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "product",
+      "column_name": "product_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "product",
+      "column_name": "sku",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "product",
+      "column_name": "product_name",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "product",
+      "column_name": "category",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "product",
+      "column_name": "catalogue_price",
+      "data_type": "numeric",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_audit",
+      "column_name": "audit_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_audit",
+      "column_name": "request_id",
+      "data_type": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_audit",
+      "column_name": "old_state",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_audit",
+      "column_name": "new_state",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_audit",
+      "column_name": "event_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_dataset",
+      "column_name": "request_id",
+      "data_type": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_dataset",
+      "column_name": "rows",
+      "data_type": "jsonb",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_dataset",
+      "column_name": "captured_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_request",
+      "column_name": "request_id",
+      "data_type": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_request",
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_request",
+      "column_name": "subject_key",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_request",
+      "column_name": "customer_id",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_request",
+      "column_name": "state",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": "'queued'::text"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_request",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_request",
+      "column_name": "completed_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_request",
+      "column_name": "last_error",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_request",
+      "column_name": "attempts",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "0"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_request",
+      "column_name": "enqueued",
+      "data_type": "boolean",
+      "is_nullable": "NO",
+      "column_default": "false"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_result",
+      "column_name": "request_id",
+      "data_type": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_result",
+      "column_name": "csv_path",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_result",
+      "column_name": "html_path",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_result",
+      "column_name": "csv_sha256",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_result",
+      "column_name": "html_sha256",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_result",
+      "column_name": "row_count",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_result",
+      "column_name": "worker_name",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_result",
+      "column_name": "sql_seconds",
+      "data_type": "double precision",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_result",
+      "column_name": "render_seconds",
+      "data_type": "double precision",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_result",
+      "column_name": "completed_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "submission_key",
+      "data_type": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "template_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "requested_by",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "customer_id",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "start_date",
+      "data_type": "date",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "end_date",
+      "data_type": "date",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "top_n",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "10"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "bulk",
+      "data_type": "boolean",
+      "is_nullable": "NO",
+      "column_default": "false"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "status",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": "'preparing'::text"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "prepared_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "report_run",
+      "column_name": "error",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "sales_order",
+      "column_name": "order_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "sales_order",
+      "column_name": "order_ref",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "sales_order",
+      "column_name": "customer_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "sales_order",
+      "column_name": "ordered_at",
+      "data_type": "date",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "sales_order",
+      "column_name": "status",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": "'completed'::text"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "stock_movement",
+      "column_name": "movement_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "stock_movement",
+      "column_name": "product_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "stock_movement",
+      "column_name": "kind",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "stock_movement",
+      "column_name": "quantity_delta",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "stock_movement",
+      "column_name": "reference",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "stock_movement",
+      "column_name": "note",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": "''::text"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "stock_movement",
+      "column_name": "actor",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "stock_movement",
+      "column_name": "customer_id",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "stock_movement",
+      "column_name": "unit_price",
+      "data_type": "numeric",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "stock_movement",
+      "column_name": "order_id",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "stock_movement",
+      "column_name": "posted_on",
+      "data_type": "date",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "stock_movement",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "template_version",
+      "column_name": "template_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "template_version",
+      "column_name": "code",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "template_version",
+      "column_name": "version",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "template_version",
+      "column_name": "title",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "template_version",
+      "column_name": "sql_text",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "template_version",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_inventory",
+      "column_name": "product_id",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_inventory",
+      "column_name": "sku",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_inventory",
+      "column_name": "product_name",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_inventory",
+      "column_name": "category",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_inventory",
+      "column_name": "catalogue_price",
+      "data_type": "numeric",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_inventory",
+      "column_name": "quantity",
+      "data_type": "integer",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_inventory",
+      "column_name": "reorder_level",
+      "data_type": "integer",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_inventory",
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_inventory",
+      "column_name": "low_stock",
+      "data_type": "boolean",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_inventory",
+      "column_name": "ledger_quantity",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_inventory",
+      "column_name": "reconciled",
+      "data_type": "boolean",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_run_progress",
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_run_progress",
+      "column_name": "code",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_run_progress",
+      "column_name": "version",
+      "data_type": "integer",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_run_progress",
+      "column_name": "preparation_status",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_run_progress",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_run_progress",
+      "column_name": "prepared_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_run_progress",
+      "column_name": "expected",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_run_progress",
+      "column_name": "queued",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_run_progress",
+      "column_name": "processing",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_run_progress",
+      "column_name": "completed",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_run_progress",
+      "column_name": "failed",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_run_progress",
+      "column_name": "last_completion",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "customer_id",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "customer_ref",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "full_name",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "region",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "order_id",
+      "data_type": "bigint",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "order_ref",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "ordered_at",
+      "data_type": "date",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "line_number",
+      "data_type": "integer",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "sku",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "product_name",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "category",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "quantity",
+      "data_type": "integer",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "unit_price",
+      "data_type": "numeric",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "v_sales_lines",
+      "column_name": "line_total",
+      "data_type": "numeric",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "web_account",
+      "column_name": "account_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "web_account",
+      "column_name": "username",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "web_account",
+      "column_name": "password_hash",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "web_account",
+      "column_name": "enabled",
+      "data_type": "boolean",
+      "is_nullable": "NO",
+      "column_default": "true"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "web_account",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "web_session",
+      "column_name": "token_hash",
+      "data_type": "character",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "web_session",
+      "column_name": "account_id",
+      "data_type": "bigint",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "web_session",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_schema": "reporting",
+      "table_name": "web_session",
+      "column_name": "expires_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO",
+      "column_default": "(now() + '08:00:00'::interval)"
+    }
+  ],
+  "constraints": [
+    {
+      "schema": "public",
+      "name": "access",
+      "conname": "access_access_type_check",
+      "contype": "c",
+      "definition": "CHECK (((access_type)::text = ANY ((ARRAY['produce'::character varying, 'consume'::character varying, 'admin'::character varying])::text[])))"
+    },
+    {
+      "schema": "public",
+      "name": "access",
+      "conname": "access_granted_by_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (granted_by) REFERENCES app_user(user_id) ON DELETE SET NULL"
+    },
+    {
+      "schema": "public",
+      "name": "access",
+      "conname": "access_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (access_id)"
+    },
+    {
+      "schema": "public",
+      "name": "access",
+      "conname": "access_topic_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE CASCADE"
+    },
+    {
+      "schema": "public",
+      "name": "access",
+      "conname": "access_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES app_user(user_id) ON DELETE CASCADE"
+    },
+    {
+      "schema": "public",
+      "name": "access",
+      "conname": "uq_access",
+      "contype": "u",
+      "definition": "UNIQUE (user_id, topic_id, access_type)"
+    },
+    {
+      "schema": "public",
+      "name": "app_user",
+      "conname": "app_user_email_key",
+      "contype": "u",
+      "definition": "UNIQUE (email)"
+    },
+    {
+      "schema": "public",
+      "name": "app_user",
+      "conname": "app_user_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (user_id)"
+    },
+    {
+      "schema": "public",
+      "name": "app_user",
+      "conname": "app_user_role_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (role_id) REFERENCES role(role_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "public",
+      "name": "app_user",
+      "conname": "app_user_status_check",
+      "contype": "c",
+      "definition": "CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'suspended'::character varying])::text[])))"
+    },
+    {
+      "schema": "public",
+      "name": "app_user",
+      "conname": "app_user_username_key",
+      "contype": "u",
+      "definition": "UNIQUE (username)"
+    },
+    {
+      "schema": "public",
+      "name": "application",
+      "conname": "application_api_key_key",
+      "contype": "u",
+      "definition": "UNIQUE (api_key)"
+    },
+    {
+      "schema": "public",
+      "name": "application",
+      "conname": "application_app_name_key",
+      "contype": "u",
+      "definition": "UNIQUE (app_name)"
+    },
+    {
+      "schema": "public",
+      "name": "application",
+      "conname": "application_app_type_check",
+      "contype": "c",
+      "definition": "CHECK (((app_type)::text = ANY ((ARRAY['producer'::character varying, 'consumer'::character varying, 'both'::character varying])::text[])))"
+    },
+    {
+      "schema": "public",
+      "name": "application",
+      "conname": "application_owner_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (owner_user_id) REFERENCES app_user(user_id) ON DELETE CASCADE"
+    },
+    {
+      "schema": "public",
+      "name": "application",
+      "conname": "application_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (app_id)"
+    },
+    {
+      "schema": "public",
+      "name": "application",
+      "conname": "application_status_check",
+      "contype": "c",
+      "definition": "CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'revoked'::character varying])::text[])))"
+    },
+    {
+      "schema": "public",
+      "name": "audit_log",
+      "conname": "audit_log_app_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (app_id) REFERENCES application(app_id) ON DELETE SET NULL"
+    },
+    {
+      "schema": "public",
+      "name": "audit_log",
+      "conname": "audit_log_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (log_id)"
+    },
+    {
+      "schema": "public",
+      "name": "audit_log",
+      "conname": "audit_log_status_check",
+      "contype": "c",
+      "definition": "CHECK (((status)::text = ANY ((ARRAY['success'::character varying, 'failure'::character varying])::text[])))"
+    },
+    {
+      "schema": "public",
+      "name": "audit_log",
+      "conname": "audit_log_topic_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE SET NULL"
+    },
+    {
+      "schema": "public",
+      "name": "audit_log",
+      "conname": "audit_log_user_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES app_user(user_id) ON DELETE SET NULL"
+    },
+    {
+      "schema": "public",
+      "name": "broker_config",
+      "conname": "broker_config_config_key_key",
+      "contype": "u",
+      "definition": "UNIQUE (config_key)"
+    },
+    {
+      "schema": "public",
+      "name": "broker_config",
+      "conname": "broker_config_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (config_id)"
+    },
+    {
+      "schema": "public",
+      "name": "broker_config",
+      "conname": "broker_config_updated_by_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (updated_by) REFERENCES app_user(user_id) ON DELETE SET NULL"
+    },
+    {
+      "schema": "public",
+      "name": "consumer_group",
+      "conname": "consumer_group_created_by_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (created_by) REFERENCES app_user(user_id) ON DELETE SET NULL"
+    },
+    {
+      "schema": "public",
+      "name": "consumer_group",
+      "conname": "consumer_group_group_name_key",
+      "contype": "u",
+      "definition": "UNIQUE (group_name)"
+    },
+    {
+      "schema": "public",
+      "name": "consumer_group",
+      "conname": "consumer_group_max_delivery_attempts_check",
+      "contype": "c",
+      "definition": "CHECK (((max_delivery_attempts >= 1) AND (max_delivery_attempts <= 10)))"
+    },
+    {
+      "schema": "public",
+      "name": "consumer_group",
+      "conname": "consumer_group_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (group_id)"
+    },
+    {
+      "schema": "public",
+      "name": "consumer_group",
+      "conname": "consumer_group_status_check",
+      "contype": "c",
+      "definition": "CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'paused'::character varying])::text[])))"
+    },
+    {
+      "schema": "public",
+      "name": "dead_letter_message",
+      "conname": "dead_letter_message_attempts_check",
+      "contype": "c",
+      "definition": "CHECK ((attempts >= 0))"
+    },
+    {
+      "schema": "public",
+      "name": "dead_letter_message",
+      "conname": "dead_letter_message_failed_group_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (failed_group_id) REFERENCES consumer_group(group_id) ON DELETE SET NULL"
+    },
+    {
+      "schema": "public",
+      "name": "dead_letter_message",
+      "conname": "dead_letter_message_original_offset_check",
+      "contype": "c",
+      "definition": "CHECK ((original_offset >= 0))"
+    },
+    {
+      "schema": "public",
+      "name": "dead_letter_message",
+      "conname": "dead_letter_message_original_topic_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (original_topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "public",
+      "name": "dead_letter_message",
+      "conname": "dead_letter_message_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (dlq_id)"
+    },
+    {
+      "schema": "public",
+      "name": "dead_letter_message",
+      "conname": "dead_letter_message_status_check",
+      "contype": "c",
+      "definition": "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'requeued'::character varying])::text[])))"
+    },
+    {
+      "schema": "public",
+      "name": "group_offset",
+      "conname": "group_offset_committed_offset_check",
+      "contype": "c",
+      "definition": "CHECK ((committed_offset >= 0))"
+    },
+    {
+      "schema": "public",
+      "name": "group_offset",
+      "conname": "group_offset_group_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (group_id) REFERENCES consumer_group(group_id) ON DELETE CASCADE"
+    },
+    {
+      "schema": "public",
+      "name": "group_offset",
+      "conname": "group_offset_partition_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE CASCADE"
+    },
+    {
+      "schema": "public",
+      "name": "group_offset",
+      "conname": "pk_group_offset",
+      "contype": "p",
+      "definition": "PRIMARY KEY (group_id, partition_id)"
+    },
+    {
+      "schema": "public",
+      "name": "group_subscription",
+      "conname": "group_subscription_group_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (group_id) REFERENCES consumer_group(group_id) ON DELETE CASCADE"
+    },
+    {
+      "schema": "public",
+      "name": "group_subscription",
+      "conname": "group_subscription_topic_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE CASCADE"
+    },
+    {
+      "schema": "public",
+      "name": "group_subscription",
+      "conname": "pk_group_subscription",
+      "contype": "p",
+      "definition": "PRIMARY KEY (group_id, topic_id)"
+    },
+    {
+      "schema": "public",
+      "name": "message",
+      "conname": "fk_message_claimed_by",
+      "contype": "f",
+      "definition": "FOREIGN KEY (claimed_by) REFERENCES consumer_group(group_id) ON DELETE SET NULL"
+    },
+    {
+      "schema": "public",
+      "name": "message",
+      "conname": "fk_message_partition",
+      "contype": "f",
+      "definition": "FOREIGN KEY (partition_id) REFERENCES partition(partition_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "public",
+      "name": "message",
+      "conname": "fk_message_producer_app",
+      "contype": "f",
+      "definition": "FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "public",
+      "name": "message",
+      "conname": "fk_message_topic",
+      "contype": "f",
+      "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "public",
+      "name": "message",
+      "conname": "message_attempts_check",
+      "contype": "c",
+      "definition": "CHECK ((attempts >= 0))"
+    },
+    {
+      "schema": "public",
+      "name": "message",
+      "conname": "message_msg_offset_check",
+      "contype": "c",
+      "definition": "CHECK ((msg_offset >= 0))"
+    },
+    {
+      "schema": "public",
+      "name": "message",
+      "conname": "message_pk",
+      "contype": "p",
+      "definition": "PRIMARY KEY (created_at, topic_id, partition_id, msg_offset)"
+    },
+    {
+      "schema": "public",
+      "name": "message",
+      "conname": "message_producer_seq_check",
+      "contype": "c",
+      "definition": "CHECK ((producer_seq >= 0))"
+    },
+    {
+      "schema": "public",
+      "name": "message",
+      "conname": "message_size_bytes_check",
+      "contype": "c",
+      "definition": "CHECK ((size_bytes >= 0))"
+    },
+    {
+      "schema": "public",
+      "name": "message",
+      "conname": "message_status_check",
+      "contype": "c",
+      "definition": "CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'claimed'::character varying, 'delivered'::character varying, 'dead'::character varying])::text[])))"
+    },
+    {
+      "schema": "public",
+      "name": "partition",
+      "conname": "partition_next_offset_check",
+      "contype": "c",
+      "definition": "CHECK ((next_offset >= 0))"
+    },
+    {
+      "schema": "public",
+      "name": "partition",
+      "conname": "partition_partition_number_check",
+      "contype": "c",
+      "definition": "CHECK ((partition_number >= 0))"
+    },
+    {
+      "schema": "public",
+      "name": "partition",
+      "conname": "partition_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (partition_id)"
+    },
+    {
+      "schema": "public",
+      "name": "partition",
+      "conname": "partition_topic_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE CASCADE"
+    },
+    {
+      "schema": "public",
+      "name": "partition",
+      "conname": "uq_partition_topic_number",
+      "contype": "u",
+      "definition": "UNIQUE (topic_id, partition_number)"
+    },
+    {
+      "schema": "public",
+      "name": "producer_sequence",
+      "conname": "pk_producer_sequence",
+      "contype": "p",
+      "definition": "PRIMARY KEY (producer_app_id, producer_seq)"
+    },
+    {
+      "schema": "public",
+      "name": "producer_sequence",
+      "conname": "producer_sequence_msg_offset_check",
+      "contype": "c",
+      "definition": "CHECK ((msg_offset >= 0))"
+    },
+    {
+      "schema": "public",
+      "name": "producer_sequence",
+      "conname": "producer_sequence_producer_app_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (producer_app_id) REFERENCES application(app_id) ON DELETE CASCADE"
+    },
+    {
+      "schema": "public",
+      "name": "producer_sequence",
+      "conname": "producer_sequence_producer_seq_check",
+      "contype": "c",
+      "definition": "CHECK ((producer_seq >= 0))"
+    },
+    {
+      "schema": "public",
+      "name": "role",
+      "conname": "role_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (role_id)"
+    },
+    {
+      "schema": "public",
+      "name": "role",
+      "conname": "role_role_name_key",
+      "contype": "u",
+      "definition": "UNIQUE (role_name)"
+    },
+    {
+      "schema": "public",
+      "name": "schema_migration",
+      "conname": "schema_migration_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (name)"
+    },
+    {
+      "schema": "public",
+      "name": "schema_version",
+      "conname": "schema_version_created_by_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (created_by) REFERENCES app_user(user_id) ON DELETE SET NULL"
+    },
+    {
+      "schema": "public",
+      "name": "schema_version",
+      "conname": "schema_version_format_check",
+      "contype": "c",
+      "definition": "CHECK (((format)::text = 'json'::text))"
+    },
+    {
+      "schema": "public",
+      "name": "schema_version",
+      "conname": "schema_version_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (schema_id)"
+    },
+    {
+      "schema": "public",
+      "name": "schema_version",
+      "conname": "schema_version_status_check",
+      "contype": "c",
+      "definition": "CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'deprecated'::character varying])::text[])))"
+    },
+    {
+      "schema": "public",
+      "name": "schema_version",
+      "conname": "schema_version_topic_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (topic_id) REFERENCES topic(topic_id) ON DELETE CASCADE"
+    },
+    {
+      "schema": "public",
+      "name": "schema_version",
+      "conname": "schema_version_version_check",
+      "contype": "c",
+      "definition": "CHECK ((version >= 1))"
+    },
+    {
+      "schema": "public",
+      "name": "schema_version",
+      "conname": "uq_schema_topic_version",
+      "contype": "u",
+      "definition": "UNIQUE (topic_id, version)"
+    },
+    {
+      "schema": "public",
+      "name": "topic",
+      "conname": "topic_created_by_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (created_by) REFERENCES app_user(user_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "public",
+      "name": "topic",
+      "conname": "topic_max_message_bytes_check",
+      "contype": "c",
+      "definition": "CHECK ((max_message_bytes > 0))"
+    },
+    {
+      "schema": "public",
+      "name": "topic",
+      "conname": "topic_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (topic_id)"
+    },
+    {
+      "schema": "public",
+      "name": "topic",
+      "conname": "topic_retention_days_check",
+      "contype": "c",
+      "definition": "CHECK (((retention_days >= 1) AND (retention_days <= 3650)))"
+    },
+    {
+      "schema": "public",
+      "name": "topic",
+      "conname": "topic_status_check",
+      "contype": "c",
+      "definition": "CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'archived'::character varying])::text[])))"
+    },
+    {
+      "schema": "public",
+      "name": "topic",
+      "conname": "topic_topic_name_key",
+      "contype": "u",
+      "definition": "UNIQUE (topic_name)"
+    },
+    {
+      "schema": "reporting",
+      "name": "analysis_run",
+      "conname": "analysis_run_check",
+      "contype": "c",
+      "definition": "CHECK ((end_date > start_date))"
+    },
+    {
+      "schema": "reporting",
+      "name": "analysis_run",
+      "conname": "analysis_run_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (analysis_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "assistant_request",
+      "conname": "assistant_request_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (request_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "assistant_request",
+      "conname": "assistant_request_prompt_check",
+      "contype": "c",
+      "definition": "CHECK (((length(prompt) >= 1) AND (length(prompt) <= 2000)))"
+    },
+    {
+      "schema": "reporting",
+      "name": "customer",
+      "conname": "customer_customer_ref_key",
+      "contype": "u",
+      "definition": "UNIQUE (customer_ref)"
+    },
+    {
+      "schema": "reporting",
+      "name": "customer",
+      "conname": "customer_email_key",
+      "contype": "u",
+      "definition": "UNIQUE (email)"
+    },
+    {
+      "schema": "reporting",
+      "name": "customer",
+      "conname": "customer_full_name_check",
+      "contype": "c",
+      "definition": "CHECK ((length(TRIM(BOTH FROM full_name)) > 0))"
+    },
+    {
+      "schema": "reporting",
+      "name": "customer",
+      "conname": "customer_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (customer_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_batch",
+      "conname": "import_batch_file_sha256_check",
+      "contype": "c",
+      "definition": "CHECK ((file_sha256 ~ '^[0-9a-f]{64}$'::text))"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_batch",
+      "conname": "import_batch_headers_check",
+      "contype": "c",
+      "definition": "CHECK ((jsonb_typeof(headers) = 'array'::text))"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_batch",
+      "conname": "import_batch_mapping_check",
+      "contype": "c",
+      "definition": "CHECK ((jsonb_typeof(mapping) = 'object'::text))"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_batch",
+      "conname": "import_batch_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (batch_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_batch",
+      "conname": "import_batch_state_check",
+      "contype": "c",
+      "definition": "CHECK ((state = ANY (ARRAY['preview'::text, 'committed'::text])))"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_row",
+      "conname": "import_row_batch_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (batch_id) REFERENCES reporting.import_batch(batch_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_row",
+      "conname": "import_row_cleaned_check",
+      "contype": "c",
+      "definition": "CHECK ((jsonb_typeof(cleaned) = 'object'::text))"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_row",
+      "conname": "import_row_errors_check",
+      "contype": "c",
+      "definition": "CHECK ((jsonb_typeof(errors) = 'array'::text))"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_row",
+      "conname": "import_row_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (batch_id, row_number)"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_row",
+      "conname": "import_row_raw_check",
+      "contype": "c",
+      "definition": "CHECK ((jsonb_typeof(raw) = 'object'::text))"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_row",
+      "conname": "import_row_row_number_check",
+      "contype": "c",
+      "definition": "CHECK ((row_number > 0))"
+    },
+    {
+      "schema": "reporting",
+      "name": "import_row",
+      "conname": "import_row_state_check",
+      "contype": "c",
+      "definition": "CHECK ((state = ANY (ARRAY['valid'::text, 'rejected'::text, 'imported'::text, 'duplicate'::text])))"
+    },
+    {
+      "schema": "reporting",
+      "name": "inventory_balance",
+      "conname": "inventory_balance_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (product_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "inventory_balance",
+      "conname": "inventory_balance_product_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (product_id) REFERENCES reporting.product(product_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "inventory_balance",
+      "conname": "inventory_balance_quantity_check",
+      "contype": "c",
+      "definition": "CHECK ((quantity >= 0))"
+    },
+    {
+      "schema": "reporting",
+      "name": "inventory_balance",
+      "conname": "inventory_balance_reorder_level_check",
+      "contype": "c",
+      "definition": "CHECK ((reorder_level >= 0))"
+    },
+    {
+      "schema": "reporting",
+      "name": "order_item",
+      "conname": "order_item_line_number_check",
+      "contype": "c",
+      "definition": "CHECK ((line_number > 0))"
+    },
+    {
+      "schema": "reporting",
+      "name": "order_item",
+      "conname": "order_item_order_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (order_id) REFERENCES reporting.sales_order(order_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "order_item",
+      "conname": "order_item_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (order_id, line_number)"
+    },
+    {
+      "schema": "reporting",
+      "name": "order_item",
+      "conname": "order_item_product_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (product_id) REFERENCES reporting.product(product_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "order_item",
+      "conname": "order_item_quantity_check",
+      "contype": "c",
+      "definition": "CHECK (((quantity >= 1) AND (quantity <= 1000000)))"
+    },
+    {
+      "schema": "reporting",
+      "name": "order_item",
+      "conname": "order_item_unit_price_check",
+      "contype": "c",
+      "definition": "CHECK ((unit_price >= (0)::numeric))"
+    },
+    {
+      "schema": "reporting",
+      "name": "product",
+      "conname": "product_catalogue_price_check",
+      "contype": "c",
+      "definition": "CHECK ((catalogue_price >= (0)::numeric))"
+    },
+    {
+      "schema": "reporting",
+      "name": "product",
+      "conname": "product_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (product_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "product",
+      "conname": "product_sku_key",
+      "contype": "u",
+      "definition": "UNIQUE (sku)"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_audit",
+      "conname": "report_audit_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (audit_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_audit",
+      "conname": "report_audit_request_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (request_id) REFERENCES reporting.report_request(request_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_dataset",
+      "conname": "report_dataset_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (request_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_dataset",
+      "conname": "report_dataset_request_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (request_id) REFERENCES reporting.report_request(request_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_dataset",
+      "conname": "report_dataset_rows_check",
+      "contype": "c",
+      "definition": "CHECK ((jsonb_typeof(rows) = 'array'::text))"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_request",
+      "conname": "report_request_attempts_check",
+      "contype": "c",
+      "definition": "CHECK ((attempts >= 0))"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_request",
+      "conname": "report_request_customer_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_request",
+      "conname": "report_request_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (request_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_request",
+      "conname": "report_request_run_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (run_id) REFERENCES reporting.report_run(run_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_request",
+      "conname": "report_request_run_id_subject_key_key",
+      "contype": "u",
+      "definition": "UNIQUE (run_id, subject_key)"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_request",
+      "conname": "report_request_state_check",
+      "contype": "c",
+      "definition": "CHECK ((state = ANY (ARRAY['queued'::text, 'processing'::text, 'completed'::text, 'failed'::text])))"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_result",
+      "conname": "report_result_csv_path_key",
+      "contype": "u",
+      "definition": "UNIQUE (csv_path)"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_result",
+      "conname": "report_result_csv_sha256_check",
+      "contype": "c",
+      "definition": "CHECK ((csv_sha256 ~ '^[0-9a-f]{64}$'::text))"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_result",
+      "conname": "report_result_html_path_key",
+      "contype": "u",
+      "definition": "UNIQUE (html_path)"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_result",
+      "conname": "report_result_html_sha256_check",
+      "contype": "c",
+      "definition": "CHECK ((html_sha256 ~ '^[0-9a-f]{64}$'::text))"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_result",
+      "conname": "report_result_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (request_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_result",
+      "conname": "report_result_render_seconds_check",
+      "contype": "c",
+      "definition": "CHECK ((render_seconds >= (0)::double precision))"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_result",
+      "conname": "report_result_request_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (request_id) REFERENCES reporting.report_request(request_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_result",
+      "conname": "report_result_row_count_check",
+      "contype": "c",
+      "definition": "CHECK ((row_count >= 0))"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_result",
+      "conname": "report_result_sql_seconds_check",
+      "contype": "c",
+      "definition": "CHECK ((sql_seconds >= (0)::double precision))"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_run",
+      "conname": "report_run_check",
+      "contype": "c",
+      "definition": "CHECK ((start_date < end_date))"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_run",
+      "conname": "report_run_check1",
+      "contype": "c",
+      "definition": "CHECK (((end_date - start_date) <= 3660))"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_run",
+      "conname": "report_run_customer_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_run",
+      "conname": "report_run_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (run_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_run",
+      "conname": "report_run_requested_by_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (requested_by) REFERENCES app_user(user_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_run",
+      "conname": "report_run_status_check",
+      "contype": "c",
+      "definition": "CHECK ((status = ANY (ARRAY['preparing'::text, 'ready'::text, 'failed'::text])))"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_run",
+      "conname": "report_run_submission_key_key",
+      "contype": "u",
+      "definition": "UNIQUE (submission_key)"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_run",
+      "conname": "report_run_template_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (template_id) REFERENCES reporting.template_version(template_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "report_run",
+      "conname": "report_run_top_n_check",
+      "contype": "c",
+      "definition": "CHECK (((top_n >= 1) AND (top_n <= 100)))"
+    },
+    {
+      "schema": "reporting",
+      "name": "sales_order",
+      "conname": "sales_order_customer_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "sales_order",
+      "conname": "sales_order_order_ref_key",
+      "contype": "u",
+      "definition": "UNIQUE (order_ref)"
+    },
+    {
+      "schema": "reporting",
+      "name": "sales_order",
+      "conname": "sales_order_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (order_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "sales_order",
+      "conname": "sales_order_status_check",
+      "contype": "c",
+      "definition": "CHECK ((status = ANY (ARRAY['completed'::text, 'cancelled'::text])))"
+    },
+    {
+      "schema": "reporting",
+      "name": "stock_movement",
+      "conname": "stock_movement_check",
+      "contype": "c",
+      "definition": "CHECK ((((kind = 'receipt'::text) AND (quantity_delta > 0) AND (order_id IS NULL) AND (customer_id IS NULL) AND (unit_price IS NULL)) OR ((kind = 'sale'::text) AND (quantity_delta < 0) AND (order_id IS NOT NULL) AND (customer_id IS NOT NULL) AND (unit_price IS NOT NULL) AND (unit_price >= (0)::numeric) AND (unit_price <= 9999999999.99))))"
+    },
+    {
+      "schema": "reporting",
+      "name": "stock_movement",
+      "conname": "stock_movement_customer_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (customer_id) REFERENCES reporting.customer(customer_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "stock_movement",
+      "conname": "stock_movement_kind_check",
+      "contype": "c",
+      "definition": "CHECK ((kind = ANY (ARRAY['receipt'::text, 'sale'::text])))"
+    },
+    {
+      "schema": "reporting",
+      "name": "stock_movement",
+      "conname": "stock_movement_note_check",
+      "contype": "c",
+      "definition": "CHECK ((length(note) <= 500))"
+    },
+    {
+      "schema": "reporting",
+      "name": "stock_movement",
+      "conname": "stock_movement_order_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (order_id) REFERENCES reporting.sales_order(order_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "stock_movement",
+      "conname": "stock_movement_order_id_key",
+      "contype": "u",
+      "definition": "UNIQUE (order_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "stock_movement",
+      "conname": "stock_movement_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (movement_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "stock_movement",
+      "conname": "stock_movement_product_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (product_id) REFERENCES reporting.product(product_id) ON DELETE RESTRICT"
+    },
+    {
+      "schema": "reporting",
+      "name": "stock_movement",
+      "conname": "stock_movement_quantity_delta_check",
+      "contype": "c",
+      "definition": "CHECK ((quantity_delta <> 0))"
+    },
+    {
+      "schema": "reporting",
+      "name": "stock_movement",
+      "conname": "stock_movement_reference_check",
+      "contype": "c",
+      "definition": "CHECK (((length(TRIM(BOTH FROM reference)) >= 1) AND (length(TRIM(BOTH FROM reference)) <= 100)))"
+    },
+    {
+      "schema": "reporting",
+      "name": "stock_movement",
+      "conname": "stock_movement_reference_key",
+      "contype": "u",
+      "definition": "UNIQUE (reference)"
+    },
+    {
+      "schema": "reporting",
+      "name": "template_version",
+      "conname": "template_version_code_check",
+      "contype": "c",
+      "definition": "CHECK ((code = ANY (ARRAY['customer_statement'::text, 'product_sales'::text, 'monthly_sales'::text])))"
+    },
+    {
+      "schema": "reporting",
+      "name": "template_version",
+      "conname": "template_version_code_version_key",
+      "contype": "u",
+      "definition": "UNIQUE (code, version)"
+    },
+    {
+      "schema": "reporting",
+      "name": "template_version",
+      "conname": "template_version_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (template_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "template_version",
+      "conname": "template_version_version_check",
+      "contype": "c",
+      "definition": "CHECK ((version > 0))"
+    },
+    {
+      "schema": "reporting",
+      "name": "web_account",
+      "conname": "web_account_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "schema": "reporting",
+      "name": "web_account",
+      "conname": "web_account_username_check",
+      "contype": "c",
+      "definition": "CHECK (((length(TRIM(BOTH FROM username)) >= 1) AND (length(TRIM(BOTH FROM username)) <= 64)))"
+    },
+    {
+      "schema": "reporting",
+      "name": "web_account",
+      "conname": "web_account_username_key",
+      "contype": "u",
+      "definition": "UNIQUE (username)"
+    },
+    {
+      "schema": "reporting",
+      "name": "web_session",
+      "conname": "web_session_account_id_fkey",
+      "contype": "f",
+      "definition": "FOREIGN KEY (account_id) REFERENCES reporting.web_account(account_id) ON DELETE CASCADE"
+    },
+    {
+      "schema": "reporting",
+      "name": "web_session",
+      "conname": "web_session_check",
+      "contype": "c",
+      "definition": "CHECK ((expires_at > created_at))"
+    },
+    {
+      "schema": "reporting",
+      "name": "web_session",
+      "conname": "web_session_pkey",
+      "contype": "p",
+      "definition": "PRIMARY KEY (token_hash)"
+    }
+  ]
+}

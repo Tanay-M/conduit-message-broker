@@ -1,5 +1,8 @@
 # Complete current database table and column reference
 
+# Current scope update — 19 October 2026
+This document's original dictionary covers the pre-expansion 28 logical tables. The current project has **34 logical tables** after migration 150: six new workflow relations are documented, column by column with constraints, in [FINAL_REVIEW_SCHEMA.md](FINAL_REVIEW_SCHEMA.md). Existing definitions below remain applicable to their original relations. Count schema_migration once; physical child partitions and views are not extra logical tables. Raw current evidence: artifacts/final-review-schema.json.
+
 Verified against the running local PostgreSQL database on 18 October 2026. This is a schema-only catalog: no credential values or account/session contents were exported.
 
 ## Counting rule

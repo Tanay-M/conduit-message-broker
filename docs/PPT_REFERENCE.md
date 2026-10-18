@@ -1,5 +1,12 @@
 # Conduit — presentation reference and explicit user requirements
 
+# Final-review additions — 19 October 2026 (supersedes older scope counts)
+The current implementation includes Sales import, Inventory, Analysis and Ask your data. Current schema is **34 logical tables**, 33 excluding schema_migration; six new relations are inventory_balance, stock_movement, import_batch, import_row, assistant_request and analysis_run. Add their column/key appendix from [FINAL_REVIEW_SCHEMA.md](FINAL_REVIEW_SCHEMA.md); keep the pre-expansion table dictionary for the original 28 relations. One new view v_inventory reconciles balances to net movement sums. The new post_stock routine is a function; existing submit_run remains a procedure.
+
+Full regression on 19 October: **57 passed in 26.88s**. Existing 10,000-report results remain a prior measured run, not a rerun after these new business fixtures. Live Gemini needs the user's key; mocked tests establish adapter/validation behavior only. Manual import, deterministic analysis and a labelled local rule parser already work offline.
+
+Updated story and demonstrations: [FINAL_REVIEW_DEMO.md](FINAL_REVIEW_DEMO.md). Additional-feature wording: an inspectable Validate→Commit→Analyse→Report workflow, whole-order quarantine/correction without duplicates, visible question-to-SQL translation and atomic stock sales. AI assists interpretation; PostgreSQL enforces correctness. Do not claim a new DBMS algorithm. Caching and the optimizer advisor were declined. No new final PPT or Word report was authored in this implementation step.
+
 Created 18 October 2026. This is the reference for preparing the replacement PPT later; no new deck is being generated in this step.
 
 ## Explicit requirements from the user
@@ -8,8 +15,8 @@ Created 18 October 2026. This is the reference for preparing the replacement PPT
 2. Include the **exact database table count**, the tables, every column's short meaning, primary keys, foreign keys and relevant constraints.
 3. Show actual SQL and matching outputs, with evidence for the database implementation, insertion/management, joins/filtering/aggregation and advanced features required by the uploaded guidelines.
 4. Preserve continuity with Review 1. Show retained broker entities and how the reporting application uses them internally, while keeping the main demo interface focused on reporting.
-5. Keep the presentation professional, readable and DBMS-focused. Use grouped schema slides plus readable appendix slides for the complete dictionary, rather than squeezing 177 column descriptions into one slide.
-6. Inventory management is requested for later, after the review walkthrough. It is not implemented and must not be presented as a current feature.
+5. Keep the presentation professional, readable and DBMS-focused. Use grouped schema slides plus readable appendix slides for the complete dictionary, rather than squeezing every column description into one slide.
+6. Inventory was initially deferred; the user approved basic inventory on 19 October and it is now implemented. Present only the receipt/sale/reorder/reconciliation scope described in FINAL_REVIEW_DEMO.md.
 
 Authoritative sources for the future deck:
 

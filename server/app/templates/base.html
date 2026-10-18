@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/static/vendor/daisyui.min.css">
   <link rel="stylesheet" href="/static/vendor/tailwind.min.css">
   <link rel="stylesheet" href="/static/app.css">
-  <link rel="stylesheet" href="/static/workspace.css">
+  <link rel="stylesheet" href="/static/workspace.css?v=20261019-ops">
   <script src="/static/vendor/htmx.min.js"></script>
   <script src="/static/vendor/sse.js"></script>
   <script src="/static/vendor/chart.umd.min.js"></script>
@@ -26,6 +26,10 @@
       <div class="nav-section-label">WORKSPACE</div>
       {% if ctx.mode == 'admin' %}
       <a href="/" class="nav-link {% if active == 'reports' %}active{% endif %}" {% if active=='reports' %}aria-current="page"{% endif %}>{{ icon('reports') }}Reports</a>
+      <a href="/imports" class="nav-link {% if active == 'imports' %}active{% endif %}">{{ icon('data') }}Sales import</a>
+      <a href="/inventory" class="nav-link {% if active == 'inventory' %}active{% endif %}">{{ icon('data') }}Inventory</a>
+      <a href="/analysis" class="nav-link {% if active == 'analysis' %}active{% endif %}">{{ icon('reports') }}Analysis</a>
+      <a href="/assistant" class="nav-link {% if active == 'assistant' %}active{% endif %}">{{ icon('code') }}Ask your data</a>
       <a href="/data" class="nav-link {% if active == 'data' %}active{% endif %}">{{ icon('data') }}Data explorer</a>
       <a href="/sql" class="nav-link {% if active == 'sql' %}active{% endif %}">{{ icon('code') }}SQL workspace</a>
       {% endif %}
@@ -33,7 +37,7 @@
     <div class="sidebar-bottom"><div class="connection-label"><span class="status-dot"></span>PostgreSQL<span>Local</span></div><div class="profile"><span class="profile-avatar">{{ 'AD' if ctx.mode=='admin' else ctx.app_name[:2]|upper }}</span><div><strong>{{ 'Administrator' if ctx.mode=='admin' else ctx.app_name }}</strong><small>{{ 'Workspace administrator' if ctx.mode=='admin' else ctx.owner_username }}</small></div><a href="/web/logout" title="Sign out" aria-label="Sign out">{{ icon('logout') }}</a></div></div>
   </aside>
   <div class="workspace-main">
-    <header class="workspace-topbar"><div class="breadcrumb"><button class="icon-button mobile-nav" aria-label="Open navigation" aria-controls="workspace-navigation" aria-expanded="false" data-nav-toggle>{{ icon('menu') }}</button><span>Workspace</span>{{ icon('chevron') }}<strong>{{ {'reports':'Reports','data':'Data explorer','sql':'SQL workspace','overview':'Queue overview','messages':'Messages','topics':'Topics','groups':'Consumer groups','audit':'Audit log','dlq':'Failed messages','playground':'Broker playground','admin':'Administration'}.get(active,'Reports') }}</strong></div><span class="environment-label"><span class="status-dot"></span>Local environment</span></header>
+    <header class="workspace-topbar"><div class="breadcrumb"><button class="icon-button mobile-nav" aria-label="Open navigation" aria-controls="workspace-navigation" aria-expanded="false" data-nav-toggle>{{ icon('menu') }}</button><span>Workspace</span>{{ icon('chevron') }}<strong>{{ {'imports':'Sales import','inventory':'Inventory','analysis':'Analysis','assistant':'Ask your data','reports':'Reports','data':'Data explorer','sql':'SQL workspace','overview':'Queue overview','messages':'Messages','topics':'Topics','groups':'Consumer groups','audit':'Audit log','dlq':'Failed messages','playground':'Broker playground','admin':'Administration'}.get(active,'Reports') }}</strong></div><span class="environment-label"><span class="status-dot"></span>Local environment</span></header>
     <main id="main-content" class="workspace-content">{% block content %}{% endblock %}</main>
     <footer class="workspace-footer"><span>Conduit</span><span>PostgreSQL reporting &amp; asynchronous processing</span></footer>
   </div>
