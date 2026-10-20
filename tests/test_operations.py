@@ -15,6 +15,12 @@ from reporting.seed import seed
 from reporting.settings import settings
 
 
+@pytest.fixture(autouse=True)
+def offline_ai(monkeypatch):
+    # Tests never use the developer's real key or make accidental provider calls.
+    monkeypatch.setattr(settings, "gemini_api_key", "")
+
+
 @pytest.fixture(scope="module", autouse=True)
 def database():
     original = settings.admin_dsn
@@ -336,3 +342,80 @@ def test_gemini_adapter_success_and_failure_without_live_key(monkeypatch):
     with pytest.raises(ai.AIUnavailable) as error:
         ai.structured("test", {}, {})
     assert "private provider details" not in str(error.value)
+
+
+def test_automatic_mapping_preserves_aliases_and_skips_unneeded_ai(monkeypatch):
+    monkeypatch.setattr(settings, "gemini_api_key", "test-only")
+    calls = []
+
+    def suggest(instruction, payload, schema):
+        calls.append(payload)
+        return dict(zip(imports.FIELDS, ["ClientCode", "OrderNo", "When", "LineNo", "ItemCode", "Qty", "Rate"]))
+
+    monkeypatch.setattr(ai, "structured", suggest)
+    mapping, _ = imports.mapping_for(HEADER.strip().split(","))
+    assert not calls and mapping["order_ref"] == "OrderNo"
+    mapping, source = imports.mapping_for(["OrderNo", "ClientCode", "When", "LineNo", "ItemCode", "Qty", "Rate"])
+    assert len(calls) == 1
+    assert mapping["order_ref"] == "OrderNo" and mapping["customer_ref"] == "ClientCode"
+    assert mapping["ordered_at"] == "When" and source.startswith("Automatic mapping")
+    assert set(calls[0]) == {"headers", "known_mapping"}
+
+
+@pytest.mark.parametrize("failure", [ai.AIUnavailable("provider unavailable"), ValueError("invalid mapping")])
+def test_automatic_mapping_keeps_manual_preview_on_ai_failure(monkeypatch, failure):
+    monkeypatch.setattr(settings, "gemini_api_key", "test-only")
+    def unavailable(*args):
+        raise failure
+    monkeypatch.setattr(ai, "structured", unavailable)
+    batch = imports.stage(b"A,B,C,D,E,F,G\nFALLBACK,DEMO-000001,2026-03-01,1,SKU-1,1,25\n", "fallback.csv")
+    assert imports.detail(batch)["counts"]["rejected"] == 1
+    imports.remap(batch, dict(zip(imports.FIELDS, "ABCDEFG")))
+    assert imports.detail(batch)["counts"]["valid"] == 1
+
+
+def test_automatic_question_fallback_and_contract_validation(monkeypatch):
+    monkeypatch.setattr(settings, "gemini_api_key", "test-only")
+    calls = []
+    proposal = {"kind": "product_sales", "start": "2026-02-01", "end": "2026-03-01", "top_n": 3, "customer_ref": None}
+    def suggest(*args):
+        calls.append(args)
+        return proposal
+    monkeypatch.setattr(ai, "structured", suggest)
+    assert assistant.plan("Show low stock")["source"].startswith("Local") and not calls
+    record = assistant.plan("Which merchandise earned the most during February 2026?")
+    assert len(calls) == 1 and record["source"] == "Gemini AI"
+    assert record["interpretation"]["top_n"] == 3
+    assert "sales" in assistant.execute(record["request_id"])["columns"]
+    proposal["sql"] = "DROP TABLE reporting.product"
+    with pytest.raises(ValueError, match="clarify"):
+        assistant.plan("Which merchandise earned the most?")
+    before = len(calls)
+    with pytest.raises(ValueError):
+        assistant.plan("drop tables")
+    assert len(calls) == before
+
+
+def test_automatic_question_provider_failure_is_a_clarification(monkeypatch):
+    monkeypatch.setattr(settings, "gemini_api_key", "test-only")
+    def unavailable(*args):
+        raise ai.AIUnavailable("private provider failure")
+    monkeypatch.setattr(ai, "structured", unavailable)
+    with pytest.raises(ValueError, match="clarify") as error:
+        assistant.plan("Which merchandise earned the most?")
+    assert "private provider" not in str(error.value)
+
+
+def test_analysis_automatic_insights_and_graceful_fallback(monkeypatch):
+    monkeypatch.setattr(settings, "gemini_api_key", "test-only")
+    monkeypatch.setattr(ai, "structured", lambda *args: {"summary": "A summary of the supplied SQL facts."})
+    enriched = analysis.run("2026-01-01", "2027-01-01")
+    assert enriched["ai_insights"] and enriched["source"].startswith("Gemini")
+    def unavailable(*args):
+        raise ai.AIUnavailable("provider failure")
+    monkeypatch.setattr(ai, "structured", unavailable)
+    fallback = analysis.run("2026-01-01", "2027-01-01")
+    assert not fallback["ai_insights"] and fallback["source"].startswith("SQL facts")
+    assert fallback["facts"] == enriched["facts"]
+    monkeypatch.setattr(ai, "structured", lambda *args: {"summary": ""})
+    assert not analysis.run("2026-01-01", "2027-01-01")["ai_insights"]

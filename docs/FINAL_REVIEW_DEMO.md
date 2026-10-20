@@ -4,6 +4,8 @@ Implemented on 19 October. Main story: **Conduit — Retail Operations and Expla
 
 ## Start and prepare
 
+For the simplest startup, double-click **START_CONDUIT.bat** in the project root. It starts the local services and opens the browser. Use **STOP_CONDUIT.bat** to stop them afterwards. The detailed click-by-click rehearsal script is [DEMO_WALKTHROUGH.md](DEMO_WALKTHROUGH.md). The launcher also writes a fresh, matching error/correction CSV pair into `.local/demo-inputs/` for each launch. Existing stock and report history are not reset.
+
 For an existing configured checkout:
 
 ```powershell

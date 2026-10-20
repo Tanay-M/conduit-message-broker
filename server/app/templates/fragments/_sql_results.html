@@ -4,7 +4,7 @@
     <table class="workspace-table">
       <thead><tr>{% for column in columns %}<th>{{ column }}</th>{% endfor %}</tr></thead>
       <tbody>
-        {% for row in rows %}<tr>{% for column in columns %}<td class="payload-cell {% if row[column] is number %}numeric{% endif %}"><code>{{ row[column] if row[column] is not none else 'NULL' }}</code></td>{% endfor %}</tr>
+        {% for row in rows %}<tr>{% for column in columns %}<td class="payload-cell {% if row[column] is number %}numeric{% endif %}"><code>{{ row[column]|display_number(column) if row[column] is not none else 'NULL' }}</code></td>{% endfor %}</tr>
         {% else %}<tr><td colspan="{{ columns|length or 1 }}"><div class="empty-state"><h3>No matching rows</h3><p>The query completed successfully and returned an empty result.</p></div></td></tr>{% endfor %}
       </tbody>
     </table>

@@ -8,8 +8,10 @@ import psycopg
 from fastapi import APIRouter, Form, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
+from markupsafe import Markup
 
 from reporting import service
+from reporting.formatting import display_cell, indian_number
 
 from .. import db
 from ..api.reporting import ReportInput
@@ -33,7 +35,8 @@ def date_label(value, pattern="%d %b %Y"):
 
 
 templates.env.filters["date_label"] = date_label
-templates.env.filters["number"] = lambda value: f"{value or 0:,}"
+templates.env.filters["number"] = lambda value: indian_number(value or 0)
+templates.env.filters["display_number"] = lambda value, column="": Markup(display_cell(value, column))
 templates.env.filters["short_id"] = lambda value: str(value)[:8].upper()
 
 

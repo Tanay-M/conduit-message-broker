@@ -104,7 +104,8 @@ def test_assistant_preview_execution_and_analysis(client):
         "/web/assistant/plan",
         data={"prompt": "top 5 products by revenue in February 2026"},
     )
-    assert response.status_code == 200 and "Local rule parser (not AI)" in response.text
+    assert response.status_code == 200 and "Query plan" in response.text
+    assert 'name="use_ai"' not in response.text and "Supported questions" not in response.text
     path = re.search(r'action="(/web/assistant/[a-f0-9-]+/execute)"', response.text)[1]
     result = client.post(path)
     assert result.status_code == 200 and "Query result" in result.text
@@ -121,6 +122,6 @@ def test_assistant_preview_execution_and_analysis(client):
     )
     assert (
         response.status_code == 200
-        and "SQL facts and deterministic explanation" in response.text
+        and "Business summary" in response.text
     )
     assert "Monthly comparison" in response.text and "SQL evidence" in response.text

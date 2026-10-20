@@ -9,7 +9,6 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import RedirectResponse, Response
 
 from reporting import analysis, assistant, imports, inventory
-from reporting.settings import settings
 
 from .reports import admin_context
 from .router import _page
@@ -119,7 +118,6 @@ async def imports_get(request: Request):
         "imports",
         batches=await asyncio.to_thread(imports.recent),
         error=None,
-        ai_ready=bool(settings.gemini_api_key),
     )
 
 
@@ -158,7 +156,6 @@ async def import_upload(request: Request):
                 content,
                 file.filename or "sales.csv",
                 ctx["owner_username"],
-                form.get("use_ai") == "on",
             )
     except (ValueError, psycopg.Error) as exc:
         response = _page(
@@ -168,7 +165,6 @@ async def import_upload(request: Request):
             "imports",
             batches=await asyncio.to_thread(imports.recent),
             error=message(exc),
-            ai_ready=bool(settings.gemini_api_key),
         )
         response.status_code = 422
         return response
@@ -240,7 +236,6 @@ async def assistant_get(request: Request):
         result=None,
         error=None,
         prompt="",
-        ai_ready=bool(settings.gemini_api_key),
     )
 
 
@@ -253,7 +248,7 @@ async def assistant_plan(request: Request):
     prompt = form.get("prompt", "")
     try:
         record = await asyncio.to_thread(
-            assistant.plan, prompt, ctx["owner_username"], form.get("use_ai") == "on"
+            assistant.plan, prompt, ctx["owner_username"]
         )
     except (ValueError, psycopg.Error) as exc:
         response = _page(
@@ -265,7 +260,6 @@ async def assistant_plan(request: Request):
             result=None,
             error=message(exc),
             prompt=prompt,
-            ai_ready=bool(settings.gemini_api_key),
         )
         response.status_code = 422
         return response
@@ -278,7 +272,6 @@ async def assistant_plan(request: Request):
         result=None,
         error=None,
         prompt=prompt,
-        ai_ready=bool(settings.gemini_api_key),
     )
 
 
@@ -300,7 +293,6 @@ async def assistant_execute(request: Request, request_id: uuid.UUID):
         result=result,
         error=None,
         prompt=result["record"]["prompt"],
-        ai_ready=bool(settings.gemini_api_key),
     )
 
 
@@ -318,7 +310,6 @@ async def analysis_get(request: Request):
         error=None,
         start="2026-01-01",
         end="2027-01-01",
-        ai_ready=bool(settings.gemini_api_key),
     )
 
 
@@ -344,7 +335,7 @@ async def analysis_post(request: Request):
     end = form.get("end", "")
     try:
         result = await asyncio.to_thread(
-            analysis.run, start, end, ctx["owner_username"], form.get("use_ai") == "on"
+            analysis.run, start, end, ctx["owner_username"]
         )
     except (ValueError, psycopg.Error) as exc:
         response = _page(
@@ -356,7 +347,6 @@ async def analysis_post(request: Request):
             error=message(exc),
             start=start,
             end=end,
-            ai_ready=bool(settings.gemini_api_key),
         )
         response.status_code = 422
         return response
@@ -369,5 +359,4 @@ async def analysis_post(request: Request):
         error=None,
         start=start,
         end=end,
-        ai_ready=bool(settings.gemini_api_key),
     )

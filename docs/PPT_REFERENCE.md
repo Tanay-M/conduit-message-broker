@@ -1,5 +1,9 @@
 # Conduit — presentation reference and explicit user requirements
 
+## Active editing instructions — 20 October 2026
+
+The authoritative working deck is **Updated_Conduit_Final_Presentation.pptx** in the repository root. Use [PPT_EDITING_REQUIREMENTS.md](PPT_EDITING_REQUIREMENTS.md) for the user's required order and current authorisations. Preserve their ER image slides. Architecture/workflow simplification remains pending chat review. Show only demo-related tables, not the total table count. These instructions supersede the older scope/count and ER-generation instructions below.
+
 # Final-review additions — 19 October 2026 (supersedes older scope counts)
 The current implementation includes Sales import, Inventory, Analysis and Ask your data. Current schema is **34 logical tables**, 33 excluding schema_migration; six new relations are inventory_balance, stock_movement, import_batch, import_row, assistant_request and analysis_run. Add their column/key appendix from [FINAL_REVIEW_SCHEMA.md](FINAL_REVIEW_SCHEMA.md); keep the pre-expansion table dictionary for the original 28 relations. One new view v_inventory reconciles balances to net movement sums. The new post_stock routine is a function; existing submit_run remains a procedure.
 

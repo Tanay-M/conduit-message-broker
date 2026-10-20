@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 import uuid
 
+from .formatting import display_cell
+
 
 def documents(report):
     rows = report["rows"]
@@ -24,14 +26,14 @@ def documents(report):
     body = "".join(
         "<tr>"
         + "".join(
-            "<td>" + html.escape(str(row.get(field, ""))) + "</td>" for field in fields
+            "<td>" + display_cell(row.get(field, ""), field) + "</td>" for field in fields
         )
         + "</tr>"
         for row in rows
     )
     page = (
         '<!doctype html><html><head><meta charset="utf-8"><title>' + title + "</title>"
-        "<style>body{font:16px Arial;margin:2rem}table{border-collapse:collapse}th,td{border:1px solid #bbb;padding:.5rem}</style></head><body>"
+        "<style>body{font:16px Arial;margin:2rem}table{border-collapse:collapse}th,td{border:1px solid #bbb;padding:.5rem}.number-value{display:inline-block;white-space:nowrap;font-variant-numeric:tabular-nums}.number-exact{display:block;color:#5b6470;font-size:.78em;margin-top:3px}</style></head><body>"
         "<h1>"
         + title
         + "</h1><p>Demonstration data | Run "

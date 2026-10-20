@@ -4,6 +4,14 @@ A DBMS project covering validated sales-data import, basic inventory, inspectabl
 
 Team 17: G Anirudh, Tanay Mohta, Dhyey Dhumasia.
 
+## Double-click demo launcher (Windows x64)
+
+Double-click **START_CONDUIT.bat** in the project folder. On a fresh clone it runs the native setup first (internet required). It starts PostgreSQL, the API and two workers, supplies missing small demo fixtures and opens the workspace in your browser. The default demo login is `admin` / `Conduit@123`, unless previously changed.
+
+The preferred API port is 8001. The launcher reuses this checkout's running API or selects a nearby free port if another application owns the preferred port. Use the address it prints and opens. Existing orders, stock and reports are preserved. Every launch creates a matching pair of fresh import demonstration CSVs in `.local/demo-inputs/`; finish a pair before restarting the launcher.
+
+Double-click **STOP_CONDUIT.bat** after the demo to stop the project services. Closing the launcher window or browser does not stop background work. For presentation clicks, exact inputs, explanations and expected outputs, use [the demo walkthrough](docs/DEMO_WALKTHROUGH.md). Rehearse on your friend's Windows laptop before the review; a fresh clone prepares a small sample dataset, not the recorded large benchmark or this laptop's report history.
+
 ## Native setup on Windows x64
 
 Docker is not required. From a cloned repository in PowerShell:
@@ -106,9 +114,9 @@ The bootstrap provides Python/PostgreSQL, subject to Windows runtime prerequisit
 
 ## Execution plan
 
-docs/IMPLEMENTATION_PLAN.md records the accepted order; docs/REPORTING_PROJECT_BLUEPRINT.md maps the updated assessment. DBMS/backend work and the reporting UI are implemented. A replacement PPT and final Word report remain later phases. Optional AI code is implemented; live provider verification awaits the user key. Older milestone/research notes retain historical Docker commands; use this README and current status for execution.
+docs/IMPLEMENTATION_PLAN.md records the accepted order; docs/REPORTING_PROJECT_BLUEPRINT.md maps the updated assessment. DBMS/backend work and the reporting UI are implemented. The current final presentation is **Updated_Conduit_Final_Presentation.pptx** in the repository root; the final Word report remains a separate task. The full rehearsal script is [docs/FINAL_WEBSITE_DEMO_SCRIPT.md](docs/FINAL_WEBSITE_DEMO_SCRIPT.md). Older milestone/research notes retain historical Docker commands; use this README and current status for execution.
 
-Optional Gemini interpretation, column mapping and analysis explanations are implemented. Add `CONDUIT_GEMINI_API_KEY` to ignored `.env.local` and restart the API; the example model is configurable with `CONDUIT_GEMINI_MODEL`. Provider credentials remain on the backend, and the normal login stays unchanged. Live inference requires the user's key, internet and available provider quota; integration was tested with mocked responses, not a live account. Local/manual workflows remain usable without AI. Authoritative figures come from SQL. See `docs/FINAL_REVIEW_DEMO.md` for the presentation sequence and boundaries.
+Gemini is an automatic fallback for unresolved column mapping and question interpretation. Analysis calculates SQL facts first and optionally adds AI insights, retaining its standard summary if the provider is unavailable. Add `CONDUIT_GEMINI_API_KEY` to ignored `.env.local` and restart the API; the model is configurable with `CONDUIT_GEMINI_MODEL`. Provider credentials remain on the backend. Live interpretation, mapping and analysis were verified on 20 October 2026; another laptop needs its own local configuration, internet and available provider quota. Local/manual workflows remain usable without AI. UI values and new HTML reports use Indian comma grouping and Lakh/Cr. labels with exact values; CSV exports retain numeric data. See `docs/UI_REFINEMENT_20261020.md` for verification and `docs/FINAL_WEBSITE_DEMO_SCRIPT.md` for the demo.
 
 ## Latest implementation verification
 
